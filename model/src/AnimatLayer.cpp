@@ -17,62 +17,55 @@ namespace model {
                              double const yOffset,
                              double const width,
                              physics::PhysicsEngine & physicsEngine)
-      : m_xOffset(xOffset)
-      , m_yOffset(yOffset)
-      , m_width(width)
-      , m_leftPoint(xOffset, yOffset, 0)
-      , m_rightPoint(xOffset + width, yOffset, 0)
     {
         // instantiate physics
-        m_indexLeft = physicsEngine.addPointMass(m_leftPoint, 5.0 /* mass */, false /* not fixed */);
-        m_indexRight = physicsEngine.addPointMass(m_rightPoint, 5.0 /* mass */, false /* not fixed */);
+        physics::Vector3 vLeft(xOffset, yOffset, 0);
+        physics::Vector3 vRight(xOffset + width, yOffset, 0);
+        m_indexLeft = physicsEngine.addPointMass(vLeft, 5.0 /* mass */, false /* not fixed */);
+        m_indexRight = physicsEngine.addPointMass(vRight, 5.0 /* mass */, false /* not fixed */);
         physicsEngine.createSpring(m_indexLeft, m_indexRight, 1.0 /* constant */, 0.9 /* dampener */);
     }
 
     physics::Vector3
-    AnimatLayer::getLeftToRightVector() const
+    AnimatLayer::getLeftToRightVector(physics::PhysicsEngine const & physicsEngine) const 
     {
-        return m_rightPoint - m_leftPoint;
+        return physicsEngine.getMassPointPosition(m_indexLeft) - 
+               physicsEngine.getMassPointPosition(m_indexRight);
     }
+    
 
     physics::Vector3
-    AnimatLayer::getRightToLeftVector() const
+    AnimatLayer::getRightToLeftVector(physics::PhysicsEngine const & physicsEngine) const 
     {
-        return m_leftPoint - m_rightPoint;
+        return physicsEngine.getMassPointPosition(m_indexRight) - 
+               physicsEngine.getMassPointPosition(m_indexLeft);
     }
 
-
+    
     physics::Vector3
-    AnimatLayer::getMidSidePoint() const
+    AnimatLayer::getMidSidePoint(physics::PhysicsEngine const & physicsEngine) const 
     {
 
         // compute distance between vectors
-        physics::Vector3 difference = m_rightPoint - m_leftPoint;
+        physics::Vector3 difference = physicsEngine.getMassPointPosition(m_indexRight) - 
+                                      physicsEngine.getMassPointPosition(m_indexLeft);
 
         // compute halfway distance
         physics::Vector3 halfway = difference / 2;
 
         // compute mid point as left + halfway
-        return m_leftPoint + halfway;
-
+        return physicsEngine.getMassPointPosition(m_indexLeft) + halfway;
     }
+    
 
-    physics::Vector3 const & AnimatLayer::getLeftPoint() const
+    int AnimatLayer::getIndexLeft() const 
     {
-        return m_leftPoint;
-    }
-
-    physics::Vector3 const & AnimatLayer::getRightPoint() const
-    {
-        return m_rightPoint;
+        return m_indexLeft;
     }
 
-    void AnimatLayer::updateLeftPoint(physics::PhysicsEngine const & physicsEngine) 
+    int AnimatLayer::getIndexRight() const 
     {
-        //m_leftPoint = physicsEngine.getMassPointPosition(m_indexLeft);
+        return m_indexRight;
     }
-    void AnimatLayer::updateRightPoint(physics::PhysicsEngine const & physicsEngine) 
-    {
-        //m_rightPoint = physicsEngine.getMassPointPosition(m_indexRight);
-    }
+
 }

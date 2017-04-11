@@ -31,23 +31,23 @@ namespace physics {
                           double const dampener);
         void addSpring(Spring const & spring);
 
-        Vector3 const & getMassPointPosition(int const i);
+        Vector3 const & getMassPointPosition(int const i) const;
 
         void setPointForceExternal(int const i, 
                                    Vector3 const & force);
 
-        Vector3 const & getPointForceAccel(int const i);
-        Vector3 const & getPointForceExternal(int const i);
+        Vector3 const & getPointForceAccel(int const i) const;
+        Vector3 const & getPointForceExternal(int const i) const;
         void resetAllExternalForces();
         void updateSpringSystem();
         void resetForces();
         void reset();
 
-        Vector3 const & getMassPointVelocity(int const i);
+        Vector3 const & getMassPointVelocity(int const i) const;
 
       private:
         /// Collection of point masses
-        std::vector<PointMass> m_masses;
+        mutable std::vector<PointMass> m_masses;
 
         /// Collection of springs
         std::vector<Spring> m_springs;

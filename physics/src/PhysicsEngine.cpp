@@ -50,12 +50,12 @@ namespace physics {
         m_masses[i].setPosition(position);
     }
 
-    Vector3 const & PhysicsEngine::getMassPointPosition(int const i)
+    Vector3 const & PhysicsEngine::getMassPointPosition(int const i) const
     {
         return m_masses[i].position();
     }
 
-    Vector3 const & PhysicsEngine::getMassPointVelocity(int const i)
+    Vector3 const & PhysicsEngine::getMassPointVelocity(int const i) const
     {
         return m_masses[i].velocity();
     }
@@ -66,12 +66,12 @@ namespace physics {
         m_masses[p].accumulateForce(u);
     }
 
-    Vector3 const & PhysicsEngine::getPointForceExternal(int const p)
+    Vector3 const & PhysicsEngine::getPointForceExternal(int const p) const
     {
         return m_masses[p].getForceAccum();
     }
 
-    Vector3 const & PhysicsEngine::getPointForceAccel(int const p)
+    Vector3 const & PhysicsEngine::getPointForceAccel(int const p) const
     {
         return m_masses[p].acceleration();
     }

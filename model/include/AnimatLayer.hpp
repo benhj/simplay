@@ -30,23 +30,14 @@ namespace model {
 
         AnimatLayer() = delete;
 
-        physics::Vector3 getLeftToRightVector() const;
-        physics::Vector3 getRightToLeftVector() const;
-        physics::Vector3 getMidSidePoint() const;
-        physics::Vector3 const & getLeftPoint() const;
-        physics::Vector3 const & getRightPoint() const;
+        int getIndexLeft() const;
+        int getIndexRight() const;
 
-        /// Update vector positions according to current
-        /// state of the physics engine
-        void updateLeftPoint(physics::PhysicsEngine const & pe);
-        void updateRightPoint(physics::PhysicsEngine const & pe);
+        physics::Vector3 getLeftToRightVector(physics::PhysicsEngine const & physicsEngine) const;
+        physics::Vector3 getRightToLeftVector(physics::PhysicsEngine const & physicsEngine) const;
+        physics::Vector3 getMidSidePoint(physics::PhysicsEngine const & physicsEngine) const;
 
      private:
-       double m_xOffset;
-       double m_yOffset;
-       double m_width;
-       physics::Vector3 m_leftPoint;
-       physics::Vector3 m_rightPoint;
        int m_indexLeft;
        int m_indexRight;
     }; 
