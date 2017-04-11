@@ -10,12 +10,18 @@ namespace physics {
     {
     }
 
-    void
-    PhysicsEngine::addMassPoint(Vector3 const & position,
+    int PhysicsEngine::addPointMass(Vector3 const & position,
                                 double const mass, 
                                 bool const fixed)
     {
         m_masses.emplace_back(position, mass, fixed);
+        return m_masses.size() - 1;
+    }
+
+    int PhysicsEngine::addPointMass(PointMass const &pm)
+    {
+        m_masses.push_back(pm);
+        return m_masses.size() - 1;
     }
 
     void
@@ -33,12 +39,16 @@ namespace physics {
         m_springs.emplace_back(m_masses[i], m_masses[j], springConstant, dampener);
     }
 
+    void PhysicsEngine::addSpring(Spring const & spring) 
+    {
+        m_springs.push_back(spring);
+    }
+
     void
     PhysicsEngine::setMassPointPosition(int const i, Vector3 const & position)
     {
         m_masses[i].setPosition(position);
     }
-
 
     Vector3 const & PhysicsEngine::getMassPointPosition(int const i)
     {

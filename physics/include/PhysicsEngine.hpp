@@ -13,9 +13,14 @@ namespace physics {
     {
       public:
         PhysicsEngine();
-        void addMassPoint(Vector3 const & position, 
-                          double const mass, 
-                          bool const fixed);
+
+        /// returns index of added mass point
+        int addPointMass(Vector3 const & position, 
+                         double const mass, 
+                         bool const fixed);
+
+        /// returns index of added mass point
+        int addPointMass(PointMass const &pm);
 
         void setMassPointPosition(int const i, 
                                   Vector3 const & position);
@@ -24,6 +29,7 @@ namespace physics {
                           int const j,
                           double const springConstant,
                           double const dampener);
+        void addSpring(Spring const & spring);
 
         Vector3 const & getMassPointPosition(int const i);
 
