@@ -1,0 +1,83 @@
+
+#include "PhysicsEngine.hpp"
+#include "Spring.hpp"
+#include "PointMass.hpp"
+#include "Vector3.hpp"
+
+namespace physics {
+
+    PhysicsEngine::PhysicsEngine()
+    {
+    }
+
+    void
+    PhysicsEngine::addMassPoint(Vector3 const & position,
+                                double const mass, 
+                                bool const fixed)
+    {
+        m_masses.emplace_back(position, mass, fixed);
+    }
+
+    void
+    PhysicsEngine::createSpring(int const i, 
+                                int const j,
+                                double const springConstant,
+                                double const dampener)
+    {
+        if (i > m_masses.size()) {
+            throw std::runtime_error("createSpring: i out of bounds");
+        }
+        if (j > m_masses.size()) {
+            throw std::runtime_error("createSpring: j out of bounds");
+        }
+        m_springs.emplace_back(m_masses[i], m_masses[j], springConstant, dampener);
+    }
+
+    void
+    PhysicsEngine::setMassPointPosition(int const i, Vector3 const & position)
+    {
+        m_masses[i].setPosition(position);
+    }
+
+
+    Vector3 const & PhysicsEngine::getMassPointPosition(int const i)
+    {
+        return m_masses[i].position();
+    }
+
+    Vector3 const & PhysicsEngine::getMassPointVelocity(int const i)
+    {
+        return m_masses[i].velocity();
+    }
+
+    void PhysicsEngine::setPointForceExternal(int const p,
+                                              Vector3 const & u)
+    {
+        m_masses[p].accumulateForce(u);
+    }
+
+    Vector3 const & PhysicsEngine::getPointForceExternal(int const p)
+    {
+        return m_masses[p].getForceAccum();
+    }
+
+    Vector3 const & PhysicsEngine::getPointForceAccel(int const p)
+    {
+        return m_masses[p].acceleration();
+    }
+
+    void PhysicsEngine::updateSpringSystem()
+    {
+        std::for_each(std::begin(m_springs), 
+                      std::end(m_springs), 
+                      [](Spring & s) { s.apply(); });
+    }
+
+    void PhysicsEngine::reset()
+    {
+        std::for_each(std::begin(m_masses), 
+                      std::end(m_masses), 
+                      [](PointMass & p) { p.reset(); });
+    }
+
+}
