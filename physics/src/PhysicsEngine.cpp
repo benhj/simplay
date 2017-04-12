@@ -7,7 +7,11 @@
 namespace physics {
 
     PhysicsEngine::PhysicsEngine()
+    : m_masses()
+    , m_springs()
     {
+        m_masses.reserve(100);
+        m_springs.reserve(100);
     }
 
     int PhysicsEngine::addPointMass(Vector3 const & position,
@@ -30,7 +34,7 @@ namespace physics {
         if (j >= m_masses.size()) {
             throw std::runtime_error("createSpring: j out of bounds");
         }
-        m_springs.emplace_back(m_masses[i], m_masses[j], springConstant, dampener);
+        m_springs.emplace_back(std::ref(m_masses[i]), std::ref(m_masses[j]), springConstant, dampener);
         return m_springs.size() - 1;
     }
 

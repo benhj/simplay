@@ -49,6 +49,8 @@ namespace physics {
 
         /// Collection of springs
         std::vector<Spring> m_springs;
+
+        PointMass *debugMass;
     };
 
 }

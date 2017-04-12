@@ -20,9 +20,11 @@ namespace model {
         }
 
         // construct blocks
-        for (int block = 0; block < layers - 1; ++block) {
-            m_blocks.emplace_back(m_layers[block], 
-                                  m_layers[block + 1],
+        for (int block = 0; block < m_layers.size() - 1; ++block) {
+            auto & layerA = m_layers[block];
+            auto & layerB = m_layers[block + 1];
+            m_blocks.emplace_back(layerA, 
+                                  layerB,
                                   m_physicsEngine);
         }
     }

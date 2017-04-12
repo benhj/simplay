@@ -9,9 +9,6 @@ namespace physics {
     : m_position(position)
     , m_mass(mass)
     , m_frozen(frozen)
-    , m_forceAccum(Vector3::Zero)
-    , m_acceleration(Vector3::Zero)
-    , m_velocity(Vector3::Zero)
     {
 
     }
@@ -24,8 +21,8 @@ namespace physics {
 
     void PointMass::accumulateForce(Vector3 const & force)
     {
-        std::cout<<m_forceAccum<<std::endl;
-        //m_forceAccum += force;
+        //std::cout<<m_forceAccum<<std::endl;
+        m_forceAccum += force;
     }
 
     void PointMass::applyForce()

@@ -40,7 +40,6 @@ namespace physics {
 
         Vector3 m_position;
         double m_mass;
-        double m_drag;
         bool m_frozen;
         
         Vector3 m_velocity;

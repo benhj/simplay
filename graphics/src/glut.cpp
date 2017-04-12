@@ -31,6 +31,10 @@ void display()
 
     auto physicsEngine = animat.getPhysicsEngine();
 
+    animat.applyBlockContraction(2, 0, 0.02);
+    animat.update();
+
+
     for(int b = 0; b < 8; ++b) {
         auto block = animat.getBlock(b);
         auto layer1 = block.getLayerOne();
@@ -87,10 +91,6 @@ int main(int argc, char **argv)
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
     glutIdleFunc(display);
-
-    //animat.applyBlockContraction(2, 0, 2.0);
-    animat.update();
-
     init();
 
     // Starts the program.
