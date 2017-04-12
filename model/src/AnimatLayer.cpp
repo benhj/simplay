@@ -21,9 +21,11 @@ namespace model {
         // instantiate physics
         physics::Vector3 vLeft(xOffset, yOffset, 0);
         physics::Vector3 vRight(xOffset + width, yOffset, 0);
-        m_indexLeft = physicsEngine.addPointMass(vLeft, 5.0 /* mass */, false /* not fixed */);
-        m_indexRight = physicsEngine.addPointMass(vRight, 5.0 /* mass */, false /* not fixed */);
-        physicsEngine.createSpring(m_indexLeft, m_indexRight, 1.0 /* constant */, 0.9 /* dampener */);
+        auto constant = 0.8;
+        auto dampener = 0.9;
+        m_indexLeft = physicsEngine.addPointMass(vLeft, 1.0 /* mass */, false /* not fixed */);
+        m_indexRight = physicsEngine.addPointMass(vRight, 1.0 /* mass */, false /* not fixed */);
+        physicsEngine.createSpring(m_indexLeft, m_indexRight, constant, dampener);
     }
 
     physics::Vector3

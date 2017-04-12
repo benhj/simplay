@@ -23,14 +23,15 @@ namespace physics {
     {
         //std::cout<<m_forceAccum<<std::endl;
         m_forceAccum += force;
+        m_forceAccum[2] = 0;
     }
 
     void PointMass::applyForce()
     {
-        if (m_mass != 0) {
+        //if (m_mass != 0) {
             m_acceleration += (m_forceAccum / m_mass);
             m_acceleration.m_vec[2] = 0;
-        }
+        //}
     }
 
 

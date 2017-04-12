@@ -66,13 +66,13 @@ namespace physics {
 
     void PhysicsEngine::update(double const dv)
     {
-        std::for_each(std::begin(m_masses),
-                      std::end(m_masses),
-                      [=](PointMass & pm) { pm.update(dv); });
-
         std::for_each(std::begin(m_springs), 
                       std::end(m_springs), 
                       [](Spring & s) { s.apply(); });
+
+        std::for_each(std::begin(m_masses),
+                      std::end(m_masses),
+                      [=](PointMass & pm) { pm.update(dv); });
     }
 
     void PhysicsEngine::reset()

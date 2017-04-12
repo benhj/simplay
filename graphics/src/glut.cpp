@@ -31,10 +31,6 @@ void display()
 
     auto physicsEngine = animat.getPhysicsEngine();
 
-    animat.applyBlockContraction(2, 0, 0.02);
-    animat.update();
-
-
     for(int b = 0; b < 8; ++b) {
         auto block = animat.getBlock(b);
         auto layer1 = block.getLayerOne();
@@ -73,6 +69,13 @@ void reshape(int w, int h)
 
 int main(int argc, char **argv)
 {
+
+    for(int b = 0;b<8;++b) {
+        animat.applyBlockContraction(b, 0, 100);
+        animat.applyBlockContraction(b, 1, 100);
+    }
+    animat.update();
+
     glutInit(&argc, argv); // Initializes glut
 
     // Sets up a double buffer with RGBA components and a depth component
