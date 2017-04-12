@@ -28,10 +28,17 @@ namespace model {
         AnimatLayer const & getLayerOne() const;
         AnimatLayer const & getLayerTwo() const;
 
+        void contractLeftSide(physics::PhysicsEngine & physicsEngine,
+                              double const forceMagnitude);
+        void contractRightSide(physics::PhysicsEngine & physicsEngine,
+                              double const forceMagnitude);
+
       private:
 
         AnimatLayer const & m_layerOne;
         AnimatLayer const & m_layerTwo;
+        int m_leftSpringIndex;
+        int m_rightSpringIndex;
     };
 
 }

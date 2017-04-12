@@ -25,11 +25,15 @@ namespace physics {
         void setMassPointPosition(int const i, 
                                   Vector3 const & position);
 
-        void createSpring(int const i, 
-                          int const j,
-                          double const springConstant,
-                          double const dampener);
+        /// returns index of spring
+        int createSpring(int const i, 
+                         int const j,
+                         double const springConstant,
+                         double const dampener);
         void addSpring(Spring const & spring);
+
+        void compressSpring(int const index,
+                            double const forceMagnitude);
 
         Vector3 const & getMassPointPosition(int const i) const;
 
@@ -39,7 +43,9 @@ namespace physics {
         Vector3 const & getPointForceAccel(int const i) const;
         Vector3 const & getPointForceExternal(int const i) const;
         void resetAllExternalForces();
-        void updateSpringSystem();
+
+        /// integrate
+        void update(double const dv);
         void resetForces();
         void reset();
 

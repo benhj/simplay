@@ -24,24 +24,34 @@ namespace physics {
         return m_masses.size() - 1;
     }
 
-    void
+    int
     PhysicsEngine::createSpring(int const i, 
                                 int const j,
                                 double const springConstant,
                                 double const dampener)
     {
-        if (i > m_masses.size()) {
+        if (i >= m_masses.size()) {
             throw std::runtime_error("createSpring: i out of bounds");
         }
-        if (j > m_masses.size()) {
+        if (j >= m_masses.size()) {
             throw std::runtime_error("createSpring: j out of bounds");
         }
         m_springs.emplace_back(m_masses[i], m_masses[j], springConstant, dampener);
+        return m_springs.size() - 1;
     }
 
     void PhysicsEngine::addSpring(Spring const & spring) 
     {
         m_springs.push_back(spring);
+    }
+
+    void PhysicsEngine::compressSpring(int const index,
+                                       double const forceMagnitude)
+    {
+        if (index >= m_springs.size()) {
+            throw std::runtime_error("compressSpring: index out of bounds");
+        }
+        m_springs[index].compress(forceMagnitude);
     }
 
     void
@@ -76,8 +86,12 @@ namespace physics {
         return m_masses[p].acceleration();
     }
 
-    void PhysicsEngine::updateSpringSystem()
+    void PhysicsEngine::update(double const dv)
     {
+        std::for_each(std::begin(m_masses),
+                      std::end(m_masses),
+                      [=](PointMass & pm) { pm.update(dv); });
+
         std::for_each(std::begin(m_springs), 
                       std::end(m_springs), 
                       [](Spring & s) { s.apply(); });

@@ -27,6 +27,7 @@ namespace physics {
         void setSpringConstant(double const k);
         void setDampener(double const d);
         double getCurrentDistension();
+        void compress(double const forceMagnitude);
 
       private:
         PointMass & m_p0;

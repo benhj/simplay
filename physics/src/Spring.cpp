@@ -70,6 +70,16 @@ namespace physics {
         }*/
     }
 
+    void Spring::compress(double const forceMagnitude)
+    {
+        Vector3 directionP0 = m_p1.position() - m_p0.position(); 
+        Vector3 directionP1 = m_p0.position() - m_p1.position();
+        directionP0*=forceMagnitude;
+        directionP1*=forceMagnitude;
+        m_p1.accumulateForce(directionP1);
+        m_p0.accumulateForce(directionP0);
+    }
+
     double
     Spring::getCurrentDistension()
     {

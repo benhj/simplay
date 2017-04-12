@@ -18,28 +18,43 @@ namespace model {
         auto const layerTwoRightVertIndex = m_layerTwo.getIndexRight();
 
         // create springs between point masses ('X')
+        m_leftSpringIndex =
         physicsEngine.createSpring(layerOneLeftVertIndex,
                                    layerTwoLeftVertIndex,
                                    1.0 /* constant */, 
                                    0.9 /* dampener */);
 
+        m_rightSpringIndex =
         physicsEngine.createSpring(layerOneRightVertIndex,
                                    layerTwoRightVertIndex,
                                    1.0 /* constant */, 
                                    0.9 /* dampener */);
 
+        (void)
         physicsEngine.createSpring(layerOneLeftVertIndex,
                                    layerTwoRightVertIndex,
                                    1.0 /* constant */, 
                                    0.9 /* dampener */);
 
+        (void)
         physicsEngine.createSpring(layerOneRightVertIndex,
                                    layerTwoLeftVertIndex,
                                    1.0 /* constant */, 
                                    0.9 /* dampener */);
-
     }
 
     AnimatLayer const & AnimatBlock::getLayerOne() const {return m_layerOne;}
     AnimatLayer const & AnimatBlock::getLayerTwo() const {return m_layerTwo;}
+
+    void AnimatBlock::contractLeftSide(physics::PhysicsEngine & physicsEngine,
+                                       double const forceMagnitude)
+    {
+        physicsEngine.compressSpring(m_leftSpringIndex, forceMagnitude);
+    }
+
+    void AnimatBlock::contractRightSide(physics::PhysicsEngine & physicsEngine,
+                                       double const forceMagnitude)
+    {
+        physicsEngine.compressSpring(m_rightSpringIndex, forceMagnitude);
+    }
 }
