@@ -36,6 +36,8 @@ namespace model {
         physics::Vector3 getLeftToRightVector(physics::PhysicsEngine const & physicsEngine) const;
         physics::Vector3 getRightToLeftVector(physics::PhysicsEngine const & physicsEngine) const;
         physics::Vector3 getMidSidePoint(physics::PhysicsEngine const & physicsEngine) const;
+        physics::Vector3 const & getPositionLeft(physics::PhysicsEngine const & physicsEngine) const;
+        physics::Vector3 const & getPositionRight(physics::PhysicsEngine const & physicsEngine) const;
 
      private:
        int m_indexLeft;

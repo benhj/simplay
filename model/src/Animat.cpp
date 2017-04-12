@@ -44,4 +44,14 @@ namespace model {
     {
         m_physicsEngine.update(0.1);
     }
+
+    AnimatBlock const & Animat::getBlock(int const b) const
+    {
+        return m_blocks[b];
+    }
+
+    physics::PhysicsEngine const & Animat::getPhysicsEngine() const
+    {
+        return m_physicsEngine;
+    }
 }

@@ -19,10 +19,7 @@ namespace physics {
                          double const mass, 
                          bool const fixed);
 
-        /// returns index of added mass point
-        int addPointMass(PointMass const &pm);
-
-        void setMassPointPosition(int const i, 
+        void setPointMassPosition(int const i, 
                                   Vector3 const & position);
 
         /// returns index of spring
@@ -30,26 +27,21 @@ namespace physics {
                          int const j,
                          double const springConstant,
                          double const dampener);
-        void addSpring(Spring const & spring);
 
-        void compressSpring(int const index,
-                            double const forceMagnitude);
+        void compressSpring(int const index, double const forceMagnitude);
 
-        Vector3 const & getMassPointPosition(int const i) const;
+        Vector3 const & getPointMassPosition(int const i) const;
 
-        void setPointForceExternal(int const i, 
-                                   Vector3 const & force);
+        void setPointForceExternal(int const i,  Vector3 const & force);
 
-        Vector3 const & getPointForceAccel(int const i) const;
-        Vector3 const & getPointForceExternal(int const i) const;
         void resetAllExternalForces();
 
         /// integrate
         void update(double const dv);
-        void resetForces();
         void reset();
 
-        Vector3 const & getMassPointVelocity(int const i) const;
+        /// hack. Needs to be made thread-safe
+        std::vector<PointMass> getMasses() const;
 
       private:
         /// Collection of point masses

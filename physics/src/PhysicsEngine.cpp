@@ -11,16 +11,10 @@ namespace physics {
     }
 
     int PhysicsEngine::addPointMass(Vector3 const & position,
-                                double const mass, 
-                                bool const fixed)
+                                    double const mass, 
+                                    bool const fixed)
     {
         m_masses.emplace_back(position, mass, fixed);
-        return m_masses.size() - 1;
-    }
-
-    int PhysicsEngine::addPointMass(PointMass const &pm)
-    {
-        m_masses.push_back(pm);
         return m_masses.size() - 1;
     }
 
@@ -40,11 +34,6 @@ namespace physics {
         return m_springs.size() - 1;
     }
 
-    void PhysicsEngine::addSpring(Spring const & spring) 
-    {
-        m_springs.push_back(spring);
-    }
-
     void PhysicsEngine::compressSpring(int const index,
                                        double const forceMagnitude)
     {
@@ -55,35 +44,20 @@ namespace physics {
     }
 
     void
-    PhysicsEngine::setMassPointPosition(int const i, Vector3 const & position)
+    PhysicsEngine::setPointMassPosition(int const i, Vector3 const & position)
     {
         m_masses[i].setPosition(position);
     }
 
-    Vector3 const & PhysicsEngine::getMassPointPosition(int const i) const
+    Vector3 const & PhysicsEngine::getPointMassPosition(int const i) const
     {
         return m_masses[i].position();
-    }
-
-    Vector3 const & PhysicsEngine::getMassPointVelocity(int const i) const
-    {
-        return m_masses[i].velocity();
     }
 
     void PhysicsEngine::setPointForceExternal(int const p,
                                               Vector3 const & u)
     {
         m_masses[p].accumulateForce(u);
-    }
-
-    Vector3 const & PhysicsEngine::getPointForceExternal(int const p) const
-    {
-        return m_masses[p].getForceAccum();
-    }
-
-    Vector3 const & PhysicsEngine::getPointForceAccel(int const p) const
-    {
-        return m_masses[p].acceleration();
     }
 
     void PhysicsEngine::update(double const dv)
@@ -102,6 +76,11 @@ namespace physics {
         std::for_each(std::begin(m_masses), 
                       std::end(m_masses), 
                       [](PointMass & p) { p.reset(); });
+    }
+
+    std::vector<PointMass> PhysicsEngine::getMasses() const
+    {
+        return m_masses;
     }
 
 }

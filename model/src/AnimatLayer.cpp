@@ -29,16 +29,16 @@ namespace model {
     physics::Vector3
     AnimatLayer::getLeftToRightVector(physics::PhysicsEngine const & physicsEngine) const 
     {
-        return physicsEngine.getMassPointPosition(m_indexLeft) - 
-               physicsEngine.getMassPointPosition(m_indexRight);
+        return physicsEngine.getPointMassPosition(m_indexLeft) - 
+               physicsEngine.getPointMassPosition(m_indexRight);
     }
     
 
     physics::Vector3
     AnimatLayer::getRightToLeftVector(physics::PhysicsEngine const & physicsEngine) const 
     {
-        return physicsEngine.getMassPointPosition(m_indexRight) - 
-               physicsEngine.getMassPointPosition(m_indexLeft);
+        return physicsEngine.getPointMassPosition(m_indexRight) - 
+               physicsEngine.getPointMassPosition(m_indexLeft);
     }
 
     
@@ -47,14 +47,14 @@ namespace model {
     {
 
         // compute distance between vectors
-        physics::Vector3 difference = physicsEngine.getMassPointPosition(m_indexRight) - 
-                                      physicsEngine.getMassPointPosition(m_indexLeft);
+        physics::Vector3 difference = physicsEngine.getPointMassPosition(m_indexRight) - 
+                                      physicsEngine.getPointMassPosition(m_indexLeft);
 
         // compute halfway distance
         physics::Vector3 halfway = difference / 2;
 
         // compute mid point as left + halfway
-        return physicsEngine.getMassPointPosition(m_indexLeft) + halfway;
+        return physicsEngine.getPointMassPosition(m_indexLeft) + halfway;
     }
     
 
@@ -68,4 +68,15 @@ namespace model {
         return m_indexRight;
     }
 
+    physics::Vector3 const & 
+    AnimatLayer::getPositionLeft(physics::PhysicsEngine const & physicsEngine) const
+    {
+        return physicsEngine.getPointMassPosition(m_indexLeft);
+    }
+
+    physics::Vector3 const & 
+    AnimatLayer::getPositionRight(physics::PhysicsEngine const & physicsEngine) const
+    {
+        return physicsEngine.getPointMassPosition(m_indexRight);
+    }
 }

@@ -50,7 +50,7 @@ namespace physics {
             }
             v *= forceMagnitude;
 
-            // apply dampening to each point which is -d * velocity
+            // // apply dampening to each point which is -d * velocity
             auto & p0_vel = m_p0.velocity();
             auto & p1_vel = m_p1.velocity();
             auto damped0 = -m_dampener * p0_vel;

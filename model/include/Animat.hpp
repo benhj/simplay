@@ -20,6 +20,10 @@ namespace model {
                                    double const force);
         void update();
 
+        AnimatBlock const & getBlock(int const b) const;
+
+        physics::PhysicsEngine const & getPhysicsEngine() const;
+
       private:
         std::vector<AnimatLayer> m_layers;
         std::vector<AnimatBlock> m_blocks;
