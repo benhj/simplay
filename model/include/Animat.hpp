@@ -7,13 +7,13 @@
 
 namespace model {
 
-    class Animat3D
+    class Animat
     {
 
       public:
-        Animat3D(int const layers,
-                 double const layerWidth,
-                 double const blockHeight);
+        Animat(int const layers,
+               double const layerWidth,
+               double const blockHeight);
     
         void applyBlockContraction(int const block, 
                                    int const side, 

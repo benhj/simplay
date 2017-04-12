@@ -6,9 +6,9 @@
 
 namespace model {
 
-    Animat3D::Animat3D(int const layers,
-                       double const layerWidth,
-                       double const blockHeight)
+    Animat::Animat(int const layers,
+                   double const layerWidth,
+                   double const blockHeight)
       : m_physicsEngine()
     {
         // construct layers
@@ -28,7 +28,7 @@ namespace model {
     }
 
     void
-    Animat3D::applyBlockContraction(int const block, 
+    Animat::applyBlockContraction(int const block, 
                                     int const side, 
                                     double const force)
     {
@@ -40,7 +40,7 @@ namespace model {
     }
 
     void
-    Animat3D::update()
+    Animat::update()
     {
         m_physicsEngine.update(0.1);
     }
