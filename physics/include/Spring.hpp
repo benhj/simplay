@@ -28,6 +28,7 @@ namespace physics {
         void setDampener(double const d);
         double getCurrentDistension();
         void compress(double const forceMagnitude);
+        void relax();
 
       private:
         PointMass & m_p0;
@@ -37,6 +38,8 @@ namespace physics {
         double m_restLength;
         bool m_fixedP0;
         bool m_fixedP1;
+        Vector3 m_compressForceP0;
+        Vector3 m_compressForceP1;
     };
 
 }

@@ -70,13 +70,13 @@ namespace model {
         return m_indexRight;
     }
 
-    physics::Vector3 const & 
+    physics::Vector3
     AnimatLayer::getPositionLeft(physics::PhysicsEngine const & physicsEngine) const
     {
         return physicsEngine.getPointMassPosition(m_indexLeft);
     }
 
-    physics::Vector3 const & 
+    physics::Vector3
     AnimatLayer::getPositionRight(physics::PhysicsEngine const & physicsEngine) const
     {
         return physicsEngine.getPointMassPosition(m_indexRight);

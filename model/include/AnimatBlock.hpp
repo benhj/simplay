@@ -33,6 +33,9 @@ namespace model {
         void contractRightSide(physics::PhysicsEngine & physicsEngine,
                               double const forceMagnitude);
 
+        void relaxLeftSide(physics::PhysicsEngine & physicsEngine);
+        void relaxRightSide(physics::PhysicsEngine & physicsEngine);
+
       private:
 
         AnimatLayer const & m_layerOne;

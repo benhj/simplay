@@ -42,6 +42,16 @@ namespace model {
     }
 
     void
+    Animat::relaxBlockContraction(int const block, int const side)
+    {
+        if (side == 0) {
+            m_blocks[block].relaxLeftSide(m_physicsEngine);
+        } else {
+            m_blocks[block].relaxRightSide(m_physicsEngine);
+        }
+    }
+
+    void
     Animat::update()
     {
         m_physicsEngine.update(0.1);

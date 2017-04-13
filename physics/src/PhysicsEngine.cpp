@@ -49,6 +49,14 @@ namespace physics {
         m_springs[index].compress(forceMagnitude);
     }
 
+    void PhysicsEngine::relaxSpring(int const index)
+    {
+        if (index >= m_springs.size()) {
+            throw std::runtime_error("relaxSpring: index out of bounds");
+        }
+        m_springs[index].relax();
+    }
+
     void
     PhysicsEngine::setPointMassPosition(int const i, Vector3 const & position)
     {

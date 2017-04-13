@@ -18,6 +18,10 @@ namespace model {
         void applyBlockContraction(int const block, 
                                    int const side, 
                                    double const force);
+
+        void relaxBlockContraction(int const block, 
+                                   int const side);
+
         void update();
 
         AnimatBlock const & getBlock(int const b) const;

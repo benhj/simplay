@@ -60,4 +60,14 @@ namespace model {
     {
         physicsEngine.compressSpring(m_rightSpringIndex, forceMagnitude);
     }
+
+    void AnimatBlock::relaxLeftSide(physics::PhysicsEngine & physicsEngine)
+    {
+        physicsEngine.relaxSpring(m_leftSpringIndex);
+    }
+
+    void AnimatBlock::relaxRightSide(physics::PhysicsEngine & physicsEngine)
+    {
+        physicsEngine.relaxSpring(m_rightSpringIndex);
+    }
 }

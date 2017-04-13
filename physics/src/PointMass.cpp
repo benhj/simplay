@@ -35,7 +35,6 @@ namespace physics {
         }
     }
 
-
     // Integrator
     void PointMass::update(double const dt)
     {

@@ -72,12 +72,18 @@ namespace physics {
 
     void Spring::compress(double const forceMagnitude)
     {
-        Vector3 directionP0 = m_p1.lockedPosition() - m_p0.lockedPosition(); 
-        Vector3 directionP1 = m_p0.lockedPosition() - m_p1.lockedPosition();
-        directionP0 *= forceMagnitude;
-        directionP1 *= forceMagnitude;
-        m_p1.accumulateForce(directionP1);
-        m_p0.accumulateForce(directionP0);
+        m_compressForceP0 = m_p1.lockedPosition() - m_p0.lockedPosition(); 
+        m_compressForceP1 = m_p0.lockedPosition() - m_p1.lockedPosition();
+        m_compressForceP0 *= forceMagnitude;
+        m_compressForceP1 *= forceMagnitude;
+        m_p0.accumulateForce(m_compressForceP0);
+        m_p1.accumulateForce(m_compressForceP1);
+    }
+
+    void Spring::relax()
+    {
+        m_p0.accumulateForce(-m_compressForceP0);
+        m_p1.accumulateForce(-m_compressForceP1);
     }
 
     double

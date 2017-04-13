@@ -30,6 +30,7 @@ namespace physics {
                          double const dampener);
 
         void compressSpring(int const index, double const forceMagnitude);
+        void relaxSpring(int const index);
 
         Vector3 getPointMassPosition(int const i) const;
 
