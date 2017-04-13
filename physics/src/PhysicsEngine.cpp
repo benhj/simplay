@@ -68,10 +68,9 @@ namespace physics {
         return m_masses[i].lockedPosition();
     }
 
-    void PhysicsEngine::setPointForceExternal(int const p,
-                                              Vector3 const & u)
+    Vector3 PhysicsEngine::getPointMassVelocity(int const i) const
     {
-        m_masses[p].accumulateForce(u);
+        return m_masses[i].velocity();
     }
 
     void PhysicsEngine::update(double const dv)

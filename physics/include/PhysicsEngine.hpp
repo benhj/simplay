@@ -33,6 +33,7 @@ namespace physics {
         void relaxSpring(int const index);
 
         Vector3 getPointMassPosition(int const i) const;
+        Vector3 getPointMassVelocity(int const i) const;
 
         void setPointForceExternal(int const i,  Vector3 const & force);
 

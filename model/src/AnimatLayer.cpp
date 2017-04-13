@@ -81,4 +81,16 @@ namespace model {
     {
         return physicsEngine.getPointMassPosition(m_indexRight);
     }
+
+    physics::Vector3
+    AnimatLayer::getVelocityLeft(physics::PhysicsEngine const & physicsEngine) const
+    {
+        return physicsEngine.getPointMassVelocity(m_indexLeft);
+    }
+
+    physics::Vector3
+    AnimatLayer::getVelocityRight(physics::PhysicsEngine const & physicsEngine) const
+    {
+        return physicsEngine.getPointMassVelocity(m_indexLeft);
+    }
 }
