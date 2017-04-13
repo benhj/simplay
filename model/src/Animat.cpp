@@ -9,7 +9,7 @@ namespace model {
     Animat::Animat(int const layers,
                    double const layerWidth,
                    double const blockHeight)
-      : m_physicsEngine()
+      : m_physicsEngine(layers * 2 /* number of point masses */)
     {
         // construct layers
         auto yOffset = blockHeight;
@@ -31,8 +31,8 @@ namespace model {
 
     void
     Animat::applyBlockContraction(int const block, 
-                                    int const side, 
-                                    double const force)
+                                  int const side, 
+                                  double const force)
     {
         if (side == 0) {
             m_blocks[block].contractLeftSide(m_physicsEngine, force);

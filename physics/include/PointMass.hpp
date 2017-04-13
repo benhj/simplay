@@ -5,8 +5,11 @@
  * Based on code found at http://resumbrae.com/ub/dms424_s03/
  */
 
-#include <vector>
 #include "Vector3.hpp"
+
+#include <vector>
+#include <mutex>
+#include <memory>
 
 namespace physics {
 
@@ -24,6 +27,7 @@ namespace physics {
 
         inline double mass(void) { return m_mass; }
         inline const Vector3& position(void) { return m_position; }
+        Vector3 lockedPosition(void) const;
         inline const Vector3& velocity(void) { return m_velocity; }
         inline const Vector3& acceleration(void) { return m_acceleration; }
 
@@ -45,6 +49,11 @@ namespace physics {
         Vector3 m_velocity;
         Vector3 m_acceleration;
         Vector3 m_forceAccum;
+
+        // Although all point masses will be unique,
+        // we need to store them in a vector meaning that
+        // they need to be copyable.
+        mutable std::shared_ptr<std::mutex> m_positionMutex;
         
     };
 

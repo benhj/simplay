@@ -14,7 +14,7 @@ namespace physics {
       , m_p1(p1)
       , m_springConstant(k)
       , m_dampener(dampener)
-      , m_restLength(m_p0.position().distance(m_p1.position()))
+      , m_restLength(m_p0.lockedPosition().distance(m_p1.lockedPosition()))
       , m_fixedP0(false)
       , m_fixedP1(false)
     {
@@ -42,7 +42,7 @@ namespace physics {
     {
         //if (!rigid)
         {
-            auto v = m_p1.position() - m_p0.position();
+            auto v = m_p1.lockedPosition() - m_p0.lockedPosition();
             auto vlength = v.length();
             auto forceMagnitude = m_springConstant * (vlength - m_restLength);
             if (vlength > 0) {
@@ -72,8 +72,8 @@ namespace physics {
 
     void Spring::compress(double const forceMagnitude)
     {
-        Vector3 directionP0 = m_p1.position() - m_p0.position(); 
-        Vector3 directionP1 = m_p0.position() - m_p1.position();
+        Vector3 directionP0 = m_p1.lockedPosition() - m_p0.lockedPosition(); 
+        Vector3 directionP1 = m_p0.lockedPosition() - m_p1.lockedPosition();
         directionP0 *= forceMagnitude;
         directionP1 *= forceMagnitude;
         m_p1.accumulateForce(directionP1);
@@ -83,7 +83,7 @@ namespace physics {
     double
     Spring::getCurrentDistension()
     {
-        auto v = m_p1.position() - m_p0.position();
+        auto v = m_p1.lockedPosition() - m_p0.lockedPosition();
         return m_restLength - v.length();
     }
 }

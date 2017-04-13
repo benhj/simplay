@@ -9,6 +9,7 @@ namespace physics {
     : m_position(position)
     , m_mass(mass)
     , m_frozen(frozen)
+    , m_positionMutex(std::make_shared<std::mutex>())
     {
 
     }
@@ -28,10 +29,10 @@ namespace physics {
 
     void PointMass::applyForce()
     {
-        //if (m_mass != 0) {
+        if (m_mass != 0) {
             m_acceleration += (m_forceAccum / m_mass);
             m_acceleration.m_vec[2] = 0;
-        //}
+        }
     }
 
 
@@ -40,9 +41,12 @@ namespace physics {
     {
         applyForce();
         m_velocity += m_acceleration * dt;
-        m_position += m_velocity * dt;
+        {
+            std::lock_guard<std::mutex> lg(*m_positionMutex);
+            m_position += m_velocity * dt;
+            m_position.m_vec[2] = 0;
+        }
         m_velocity.m_vec[2] = 0;
-        m_position.m_vec[2] = 0;
         m_acceleration.toZero();
         m_forceAccum.toZero();
     }
@@ -54,8 +58,15 @@ namespace physics {
 
     void PointMass::setPosition(Vector3 const & pos)
     {
+        std::lock_guard<std::mutex> lg(*m_positionMutex);
         m_position = pos;
         m_position.m_vec[2] = 0;
+    }
+
+    Vector3 PointMass::lockedPosition(void) const
+    {
+        std::lock_guard<std::mutex> lg(*m_positionMutex);
+        return m_position;
     }
 
 

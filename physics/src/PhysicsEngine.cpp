@@ -6,12 +6,14 @@
 
 namespace physics {
 
-    PhysicsEngine::PhysicsEngine()
+    PhysicsEngine::PhysicsEngine(int const pointCount)
     : m_masses()
     , m_springs()
     {
-        m_masses.reserve(100);
-        m_springs.reserve(100);
+        auto const blockCount = (pointCount / 2) - 1;
+        auto const springCount = ((blockCount * 4) + blockCount + 1);
+        m_masses.reserve(pointCount);
+        m_springs.reserve(springCount);
     }
 
     int PhysicsEngine::addPointMass(Vector3 const & position,
@@ -53,9 +55,9 @@ namespace physics {
         m_masses[i].setPosition(position);
     }
 
-    Vector3 const & PhysicsEngine::getPointMassPosition(int const i) const
+    Vector3 PhysicsEngine::getPointMassPosition(int const i) const
     {
-        return m_masses[i].position();
+        return m_masses[i].lockedPosition();
     }
 
     void PhysicsEngine::setPointForceExternal(int const p,
@@ -81,10 +83,4 @@ namespace physics {
                       std::end(m_masses), 
                       [](PointMass & p) { p.reset(); });
     }
-
-    std::vector<PointMass> PhysicsEngine::getMasses() const
-    {
-        return m_masses;
-    }
-
 }

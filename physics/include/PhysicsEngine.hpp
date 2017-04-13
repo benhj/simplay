@@ -12,7 +12,8 @@ namespace physics {
     class PhysicsEngine
     {
       public:
-        PhysicsEngine();
+        explicit PhysicsEngine(int const pointCount);
+        PhysicsEngine() = delete;
 
         /// returns index of added mass point
         int addPointMass(Vector3 const & position, 
@@ -30,7 +31,7 @@ namespace physics {
 
         void compressSpring(int const index, double const forceMagnitude);
 
-        Vector3 const & getPointMassPosition(int const i) const;
+        Vector3 getPointMassPosition(int const i) const;
 
         void setPointForceExternal(int const i,  Vector3 const & force);
 
@@ -40,17 +41,12 @@ namespace physics {
         void update(double const dv);
         void reset();
 
-        /// hack. Needs to be made thread-safe
-        std::vector<PointMass> getMasses() const;
-
       private:
         /// Collection of point masses
         mutable std::vector<PointMass> m_masses;
 
         /// Collection of springs
         std::vector<Spring> m_springs;
-
-        PointMass *debugMass;
     };
 
 }
