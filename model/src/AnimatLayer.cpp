@@ -21,8 +21,8 @@ namespace model {
         // instantiate physics
         physics::Vector3 vLeft(xOffset, yOffset, 0);
         physics::Vector3 vRight(xOffset + width, yOffset, 0);
-        auto constant = 0.8;
-        auto dampener = 0.9;
+        auto constant = 50;
+        auto dampener = 0.4;
         m_indexLeft = physicsEngine.addPointMass(vLeft, 1.0 /* mass */, false /* not fixed */);
         m_indexRight = physicsEngine.addPointMass(vRight, 1.0 /* mass */, false /* not fixed */);
         physicsEngine.createSpring(m_indexLeft, m_indexRight, constant, dampener);

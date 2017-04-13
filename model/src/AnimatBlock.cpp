@@ -17,8 +17,8 @@ namespace model {
         auto const layerTwoLeftVertIndex = m_layerTwo.getIndexLeft();
         auto const layerTwoRightVertIndex = m_layerTwo.getIndexRight();
 
-        auto constant = 0.8;
-        auto dampener = 0.9;
+        auto constant = 25;
+        auto dampener = 0.4;
 
         // create springs between point masses ('X')
         m_leftSpringIndex =
@@ -32,17 +32,16 @@ namespace model {
                                    layerTwoRightVertIndex,
                                    constant,
                                    dampener);
-
         (void)
         physicsEngine.createSpring(layerOneLeftVertIndex,
                                    layerTwoRightVertIndex,
-                                   constant,
+                                   50,
                                    dampener);
 
         (void)
         physicsEngine.createSpring(layerOneRightVertIndex,
                                    layerTwoLeftVertIndex,
-                                   constant,
+                                   50,
                                    dampener);
     }
 

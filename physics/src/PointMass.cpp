@@ -40,6 +40,7 @@ namespace physics {
     {
         applyForce();
         m_velocity += m_acceleration * dt;
+        m_velocity.m_vec[2] = 0;
         {
             std::lock_guard<std::mutex> lg(*m_positionMutex);
             m_position += m_velocity * dt;

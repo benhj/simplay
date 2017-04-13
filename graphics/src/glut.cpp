@@ -9,8 +9,13 @@
 #include <OpenGL/glu.h>
 
 #include <iostream>
+#include <thread>
+#include <unistd.h>
 
-model::Animat animat(9,5,8);
+std::thread testThread;
+
+int blocks = 8;
+model::Animat animat(blocks+1,0.3,0.5);
 
 // This is just an example using basic glut functionality.
 // If you want specific Apple functionality, look up AGL
@@ -31,7 +36,7 @@ void display()
 
     auto physicsEngine = animat.getPhysicsEngine();
 
-    for(int b = 0; b < 8; ++b) {
+    for(int b = 0; b < blocks; ++b) {
         auto block = animat.getBlock(b);
         auto layer1 = block.getLayerOne();
         auto layer2 = block.getLayerTwo();
@@ -41,15 +46,15 @@ void display()
         auto layer2Right = layer2.getPositionRight(physicsEngine);
 
         glBegin(GL_LINES);
-            glVertex3f(layer1Left.m_vec[0], layer1Left.m_vec[1], -200.0);
-            glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], -200.0);
-            glVertex3f(layer2Left.m_vec[0], layer2Left.m_vec[1], -200.0);
-            glVertex3f(layer2Right.m_vec[0], layer2Right.m_vec[1], -200.0);
+            glVertex3f(layer1Left.m_vec[0], layer1Left.m_vec[1], -10.0);
+            glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], -10.0);
+            glVertex3f(layer2Left.m_vec[0], layer2Left.m_vec[1], -10.0);
+            glVertex3f(layer2Right.m_vec[0], layer2Right.m_vec[1], -10.0);
 
-            glVertex3f(layer1Left.m_vec[0], layer1Left.m_vec[1], -200.0);
-            glVertex3f(layer2Left.m_vec[0], layer2Left.m_vec[1], -200.0);
-            glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], -200.0);
-            glVertex3f(layer2Right.m_vec[0], layer2Right.m_vec[1], -200.0);
+            glVertex3f(layer1Left.m_vec[0], layer1Left.m_vec[1], -10.0);
+            glVertex3f(layer2Left.m_vec[0], layer2Left.m_vec[1], -10.0);
+            glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], -10.0);
+            glVertex3f(layer2Right.m_vec[0], layer2Right.m_vec[1], -10.0);
         glEnd();
     }
     glutSwapBuffers();
@@ -66,15 +71,20 @@ void reshape(int w, int h)
     glLoadIdentity();
 }
 
+void loop()
+{
+    for(int integ = 0; integ < 10; ++integ) {
+        for(int b = 0;b<blocks;++b) {
+            animat.applyBlockContraction(b, 0, 20);
+            //animat.applyBlockContraction(b, 1, 20);
+        }    
+        animat.update();
+        usleep(50000);
+    }
+}
 
 int main(int argc, char **argv)
 {
-
-    for(int b = 0;b<8;++b) {
-        animat.applyBlockContraction(b, 0, 100);
-        animat.applyBlockContraction(b, 1, 100);
-    }
-    animat.update();
 
     glutInit(&argc, argv); // Initializes glut
 
@@ -95,6 +105,8 @@ int main(int argc, char **argv)
     glutDisplayFunc(display);
     glutIdleFunc(display);
     init();
+
+    testThread = std::thread(loop);
 
     // Starts the program.
     glutMainLoop();

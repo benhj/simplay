@@ -60,7 +60,7 @@ namespace physics {
                 m_p0.accumulateForce(v + damped0);
             }
             if (!m_fixedP1) {
-                m_p1.accumulateForce(v + damped1);
+                m_p1.accumulateForce(-v + damped1);
             }
         } 
         /*
