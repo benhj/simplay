@@ -1,4 +1,4 @@
-
+/// Copyright (c) 2017 Ben Jones
 #include "Animat.hpp"
 #include "Spring.hpp"
 #include "PointMass.hpp"

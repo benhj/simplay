@@ -1,3 +1,4 @@
+/// Copyright (c) 2017 Ben Jones
 
 #include "Matrix.hpp"
 #include <iostream>

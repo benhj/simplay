@@ -1,4 +1,4 @@
-
+/// Copyright (c) 2017 Ben Jones
 
 #include "Spring.hpp"
 #include <cmath>

@@ -1,4 +1,4 @@
-
+/// Copyright (c) 2017 Ben Jones
 #include <math.h>
 #include "Vector3.hpp"
 

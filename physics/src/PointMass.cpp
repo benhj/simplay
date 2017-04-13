@@ -1,3 +1,5 @@
+/// Copyright (c) 2017 Ben Jones
+
 #include "PointMass.hpp"
 #include <cmath>
 
@@ -46,7 +48,6 @@ namespace physics {
             m_position += m_velocity * dt;
             m_position.m_vec[2] = 0;
         }
-        m_velocity.m_vec[2] = 0;
         m_acceleration.toZero();
         m_forceAccum.toZero();
     }
