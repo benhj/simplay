@@ -4,6 +4,7 @@
 #include "PhysicsEngine.hpp"
 #include "AnimatLayer.hpp"
 #include "AnimatBlock.hpp"
+#include "Vector3.hpp"
 #include <vector>
 
 namespace model {
@@ -16,6 +17,8 @@ namespace model {
                double const layerWidth,
                double const blockHeight);
     
+        void constructAntennae();
+
         void applyBlockContraction(int const block, 
                                    int const side, 
                                    double const force);
@@ -25,6 +28,7 @@ namespace model {
 
         void applyWaterForces();
 
+        /// Integrates animat physics
         void update();
 
         AnimatBlock const & getBlock(int const b) const;
@@ -35,6 +39,8 @@ namespace model {
         std::vector<AnimatLayer> m_layers;
         std::vector<AnimatBlock> m_blocks;
         physics::PhysicsEngine m_physicsEngine;
+        physics::Vector3 m_leftAntenna;
+        physics::Vector3 m_rightAntenna;
     };
 }
 

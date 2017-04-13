@@ -30,6 +30,11 @@ namespace model {
         }
     }
 
+    void Animat::constructAntennae()
+    {
+        // TODO
+    }
+
     void
     Animat::applyBlockContraction(int const block, 
                                   int const side, 
