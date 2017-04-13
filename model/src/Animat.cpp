@@ -1,9 +1,11 @@
 /// Copyright (c) 2017 Ben Jones
+
 #include "Animat.hpp"
 #include "Spring.hpp"
 #include "PointMass.hpp"
 #include "Vector3.hpp"
 #include "WaterForceGenerator.hpp"
+#include <cmath>
 
 namespace model {
 
@@ -28,11 +30,59 @@ namespace model {
                                   layerB,
                                   m_physicsEngine);
         }
+
+        // antennae
+        constructAntennae();
     }
 
     void Animat::constructAntennae()
     {
-        // TODO
+        auto const PI = 3.14;
+        auto & topLayer = m_layers[0];
+        auto leftIndex = topLayer.getIndexLeft();
+        auto rightIndex = topLayer.getIndexRight();
+        auto leftPM = m_physicsEngine.getPointMassPosition(leftIndex);
+        auto rightPM = m_physicsEngine.getPointMassPosition(rightIndex);
+
+        auto dirLeft(leftPM - rightPM);
+        auto dirRight(rightPM - leftPM);
+        dirLeft.normalize();
+        dirRight.normalize();
+        physics::Vector3 upvec(0, 1, 0);
+        upvec.normalize();
+
+        auto baseAngle = acos((dirLeft.dot(upvec)));
+        if (dirLeft.m_vec[0]<0&&dirLeft.m_vec[1]<0)baseAngle = -baseAngle-(PI/4);
+        else if (dirLeft.m_vec[0]<0&&dirLeft.m_vec[1]>0)baseAngle = -baseAngle-(PI/4);
+        else if (dirLeft.m_vec[0]>0&&dirLeft.m_vec[1]<0)baseAngle = baseAngle-(PI/4);
+        else if (dirLeft.m_vec[0]>0&&dirLeft.m_vec[1]>0)baseAngle = baseAngle-(PI/4);
+        double ant = 4.0;
+        double cosBit = cos(baseAngle);
+        double sinBit = sin(baseAngle);
+        auto xLeft = leftPM.m_vec[0] + (sinBit * ant);
+        auto yLeft = leftPM.m_vec[1] + (sinBit * ant);
+
+        double baseAngle2 = acos((dirRight.dot(upvec)));
+        if (dirRight.m_vec[0]<0&&dirRight.m_vec[1]<0)baseAngle2 = -baseAngle2+(PI/4);
+        else if (dirRight.m_vec[0]<0&&dirRight.m_vec[1]>0)baseAngle2 = -baseAngle2+(PI/4);
+        else if (dirRight.m_vec[0]>0&&dirRight.m_vec[1]<0)baseAngle2 = baseAngle2+(PI/4);
+        else if (dirRight.m_vec[0]>0&&dirRight.m_vec[1]>0)baseAngle2 = baseAngle2+(PI/4);
+        double cosBit2 = cos(baseAngle2);
+        double sinBit2 = sin(baseAngle2);
+        auto xRight = rightPM.m_vec[0] + (sinBit2 * ant);
+        auto yRight = rightPM.m_vec[1] + (sinBit2 * ant);
+
+        m_leftAntenna.set(xLeft, yLeft, 0);
+        m_rightAntenna.set(xRight, yRight, 0);
+    }
+
+    physics::Vector3 Animat::getLeftAntennaePoint() const
+    {
+        return m_leftAntenna;
+    }
+    physics::Vector3 Animat::getRightAntennaePoint() const
+    {
+        return m_rightAntenna;
     }
 
     void
@@ -70,6 +120,7 @@ namespace model {
     Animat::update()
     {
         m_physicsEngine.update(0.1);
+        constructAntennae();
     }
 
     AnimatBlock const & Animat::getBlock(int const b) const

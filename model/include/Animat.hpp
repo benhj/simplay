@@ -16,9 +16,7 @@ namespace model {
         Animat(int const layers,
                double const layerWidth,
                double const blockHeight);
-    
-        void constructAntennae();
-
+   
         void applyBlockContraction(int const block, 
                                    int const side, 
                                    double const force);
@@ -35,12 +33,16 @@ namespace model {
 
         physics::PhysicsEngine const & getPhysicsEngine() const;
 
+        physics::Vector3 getLeftAntennaePoint() const;
+        physics::Vector3 getRightAntennaePoint() const;
+
       private:
         std::vector<AnimatLayer> m_layers;
         std::vector<AnimatBlock> m_blocks;
         physics::PhysicsEngine m_physicsEngine;
         physics::Vector3 m_leftAntenna;
         physics::Vector3 m_rightAntenna;
+        void constructAntennae();
     };
 }
 
