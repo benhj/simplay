@@ -12,7 +12,7 @@ namespace physics {
       WaterForceGenerator(model::AnimatLayer & layerOne,
                           model::AnimatLayer & layerTwo,
                           PhysicsEngine & physicsEngine);
-      void applyForces();
+      void apply();
 
     private:
       Vector3 computeFaceNormalLeft() const;

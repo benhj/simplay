@@ -3,6 +3,7 @@
 #include "Spring.hpp"
 #include "PointMass.hpp"
 #include "Vector3.hpp"
+#include "WaterForceGenerator.hpp"
 
 namespace model {
 
@@ -48,6 +49,15 @@ namespace model {
             m_blocks[block].relaxLeftSide(m_physicsEngine);
         } else {
             m_blocks[block].relaxRightSide(m_physicsEngine);
+        }
+    }
+
+    void Animat::applyWaterForces()
+    {
+        for (auto & block : m_blocks) {
+            auto layerOne = block.getLayerOne();
+            auto layerTwo = block.getLayerTwo();
+            physics::WaterForceGenerator(layerOne, layerTwo, m_physicsEngine).apply();
         }
     }
 

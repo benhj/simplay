@@ -75,8 +75,7 @@ namespace physics {
         return length * 3.0;
     }
 
-    void
-    WaterForceGenerator::applyForces()
+    void WaterForceGenerator::apply()
     {
         // Coefficients
         auto nFactor(5.0);

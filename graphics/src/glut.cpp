@@ -73,13 +73,16 @@ void reshape(int w, int h)
 
 void loop()
 {
-    for(int integ = 0; integ < 10; ++integ) {
-        for(int b = 0;b<blocks;++b) {
-            animat.applyBlockContraction(b, 0, 20);
-            //animat.applyBlockContraction(b, 1, 20);
-        }    
-        animat.update();
-        usleep(50000);
+    for(int tick = 0; tick < 5; ++tick) {
+        for(int integ = 0; integ < 10; ++integ) {
+            for(int b = 0;b<blocks;++b) {
+                animat.applyBlockContraction(b, 0, 20);
+                //animat.applyBlockContraction(b, 1, 20);
+            }
+            animat.applyWaterForces();    
+            animat.update();
+            usleep(50000);
+        }
     }
 }
 

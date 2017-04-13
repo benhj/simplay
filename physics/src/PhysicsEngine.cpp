@@ -25,6 +25,14 @@ namespace physics {
         return m_masses.size() - 1;
     }
 
+    void PhysicsEngine::setPointForceExternal(int const i,  Vector3 const & force)
+    {
+        if (i >= m_masses.size()) {
+            throw std::runtime_error("setPointForceExternal: i out of bounds");
+        }
+        m_masses[i].accumulateForce(force);
+    }
+
     int
     PhysicsEngine::createSpring(int const i, 
                                 int const j,

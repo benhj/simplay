@@ -23,6 +23,8 @@ namespace model {
         void relaxBlockContraction(int const block, 
                                    int const side);
 
+        void applyWaterForces();
+
         void update();
 
         AnimatBlock const & getBlock(int const b) const;
