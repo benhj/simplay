@@ -37,51 +37,60 @@ namespace model {
 
     void Animat::constructAntennae()
     {
-        auto const PI = 3.14;
+        auto const PI = 3.14149;
         auto & topLayer = m_layers[0];
+        auto & secondLayer = m_layers[1];
         auto leftIndex = topLayer.getIndexLeft();
         auto rightIndex = topLayer.getIndexRight();
+        auto leftIndexSecond = secondLayer.getIndexLeft();
+        auto rightIndexSecond = secondLayer.getIndexRight();
         auto leftPM = m_physicsEngine.getPointMassPosition(leftIndex);
         auto rightPM = m_physicsEngine.getPointMassPosition(rightIndex);
+        auto leftPMSecond = m_physicsEngine.getPointMassPosition(leftIndexSecond);
+        auto rightPMSecond = m_physicsEngine.getPointMassPosition(rightIndexSecond);
 
-        auto dirLeft(leftPM - rightPM);
-        auto dirRight(rightPM - leftPM);
+        auto dirLeft(leftPM - leftPMSecond);
+        auto dirRight(rightPM - rightPMSecond);
         dirLeft.normalize();
         dirRight.normalize();
         physics::Vector3 upvec(0, 1, 0);
         upvec.normalize();
 
         auto baseAngle = acos((dirLeft.dot(upvec)));
-        if (dirLeft.m_vec[0]<0&&dirLeft.m_vec[1]<0)baseAngle = -baseAngle-(PI/4);
-        else if (dirLeft.m_vec[0]<0&&dirLeft.m_vec[1]>0)baseAngle = -baseAngle-(PI/4);
-        else if (dirLeft.m_vec[0]>0&&dirLeft.m_vec[1]<0)baseAngle = baseAngle-(PI/4);
-        else if (dirLeft.m_vec[0]>0&&dirLeft.m_vec[1]>0)baseAngle = baseAngle-(PI/4);
-        double ant = 4.0;
-        double cosBit = cos(baseAngle);
-        double sinBit = sin(baseAngle);
+        if (dirLeft.m_vec[0]<=0&&dirLeft.m_vec[1]<=0)baseAngle = -baseAngle+(PI/4);
+        else if (dirLeft.m_vec[0]<=0&&dirLeft.m_vec[1]>=0)baseAngle = -baseAngle+(PI/4);
+        else if (dirLeft.m_vec[0]>=0&&dirLeft.m_vec[1]<=0)baseAngle = -baseAngle+(PI/4);
+        else if (dirLeft.m_vec[0]>=0&&dirLeft.m_vec[1]>=0)baseAngle = -baseAngle+(PI/4);
+        auto ant = 0.4;
+        auto cosBit = cos(baseAngle);
+        auto sinBit = sin(baseAngle);
         auto xLeft = leftPM.m_vec[0] + (sinBit * ant);
-        auto yLeft = leftPM.m_vec[1] + (sinBit * ant);
+        auto yLeft = leftPM.m_vec[1] + (cosBit * ant);
 
         double baseAngle2 = acos((dirRight.dot(upvec)));
-        if (dirRight.m_vec[0]<0&&dirRight.m_vec[1]<0)baseAngle2 = -baseAngle2+(PI/4);
-        else if (dirRight.m_vec[0]<0&&dirRight.m_vec[1]>0)baseAngle2 = -baseAngle2+(PI/4);
-        else if (dirRight.m_vec[0]>0&&dirRight.m_vec[1]<0)baseAngle2 = baseAngle2+(PI/4);
-        else if (dirRight.m_vec[0]>0&&dirRight.m_vec[1]>0)baseAngle2 = baseAngle2+(PI/4);
-        double cosBit2 = cos(baseAngle2);
-        double sinBit2 = sin(baseAngle2);
-        auto xRight = rightPM.m_vec[0] + (sinBit2 * ant);
-        auto yRight = rightPM.m_vec[1] + (sinBit2 * ant);
+        if (dirRight.m_vec[0]<=0&&dirRight.m_vec[1]<=0)baseAngle2 = -baseAngle2-(PI/4);
+        else if (dirRight.m_vec[0]<=0&&dirRight.m_vec[1]>=0)baseAngle2 = -baseAngle2-(PI/4);
+        else if (dirRight.m_vec[0]>=0&&dirRight.m_vec[1]<=0)baseAngle2 = -baseAngle2-(PI/4);
+        else if (dirRight.m_vec[0]>=0&&dirRight.m_vec[1]>=0)baseAngle2 = -baseAngle2-(PI/4);
+        auto cosBit2 = cos(baseAngle2);
+        auto sinBit2 = sin(baseAngle2);
 
+        auto xRight = rightPM.m_vec[0] + (sinBit2 * ant);
+        auto yRight = rightPM.m_vec[1] + (cosBit2 * ant);
+
+        std::lock_guard<std::mutex> lg(m_antennaeMutex);
         m_leftAntenna.set(xLeft, yLeft, 0);
         m_rightAntenna.set(xRight, yRight, 0);
     }
 
     physics::Vector3 Animat::getLeftAntennaePoint() const
     {
+        std::lock_guard<std::mutex> lg(m_antennaeMutex);
         return m_leftAntenna;
     }
     physics::Vector3 Animat::getRightAntennaePoint() const
     {
+        std::lock_guard<std::mutex> lg(m_antennaeMutex);
         return m_rightAntenna;
     }
 

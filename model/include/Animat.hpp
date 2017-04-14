@@ -6,6 +6,7 @@
 #include "AnimatBlock.hpp"
 #include "Vector3.hpp"
 #include <vector>
+#include <mutex>
 
 namespace model {
 
@@ -42,6 +43,7 @@ namespace model {
         physics::PhysicsEngine m_physicsEngine;
         physics::Vector3 m_leftAntenna;
         physics::Vector3 m_rightAntenna;
+        mutable std::mutex m_antennaeMutex;
         void constructAntennae();
     };
 }
