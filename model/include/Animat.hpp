@@ -37,6 +37,9 @@ namespace model {
         physics::Vector3 getLeftAntennaePoint() const;
         physics::Vector3 getRightAntennaePoint() const;
 
+        /// Retrieve number of blocks or body segments
+        int getBlockCount() const;
+
       private:
         std::vector<AnimatLayer> m_layers;
         std::vector<AnimatBlock> m_blocks;

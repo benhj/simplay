@@ -13,6 +13,7 @@ file(GLOB_RECURSE model model/src/*.cpp model/include/*.hpp)
 include_directories(physics/include)
 include_directories(ctrnn/include)
 include_directories(model/include)
+include_directories(graphics/include)
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
 
 # break above sub-folders into individual libraries

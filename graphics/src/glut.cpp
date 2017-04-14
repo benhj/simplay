@@ -2,6 +2,7 @@
 
 #include "Animat.hpp"
 #include "Spring.hpp"
+#include "GLAnimat.hpp"
 
 // The OpenGL libraries, make sure to include the GLUT and OpenGL frameworks
 #include <GLUT/glut.h>
@@ -33,44 +34,7 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-
-    auto physicsEngine = animat.getPhysicsEngine();
-
-    for(int b = 0; b < blocks; ++b) {
-        auto block = animat.getBlock(b);
-        auto layer1 = block.getLayerOne();
-        auto layer2 = block.getLayerTwo();
-        auto layer1Left = layer1.getPositionLeft(physicsEngine);
-        auto layer1Right = layer1.getPositionRight(physicsEngine);
-        auto layer2Left = layer2.getPositionLeft(physicsEngine);
-        auto layer2Right = layer2.getPositionRight(physicsEngine);
-
-        glBegin(GL_LINES);
-            glVertex3f(layer1Left.m_vec[0], layer1Left.m_vec[1], -10.0);
-            glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], -10.0);
-            glVertex3f(layer2Left.m_vec[0], layer2Left.m_vec[1], -10.0);
-            glVertex3f(layer2Right.m_vec[0], layer2Right.m_vec[1], -10.0);
-
-            glVertex3f(layer1Left.m_vec[0], layer1Left.m_vec[1], -10.0);
-            glVertex3f(layer2Left.m_vec[0], layer2Left.m_vec[1], -10.0);
-            glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], -10.0);
-            glVertex3f(layer2Right.m_vec[0], layer2Right.m_vec[1], -10.0);
-        glEnd();
-    }
-
-    // Draw antennae
-    auto leftAnt = animat.getLeftAntennaePoint();
-    auto rightAnt = animat.getRightAntennaePoint();
-    auto layer1 = animat.getBlock(0).getLayerOne();
-    auto layer1Left = layer1.getPositionLeft(physicsEngine);
-    auto layer1Right = layer1.getPositionRight(physicsEngine);
-    glBegin(GL_LINES);
-        glVertex3f(layer1Left.m_vec[0], layer1Left.m_vec[1], -10.0);
-        glVertex3f(leftAnt.m_vec[0], leftAnt.m_vec[1], -10.0);
-        glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], -10.0);
-        glVertex3f(rightAnt.m_vec[0], rightAnt.m_vec[1], -10.0);
-    glEnd();
-
+    graphics::GLAnimat(animat).draw();
     glutSwapBuffers();
 }
 
@@ -96,7 +60,7 @@ void loop()
             }
             animat.applyWaterForces();    
             animat.update();
-            usleep(500000);
+            usleep(50000);
         }
     }
 }

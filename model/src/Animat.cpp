@@ -141,4 +141,9 @@ namespace model {
     {
         return m_physicsEngine;
     }
+
+    int Animat::getBlockCount() const
+    {
+        return m_blocks.size();
+    }
 }
