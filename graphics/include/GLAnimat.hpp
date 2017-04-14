@@ -5,8 +5,24 @@
 #include "PhysicsEngine.hpp"
 #include "Animat.hpp"
 #include <OpenGL/gl.h>
+#include <cmath>
 
 namespace graphics {
+
+    namespace detail {
+
+        inline void drawCircle(float cx, float cy, float r, int num_segments) 
+        {
+            glBegin(GL_LINE_LOOP);
+            for (int ii = 0; ii < num_segments; ii++)   {
+                float theta = 2.0f * 3.1415926f * float(ii) / float(num_segments);//get the current angle 
+                float x = r * cosf(theta);//calculate the x component 
+                float y = r * sinf(theta);//calculate the y component 
+                glVertex3f(x + cx, y + cy, -10.0);//output vertex 
+            }
+            glEnd();
+        }
+    }
 
     struct GLAnimat
     {
@@ -69,7 +85,10 @@ namespace graphics {
                 glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], -10.0);
                 glVertex3f(rightAnt.m_vec[0], rightAnt.m_vec[1], -10.0);
             glEnd();
-        }
 
+            // Draw 'bobbles' on the end of each antenna
+            detail::drawCircle(leftAnt.m_vec[0], leftAnt.m_vec[1], 0.05, 10);
+            detail::drawCircle(rightAnt.m_vec[0], rightAnt.m_vec[1], 0.05, 10);
+        }   
     };
 }
