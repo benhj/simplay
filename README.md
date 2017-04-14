@@ -1,7 +1,6 @@
 # simplay
 
-This forms the beginnings of a re-write of a simulator I wrote during my PhD and later, during a following post-doc. 
-The original aim of that work was a study of nervous-system/body plan co-evolution in models of soft-bodied worm-like creatures. I decided to rewrite the software as the original was so buggy and crufty it was starting to become a headache to maintain. This version will be far cleaner and from a software architectural perspective, hopefully a bit more elegant.
+This forms the beginnings of a re-write of an Artificial Life simulator I wrote during my PhD and later, during a following post-doc. The original aim of that work was a study of nervous-system/body plan co-evolution in models of soft-bodied worm-like creatures. I decided to rewrite the software as the original was so buggy and crufty it was starting to become a headache to maintain. This version will be far cleaner and from a software architectural perspective, hopefully a bit more elegant.
 
 ## The plan
 
