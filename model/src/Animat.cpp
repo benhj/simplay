@@ -38,8 +38,9 @@ namespace model {
     void Animat::constructAntennae()
     {
         auto const PI = 3.14149;
-        auto & topLayer = m_layers[0];
-        auto & secondLayer = m_layers[1];
+        auto layerIndex = m_layers.size() - 1;
+        auto & topLayer = m_layers[layerIndex];
+        auto & secondLayer = m_layers[layerIndex - 1];
         auto leftIndex = topLayer.getIndexLeft();
         auto rightIndex = topLayer.getIndexRight();
         auto leftIndexSecond = secondLayer.getIndexLeft();
@@ -57,10 +58,10 @@ namespace model {
         upvec.normalize();
 
         auto baseAngle = acos((dirLeft.dot(upvec)));
-        if (dirLeft.m_vec[0]<=0&&dirLeft.m_vec[1]<=0)baseAngle = -baseAngle+(PI/4);
-        else if (dirLeft.m_vec[0]<=0&&dirLeft.m_vec[1]>=0)baseAngle = -baseAngle+(PI/4);
-        else if (dirLeft.m_vec[0]>=0&&dirLeft.m_vec[1]<=0)baseAngle = -baseAngle+(PI/4);
-        else if (dirLeft.m_vec[0]>=0&&dirLeft.m_vec[1]>=0)baseAngle = -baseAngle+(PI/4);
+        if (dirLeft.m_vec[0]<=0&&dirLeft.m_vec[1]<=0)baseAngle = -baseAngle-(PI/4);
+        else if (dirLeft.m_vec[0]<=0&&dirLeft.m_vec[1]>=0)baseAngle = -baseAngle-(PI/4);
+        else if (dirLeft.m_vec[0]>=0&&dirLeft.m_vec[1]<=0)baseAngle = baseAngle-(PI/4);
+        else if (dirLeft.m_vec[0]>=0&&dirLeft.m_vec[1]>=0)baseAngle = baseAngle-(PI/4);
         auto ant = 0.4;
         auto cosBit = cos(baseAngle);
         auto sinBit = sin(baseAngle);
@@ -68,10 +69,10 @@ namespace model {
         auto yLeft = leftPM.m_vec[1] + (cosBit * ant);
 
         double baseAngle2 = acos((dirRight.dot(upvec)));
-        if (dirRight.m_vec[0]<=0&&dirRight.m_vec[1]<=0)baseAngle2 = -baseAngle2-(PI/4);
-        else if (dirRight.m_vec[0]<=0&&dirRight.m_vec[1]>=0)baseAngle2 = -baseAngle2-(PI/4);
-        else if (dirRight.m_vec[0]>=0&&dirRight.m_vec[1]<=0)baseAngle2 = -baseAngle2-(PI/4);
-        else if (dirRight.m_vec[0]>=0&&dirRight.m_vec[1]>=0)baseAngle2 = -baseAngle2-(PI/4);
+        if (dirRight.m_vec[0]<=0&&dirRight.m_vec[1]<=0)baseAngle2 = -baseAngle2+(PI/4);
+        else if (dirRight.m_vec[0]<=0&&dirRight.m_vec[1]>=0)baseAngle2 = -baseAngle2+(PI/4);
+        else if (dirRight.m_vec[0]>=0&&dirRight.m_vec[1]<=0)baseAngle2 = baseAngle2+(PI/4);
+        else if (dirRight.m_vec[0]>=0&&dirRight.m_vec[1]>=0)baseAngle2 = baseAngle2+(PI/4);
         auto cosBit2 = cos(baseAngle2);
         auto sinBit2 = sin(baseAngle2);
 

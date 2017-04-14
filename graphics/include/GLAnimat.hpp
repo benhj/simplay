@@ -56,10 +56,11 @@ namespace graphics {
         void drawAntennae()
         {
             auto & physicsEngine = m_animat.getPhysicsEngine();
+            auto blocks = m_animat.getBlockCount();
             // Draw antennae
             auto leftAnt = m_animat.getLeftAntennaePoint();
             auto rightAnt = m_animat.getRightAntennaePoint();
-            auto layer1 = m_animat.getBlock(0).getLayerOne();
+            auto layer1 = m_animat.getBlock(blocks-1).getLayerTwo();
             auto layer1Left = layer1.getPositionLeft(physicsEngine);
             auto layer1Right = layer1.getPositionRight(physicsEngine);
             glBegin(GL_LINES);
