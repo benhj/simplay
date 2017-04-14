@@ -7,9 +7,11 @@ The original aim of that work was a study of nervous-system/body plan co-evoluti
 
 The plan is to implement the following stuff. I will cross items out as I make progress.
 
+* ~~Basic animat model.~~
 * ~~Simple soft-bodied physics engine composed of springs and point masses.~~
 * ~~A water force generator to simlate water drag and viscosity.~~
 * ~~CTRNN implementation for eventual control of an animat.~~
+* ~~Antennae model.~~
 * Collision detection and resolution.
 * Main simulation engine
 * Optimization process
