@@ -14,15 +14,15 @@
 #include <thread>
 #include <unistd.h>
 
-int windowWidth = 512;
-int windowHeight = 512;
-double viewDistance = 0.015;
+int windowWidth = 800;
+int windowHeight = 800;
+double viewDistance = 0.1;
 
 std::thread testThread;
 
 int blocks = 8;
 int popSize = 1;
-simulator::AnimatWorld animatWorld(1,{blocks, 0.3,0.5});
+simulator::AnimatWorld animatWorld(1,{blocks, 3.0, 5.0});
 
 void setScene()
 {
@@ -76,7 +76,11 @@ void display()
 // Called every time a window is resized to resize the projection matrix
 void reshape(int w, int h)
 {
-    setScene();
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glFrustum(-0.1, 0.1, -float(h)/(10.0*float(w)), float(h)/(10.0*float(w)), 0.2, 1000.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 void loop()
@@ -108,7 +112,7 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGBA);
 
     // Sets the window size to 512*512 square pixels
-    glutInitWindowSize(512, 512);
+    glutInitWindowSize(windowWidth, windowHeight);
 
     // Sets the window position to the upper left
     glutInitWindowPosition(0, 0);
@@ -117,7 +121,7 @@ int main(int argc, char **argv)
     glutCreateWindow("Animat test!");
 
     // passes reshape and display functions to the OpenGL machine for callback
-    //glutReshapeFunc(reshape);
+    glutReshapeFunc(reshape);
     glutDisplayFunc(display);
     glutIdleFunc(display);
     init();

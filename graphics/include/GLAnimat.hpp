@@ -87,8 +87,8 @@ namespace graphics {
             glEnd();
 
             // Draw 'bobbles' on the end of each antenna
-            detail::drawCircle(leftAnt.m_vec[0], leftAnt.m_vec[1], 0.05, 10);
-            detail::drawCircle(rightAnt.m_vec[0], rightAnt.m_vec[1], 0.05, 10);
+            detail::drawCircle(leftAnt.m_vec[0], leftAnt.m_vec[1], 0.5, 5);
+            detail::drawCircle(rightAnt.m_vec[0], rightAnt.m_vec[1], 0.5, 5);
         }   
     };
 }
