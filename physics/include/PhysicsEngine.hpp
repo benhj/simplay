@@ -1,11 +1,11 @@
 /// Copyright (c) 2017 Ben Jones
 #pragma once
 
+#include "Spring.hpp"
 #include <vector>
 
 namespace physics {
 
-    class Spring;
     class PointMass;
     class Vector3;
 

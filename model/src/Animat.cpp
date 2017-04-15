@@ -13,6 +13,7 @@ namespace model {
                    double const layerWidth,
                    double const blockHeight)
       : m_physicsEngine(layers * 2 /* number of point masses */)
+      , m_antennaeMutex(std::make_shared<std::mutex>())
     {
         // construct layers
         auto yOffset = blockHeight;
@@ -79,19 +80,19 @@ namespace model {
         auto xRight = rightPM.m_vec[0] + (sinBit2 * ant);
         auto yRight = rightPM.m_vec[1] + (cosBit2 * ant);
 
-        std::lock_guard<std::mutex> lg(m_antennaeMutex);
+        std::lock_guard<std::mutex> lg(*m_antennaeMutex);
         m_leftAntenna.set(xLeft, yLeft, 0);
         m_rightAntenna.set(xRight, yRight, 0);
     }
 
     physics::Vector3 Animat::getLeftAntennaePoint() const
     {
-        std::lock_guard<std::mutex> lg(m_antennaeMutex);
+        std::lock_guard<std::mutex> lg(*m_antennaeMutex);
         return m_leftAntenna;
     }
     physics::Vector3 Animat::getRightAntennaePoint() const
     {
-        std::lock_guard<std::mutex> lg(m_antennaeMutex);
+        std::lock_guard<std::mutex> lg(*m_antennaeMutex);
         return m_rightAntenna;
     }
 

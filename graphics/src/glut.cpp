@@ -1,6 +1,7 @@
 // Hacky test
 
 #include "Animat.hpp"
+#include "AnimatWorld.hpp"
 #include "Spring.hpp"
 #include "GLAnimat.hpp"
 
@@ -16,7 +17,8 @@
 std::thread testThread;
 
 int blocks = 8;
-model::Animat animat(blocks+1,0.3,0.5);
+int popSize = 1;
+simulator::AnimatWorld animatWorld(1,{blocks, 0.3,0.5});
 
 // This is just an example using basic glut functionality.
 // If you want specific Apple functionality, look up AGL
@@ -34,7 +36,9 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    graphics::GLAnimat(animat).draw();
+    for (int p = 0; p < popSize; ++p) {
+        graphics::GLAnimat(animatWorld.animat(p)).draw();
+    }
     glutSwapBuffers();
 }
 
@@ -54,12 +58,16 @@ void loop()
     
     for(int tick = 0; tick < 5; ++tick) {
         for(int integ = 0; integ < 10; ++integ) {
-            for(int b = 0;b<blocks;++b) {
-                animat.applyBlockContraction(b, 0, 20);
-                animat.applyBlockContraction(b, 1, 20);
+
+            for (int p = 0; p < popSize; ++p) {
+
+                for(int b = 0;b<blocks;++b) {
+                    animatWorld.animat(p).applyBlockContraction(b, 0, 20);
+                    animatWorld.animat(p).applyBlockContraction(b, 1, 20);
+                }
+                animatWorld.animat(p).applyWaterForces();    
+                animatWorld.animat(p).update();
             }
-            animat.applyWaterForces();    
-            animat.update();
             usleep(50000);
         }
     }
