@@ -38,6 +38,7 @@ namespace graphics {
         {
             drawBody();
             drawAntennae();
+            drawBoundingCircles();
         }
 
       private:
@@ -89,6 +90,17 @@ namespace graphics {
             // Draw 'bobbles' on the end of each antenna
             detail::drawCircle(leftAnt.m_vec[0], leftAnt.m_vec[1], 0.5, 5);
             detail::drawCircle(rightAnt.m_vec[0], rightAnt.m_vec[1], 0.5, 5);
+        }
+
+        void drawBoundingCircles()
+        {
+            for(int b = 0; b < m_animat.getBlockCount(); ++b) {
+                auto boundingPair = m_animat.getBoundingCircle(b);
+                auto & centerPoint = boundingPair.first;
+                detail::drawCircle(centerPoint.m_vec[0], 
+                                   centerPoint.m_vec[1],
+                                   boundingPair.second, 20);
+            }
         }   
     };
 }

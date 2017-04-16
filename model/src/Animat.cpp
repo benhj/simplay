@@ -32,6 +32,12 @@ namespace model {
                                   m_physicsEngine);
         }
 
+        // construct bounding circles
+        m_boundingCircles.reserve(layers - 1);
+        for (int block = 0; block < m_layers.size() - 1; ++block) {
+            m_boundingCircles.emplace_back(m_blocks[block].deriveBoundingCircle(m_physicsEngine));
+        }
+
         // antennae
         constructAntennae();
     }
@@ -127,11 +133,29 @@ namespace model {
         }
     }
 
+    void Animat::updateBoundingCircles()
+    {
+        auto block = 0;
+        for (auto & circle : m_boundingCircles) {
+            auto bc = m_blocks[block].deriveBoundingCircle(m_physicsEngine);
+            circle.first = bc.first;
+            circle.second = bc.second;
+            ++block;
+        }
+    }
+
+    std::pair<physics::Vector3, double> 
+    Animat::getBoundingCircle(int const index)
+    {
+        return m_boundingCircles[index];
+    }
+
     void
     Animat::update()
     {
         m_physicsEngine.update(0.1);
         constructAntennae();
+        updateBoundingCircles();
     }
 
     AnimatBlock const & Animat::getBlock(int const b) const

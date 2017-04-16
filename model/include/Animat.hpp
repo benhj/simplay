@@ -41,6 +41,9 @@ namespace model {
         /// Retrieve number of blocks or body segments
         int getBlockCount() const;
 
+        void updateBoundingCircles();
+        std::pair<physics::Vector3, double> getBoundingCircle(int const index);
+
       private:
         std::vector<AnimatLayer> m_layers;
         std::vector<AnimatBlock> m_blocks;
@@ -48,6 +51,9 @@ namespace model {
         physics::Vector3 m_leftAntenna;
         physics::Vector3 m_rightAntenna;
         mutable std::shared_ptr<std::mutex> m_antennaeMutex;
+
+        /// Useful for collision detection and resolution
+        std::vector<std::pair<physics::Vector3, double>> m_boundingCircles;
         void constructAntennae();
     };
 }

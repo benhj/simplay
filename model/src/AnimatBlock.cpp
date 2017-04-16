@@ -70,4 +70,23 @@ namespace model {
     {
         physicsEngine.relaxSpring(m_rightSpringIndex);
     }
+
+    std::pair<physics::Vector3, double> 
+    AnimatBlock::deriveBoundingCircle(physics::PhysicsEngine & physicsEngine)
+    {
+        auto layerOneLeft = m_layerOne.getPositionLeft(physicsEngine);
+        auto layerOneRight = m_layerOne.getPositionRight(physicsEngine);
+        auto layerTwoLeft = m_layerTwo.getPositionLeft(physicsEngine);
+        auto layerTwoRight = m_layerTwo.getPositionRight(physicsEngine);
+
+        // Construct mid-point
+        auto rightLeftDist = layerTwoRight.distance(layerOneLeft);
+        auto leftRightDist = layerTwoLeft.distance(layerOneRight);
+
+        auto firstApprox = ((layerTwoLeft - layerOneLeft) / 2) + layerOneLeft;
+        auto secondApprox = ((layerTwoRight - layerOneRight) / 2) + layerOneRight;
+
+        auto radius = (rightLeftDist + leftRightDist) / 4.0;
+        return {(firstApprox + secondApprox) / 2, radius};   
+    }
 }

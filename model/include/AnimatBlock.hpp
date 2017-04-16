@@ -11,6 +11,7 @@
 
 #include "AnimatLayer.hpp"
 #include "PhysicsEngine.hpp"
+#include "Vector3.hpp"
 
 namespace model {
 
@@ -36,6 +37,11 @@ namespace model {
 
         void relaxLeftSide(physics::PhysicsEngine & physicsEngine);
         void relaxRightSide(physics::PhysicsEngine & physicsEngine);
+
+        /// Draws a bounding circle around block. Will also be useful
+        /// for collision dectection and resolution process.
+        std::pair<physics::Vector3, double> 
+        deriveBoundingCircle(physics::PhysicsEngine & physicsEngine);
 
       private:
 
