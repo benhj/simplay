@@ -80,13 +80,14 @@ namespace model {
         auto layerTwoRight = m_layerTwo.getPositionRight(physicsEngine);
 
         // Construct mid-point
-        auto rightLeftDist = layerTwoRight.distance(layerOneLeft);
-        auto leftRightDist = layerTwoLeft.distance(layerOneRight);
-
         auto firstApprox = ((layerTwoLeft - layerOneLeft) / 2) + layerOneLeft;
         auto secondApprox = ((layerTwoRight - layerOneRight) / 2) + layerOneRight;
 
+        // Construct radius
+        auto rightLeftDist = layerTwoRight.distance(layerOneLeft);
+        auto leftRightDist = layerTwoLeft.distance(layerOneRight);
         auto radius = (rightLeftDist + leftRightDist) / 4.0;
+        
         return {(firstApprox + secondApprox) / 2, radius};   
     }
 }
