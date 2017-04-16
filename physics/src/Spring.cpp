@@ -40,34 +40,26 @@ namespace physics {
 
     void Spring::apply(void)
     {
-        //if (!rigid)
-        {
-            auto v = m_p1.lockedPosition() - m_p0.lockedPosition();
-            auto vlength = v.length();
-            auto forceMagnitude = m_springConstant * (vlength - m_restLength);
-            if (vlength > 0) {
-                v /= vlength;
-            }
-            v *= forceMagnitude;
+        auto v = m_p1.lockedPosition() - m_p0.lockedPosition();
+        auto vlength = v.length();
+        auto forceMagnitude = m_springConstant * (vlength - m_restLength);
+        if (vlength > 0) {
+            v /= vlength;
+        }
+        v *= forceMagnitude;
 
-            // // apply dampening to each point which is -d * velocity
-            auto & p0_vel = m_p0.velocity();
-            auto & p1_vel = m_p1.velocity();
-            auto damped0 = -m_dampener * p0_vel;
-            auto damped1 = -m_dampener * p1_vel;
+        // // apply dampening to each point which is -d * velocity
+        auto & p0_vel = m_p0.velocity();
+        auto & p1_vel = m_p1.velocity();
+        auto damped0 = -m_dampener * p0_vel;
+        auto damped1 = -m_dampener * p1_vel;
 
-            if (!m_fixedP0) {
-                m_p0.accumulateForce(v + damped0);
-            }
-            if (!m_fixedP1) {
-                m_p1.accumulateForce(-v + damped1);
-            }
-        } 
-        /*
-        else { // move point 1 exaclty in relation to point 0. I.e. distance is maintained.
-            p1Ptr.setVelocity(p0Ptr.velocity());
-            p1Ptr.setAcceleration(p0Ptr.acceleration());
-        }*/
+        if (!m_fixedP0) {
+            m_p0.accumulateForce(v + damped0);
+        }
+        if (!m_fixedP1) {
+            m_p1.accumulateForce(-v + damped1);
+        }
     }
 
     void Spring::compress(double const forceMagnitude)

@@ -105,7 +105,6 @@ void loop()
 
 int main(int argc, char **argv)
 {
-
     glutInit(&argc, argv); // Initializes glut
 
     // Sets up a double buffer with RGBA components and a depth component

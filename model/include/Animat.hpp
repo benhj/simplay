@@ -31,9 +31,16 @@ namespace model {
         /// Integrates animat physics
         void update();
 
-        AnimatBlock const & getBlock(int const b) const;
+        /// To update the derived components (antenna, bounding circles etc.).
+        /// Usually a call to this won't ne necessary as derivation will happen
+        /// as part of the update() function. ight be called during animat
+        /// initialization when position is randomly set.
+        void updateDerivedComponents();
 
-        physics::PhysicsEngine const & getPhysicsEngine() const;
+        AnimatBlock const & getBlock(int const b) const;
+        AnimatLayer const & getLayer(int const layer) const;
+
+        physics::PhysicsEngine & getPhysicsEngine();
 
         physics::Vector3 getLeftAntennaePoint() const;
         physics::Vector3 getRightAntennaePoint() const;
@@ -55,6 +62,10 @@ namespace model {
         /// Useful for collision detection and resolution
         std::vector<std::pair<physics::Vector3, double>> m_boundingCircles;
         void constructAntennae();
+
+        /// Derived components are those whose geometry are calculated
+        /// from pre-existing point mass information
+        void doUpdateDerivedComponents();
     };
 }
 

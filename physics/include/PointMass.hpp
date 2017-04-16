@@ -26,7 +26,7 @@ namespace physics {
         void update(double const dt);
 
         inline double mass(void) { return m_mass; }
-        inline const Vector3& position(void) { return m_position; }
+        inline Vector3 & position(void) { return m_position; }
         Vector3 lockedPosition(void) const;
         inline const Vector3& velocity(void) { return m_velocity; }
         inline const Vector3& acceleration(void) { return m_acceleration; }

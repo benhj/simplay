@@ -81,6 +81,11 @@ namespace physics {
         return m_masses[i].velocity();
     }
 
+    Vector3 & PhysicsEngine::getPointMassPositionRef(int const i)
+    {
+        return m_masses[i].position();
+    }
+
     void PhysicsEngine::update(double const dv)
     {
         std::for_each(std::begin(m_springs), 

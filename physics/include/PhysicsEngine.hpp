@@ -35,6 +35,10 @@ namespace physics {
         Vector3 getPointMassPosition(int const i) const;
         Vector3 getPointMassVelocity(int const i) const;
 
+        /// Use reference to point mass to make updating position
+        /// easier during initialization
+        Vector3 & getPointMassPositionRef(int const i);
+
         void setPointForceExternal(int const i,  Vector3 const & force);
 
         void resetAllExternalForces();

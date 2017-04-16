@@ -17,6 +17,12 @@ namespace simulator {
                      model::AnimatProperties const & animatProperties);
          AnimatWorld() = delete;
 
+         /// Randomizes individual placements with bounds
+         /// that specify how big the environment is. Note
+         /// ranges are [-boundX, boundX] and [-boundY, boundY]
+         void randomizePositions(double const boundX,
+                                 double const boundY);
+
          /// Updates the simulation world
          void update();
 
@@ -25,5 +31,10 @@ namespace simulator {
 
        private:
          std::vector<model::Animat> m_animats;
+
+         /// Move animat to new relative position in world
+         void translateAnimatPosition(int const index,
+                                      double const x, 
+                                      double const y);
     };
 }

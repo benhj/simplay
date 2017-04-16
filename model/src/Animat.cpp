@@ -147,23 +147,47 @@ namespace model {
     std::pair<physics::Vector3, double> 
     Animat::getBoundingCircle(int const index)
     {
+        if (index > m_boundingCircles.size()) {
+            throw std::runtime_error("Animat::getBoundingCircle: index out of bounds");
+        }
         return m_boundingCircles[index];
     }
 
-    void
-    Animat::update()
+    void Animat::update()
     {
         m_physicsEngine.update(0.1);
+        doUpdateDerivedComponents();
+    }
+
+    void Animat::updateDerivedComponents()
+    {
+        doUpdateDerivedComponents();
+    }
+
+    void  Animat::doUpdateDerivedComponents()
+    {
         constructAntennae();
         updateBoundingCircles();
     }
 
     AnimatBlock const & Animat::getBlock(int const b) const
     {
+        if (b > m_blocks.size()) {
+            throw std::runtime_error("Animat::getBlock: index out of bounds");
+        }
         return m_blocks[b];
     }
 
-    physics::PhysicsEngine const & Animat::getPhysicsEngine() const
+    AnimatLayer const & Animat::getLayer(int const layer) const
+    {
+
+        if (layer > m_layers.size()) {
+            throw std::runtime_error("Animat::getLayer: index out of bounds");
+        }
+        return m_layers[layer];
+    }
+
+    physics::PhysicsEngine & Animat::getPhysicsEngine()
     {
         return m_physicsEngine;
     }
