@@ -25,6 +25,20 @@ std::thread testThread;
 int blocks = 8;
 int popSize = 20;
 simulator::AnimatWorld animatWorld(popSize,{blocks, 3.0, 5.0});
+std::vector<graphics::GLAnimat> glAnimats;
+
+void worldToScreen(double const wx, double const wy,
+                   double & sx, double & sy)
+{
+    double sz;
+    GLdouble projection[16];
+    GLdouble modelview[16];
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    glGetDoublev(GL_PROJECTION_MATRIX, projection);
+    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+    gluProject(wx, wy, 0, modelview, projection, viewport, &sx, &sy, &sz);
+}
 
 void setScene()
 {
@@ -59,6 +73,10 @@ void init() // Called before main loop to set up the program
     glEnable(GL_POLYGON_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glShadeModel(GL_SMOOTH);
+    glAnimats.reserve(popSize);
+    for (int p = 0; p < popSize; ++p) {
+        glAnimats.emplace_back(animatWorld.animat(p));
+    }
     setScene();
 }
 
@@ -81,7 +99,7 @@ void display()
     glLoadIdentity();
     if(displayAxis) { drawAxis(); }
     for (int p = 0; p < popSize; ++p) {
-        graphics::GLAnimat(animatWorld.animat(p)).draw();
+        glAnimats[p].draw();
     }
     glutSwapBuffers();
 }
@@ -127,6 +145,29 @@ void keyboardHandler(int key, int x, int y)
     }
 }
 
+void passiveMouseFunc(int x, int y)
+{
+    // Convert animat central points to world points
+    // and then figure out if world mouse if within
+    // range of world animat
+    for (int p = 0; p < popSize; ++p) {
+        auto & animat = animatWorld.animat(p);
+        auto centralPoint = animat.getCentralPoint();
+        auto & pos = centralPoint.first;
+        auto cx = pos.m_vec[0];
+        auto cy = pos.m_vec[1];
+        double sx, sy;
+        worldToScreen(cx, -cy, sx, sy);
+        auto absDiffX = std::abs(sx - x);
+        auto absDiffY = std::abs(sy - y);
+        if (absDiffX < 40 && absDiffY < 40) {
+            glAnimats[p].highlight();
+        } else {
+            glAnimats[p].dehighlight();
+        }
+    }
+}
+
 int main(int argc, char **argv)
 {
 
@@ -150,7 +191,7 @@ int main(int argc, char **argv)
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
     glutIdleFunc(display);
-
+    glutPassiveMotionFunc(passiveMouseFunc);
     glutSpecialFunc(keyboardHandler);
 
     init();

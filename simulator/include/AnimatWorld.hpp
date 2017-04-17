@@ -45,7 +45,7 @@ namespace simulator {
          /// Rotates animat along the z-axis
          void doSetHeading(int const index, double const angle);
 
-         /// Check if animat overlaps another
+         /// Check if animat at index overlaps another
          bool nearAnotherAnimat(int const index);
     };
 }
