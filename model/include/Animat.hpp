@@ -63,7 +63,9 @@ namespace model {
         physics::PhysicsEngine m_physicsEngine;
         physics::Vector3 m_leftAntenna;
         physics::Vector3 m_rightAntenna;
+        physics::Vector3 m_centralPoint;
         mutable std::shared_ptr<std::mutex> m_antennaeMutex;
+        mutable std::shared_ptr<std::mutex> m_centralPointMutex;
 
         /// Useful for collision detection and resolution
         std::vector<std::pair<physics::Vector3, double>> m_boundingCircles;
@@ -72,6 +74,11 @@ namespace model {
         /// Derived components are those whose geometry are calculated
         /// from pre-existing point mass information
         void doUpdateDerivedComponents();
+
+        /// Useful for the 'large' bounding circle arround the whole
+        /// animat to be used for course collision detection
+        /// and resolution
+        void updateCentralPoint();
     };
 }
 

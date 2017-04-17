@@ -14,6 +14,7 @@ namespace model {
                    double const blockHeight)
       : m_physicsEngine(layers * 2 /* number of point masses */)
       , m_antennaeMutex(std::make_shared<std::mutex>())
+      , m_centralPointMutex(std::make_shared<std::mutex>())
     {
 
         m_layers.reserve(layers);
@@ -45,6 +46,9 @@ namespace model {
 
         // antennae
         constructAntennae();
+
+        // center point -- the center of the animat
+        updateCentralPoint();
     }
 
     void Animat::constructAntennae()
@@ -169,10 +173,11 @@ namespace model {
         doUpdateDerivedComponents();
     }
 
-    void  Animat::doUpdateDerivedComponents()
+    void Animat::doUpdateDerivedComponents()
     {
         constructAntennae();
         updateBoundingCircles();
+        updateCentralPoint();
     }
 
     AnimatBlock const & Animat::getBlock(int const b) const
@@ -202,7 +207,7 @@ namespace model {
         return m_blocks.size();
     }
 
-    physics::Vector3 Animat::getCentralPoint() const
+    void Animat::updateCentralPoint()
     {
         // Rotate animat by heading matrix
         physics::Vector3 accumVector;
@@ -214,7 +219,17 @@ namespace model {
             accumVector += m_physicsEngine.getPointMassPosition(indexLeft);
             accumVector += m_physicsEngine.getPointMassPosition(indexRight);
         }
-        accumVector /= (m_layers.size() * 2);
-        return accumVector;
+
+        std::lock_guard<std::mutex> lg(*m_centralPointMutex);
+        m_centralPoint = accumVector / (m_layers.size() * 2);
+
+    }
+
+    physics::Vector3 Animat::getCentralPoint() const
+    {
+        std::lock_guard<std::mutex> lg(*m_centralPointMutex);
+        return m_centralPoint;
     }
 }
+
+
