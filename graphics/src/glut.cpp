@@ -12,11 +12,13 @@
 
 #include <iostream>
 #include <thread>
+#include <atomic>
 #include <unistd.h>
 
 int windowWidth = 800;
 int windowHeight = 800;
 double viewDistance = 0.1;
+std::atomic<bool> displayAxis(true);
 
 std::thread testThread;
 
@@ -31,8 +33,8 @@ void setScene()
     glLoadIdentity();
     glOrtho((-windowWidth/2)*viewDistance, 
             (windowWidth/2)*viewDistance, 
-            (-windowHeight/2 + (windowHeight/3))*viewDistance, 
-            (windowHeight/2 + (windowHeight/3))*viewDistance, 
+            (-windowHeight/2)*viewDistance, 
+            (windowHeight/2)*viewDistance, 
             -10000, 10000);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -60,6 +62,16 @@ void init() // Called before main loop to set up the program
     setScene();
 }
 
+void drawAxis()
+{
+    glBegin(GL_LINES);
+    glVertex3f(0, -(windowHeight/2), 0);
+    glVertex3f(0, (windowHeight/2), 0);
+    glVertex3f(-(windowWidth/2), 0, 0);
+    glVertex3f((windowWidth/2), 0, 0);
+    glEnd();
+}
+
 // Called at the start of the program, after a glutPostRedisplay() and during idle
 // to display a frame
 void display()
@@ -67,6 +79,7 @@ void display()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     setScene();
     glLoadIdentity();
+    if(displayAxis) { drawAxis(); }
     for (int p = 0; p < popSize; ++p) {
         graphics::GLAnimat(animatWorld.animat(p)).draw();
     }
@@ -105,10 +118,12 @@ void loop()
 void keyboardHandler(int key, int x, int y)
 {
     // zoom control
-    if (key == 43) /* '+' */ {
+    if (key == '+') /* '+' */ {
         viewDistance -= 0.01;
-    } else if (key == 45) /* '-' */ {
+    } else if (key == '-') /* '-' */ {
         viewDistance += 0.01;
+    } else if (key == 'a') {
+        displayAxis = !displayAxis;
     }
 }
 
