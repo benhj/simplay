@@ -21,8 +21,8 @@ double viewDistance = 0.1;
 std::thread testThread;
 
 int blocks = 8;
-int popSize = 1;
-simulator::AnimatWorld animatWorld(1,{blocks, 3.0, 5.0});
+int popSize = 3;
+simulator::AnimatWorld animatWorld(popSize,{blocks, 3.0, 5.0});
 
 void setScene()
 {
@@ -88,20 +88,35 @@ void loop()
 
             for (int p = 0; p < popSize; ++p) {
 
+                auto & animat = animatWorld.animat(p);
+
                 for(int b = 0;b<blocks;++b) {
-                    animatWorld.animat(p).applyBlockContraction(b, 0, 20);
-                    animatWorld.animat(p).applyBlockContraction(b, 1, 20);
+                    animat.applyBlockContraction(b, 0, 20);
+                    animat.applyBlockContraction(b, 1, 20);
                 }
-                animatWorld.animat(p).applyWaterForces();    
-                animatWorld.animat(p).update();
+                animat.applyWaterForces();    
+                animat.update();
             }
             usleep(50000);
         }
     }
 }
 
+void keyboardHandler(int key, int x, int y)
+{
+    // zoom control
+    if (key == 43) /* '+' */ {
+        viewDistance -= 0.01;
+    } else if (key == 45) /* '-' */ {
+        viewDistance += 0.01;
+    }
+}
+
 int main(int argc, char **argv)
 {
+
+    animatWorld.randomizePositions(20, 20);
+
     glutInit(&argc, argv); // Initializes glut
 
     // Sets up a double buffer with RGBA components and a depth component
@@ -120,6 +135,9 @@ int main(int argc, char **argv)
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
     glutIdleFunc(display);
+
+    glutSpecialFunc(keyboardHandler);
+
     init();
 
     testThread = std::thread(loop);

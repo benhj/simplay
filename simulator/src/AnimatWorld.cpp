@@ -12,9 +12,12 @@ namespace simulator {
       : m_animats()
     {
         m_animats.reserve(populationSize);
-        m_animats.emplace_back(animatProperties.blocks + 1,
-                               animatProperties.blockWidth,
-                               animatProperties.blockHeight);
+
+        for (int p = 0; p < populationSize; ++p) {
+            m_animats.emplace_back(animatProperties.blocks + 1,
+                                   animatProperties.blockWidth,
+                                   animatProperties.blockHeight);
+        }
 
         // seed random generator for random pop placement
         ::srand(::time(NULL));
@@ -36,7 +39,7 @@ namespace simulator {
             }
             doTranslateAnimatPosition(i, randomX, randomY);
             auto angle = ((double) rand() / (RAND_MAX)) * (3.14159265 * 2);
-            doSetHeading(0, angle);
+            doSetHeading(i, angle);
         }
     }
 

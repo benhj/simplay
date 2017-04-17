@@ -15,6 +15,11 @@ namespace model {
       : m_physicsEngine(layers * 2 /* number of point masses */)
       , m_antennaeMutex(std::make_shared<std::mutex>())
     {
+
+        m_layers.reserve(layers);
+        m_blocks.reserve(layers + 1);
+        m_boundingCircles.reserve(layers + 1);
+
         // construct layers
         auto yOffset = 0;
         auto xOffset = -(layerWidth / 2); // around zero
