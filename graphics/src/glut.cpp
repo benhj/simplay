@@ -76,11 +76,8 @@ void display()
 // Called every time a window is resized to resize the projection matrix
 void reshape(int w, int h)
 {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glFrustum(-0.1, 0.1, -float(h)/(10.0*float(w)), float(h)/(10.0*float(w)), 0.2, 1000.0);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    windowWidth = w;
+    windowHeight = h;
 }
 
 void loop()

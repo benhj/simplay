@@ -1,8 +1,10 @@
 /// Copyright (c) 2017 Ben Jones
 
 #include "AnimatWorld.hpp"
+#include "Matrix.hpp"
 #include <cstdlib> // rand
 #include <ctime> // time
+#include <cmath>
 
 namespace simulator {
     AnimatWorld::AnimatWorld(int const populationSize,
@@ -32,8 +34,60 @@ namespace simulator {
             if (posOrNeg >= 0.5) {
                 randomY = -randomY;
             }
-            translateAnimatPosition(i, randomX, randomY);
+            doTranslateAnimatPosition(i, randomX, randomY);
+            auto angle = ((double) rand() / (RAND_MAX)) * (3.14159265 * 2);
+            doSetHeading(0, angle);
         }
+    }
+
+    void AnimatWorld::doSetHeading(int const index,
+                                   double const angle)
+    {
+        // Derive heading matrix given angle
+        physics::Matrix xAxis, yAxis, zAxis;
+        xAxis.toIdentity();
+        yAxis.toIdentity();
+        zAxis.toIdentity();
+        xAxis[1][1]=cos(0);
+        xAxis[1][2]=-sin(0);
+        xAxis[2][1]=sin(0);
+        xAxis[2][2]=cos(0);
+        yAxis[0][0]=cos(0);
+        yAxis[0][2]=sin(0);
+        yAxis[2][0]=-sin(0);
+        yAxis[2][2]=cos(0);
+        zAxis[0][0]=cos(angle);
+        zAxis[0][1]=-sin(angle);
+        zAxis[1][0]=sin(angle);
+        zAxis[1][1]=cos(angle);
+        auto zy = zAxis * yAxis;
+        auto headingMatrix = zy * xAxis;
+
+        // Rotate around zero so need to offset
+        auto & animat = m_animats[index];
+        auto & physicsEngine = animat.getPhysicsEngine();
+        auto centerPoint = animat.getCentralPoint();
+        auto difference = physicsEngine.getPointMassPosition(animat.getLayer(0).getIndexLeft())
+                        - centerPoint;
+        doTranslateAnimatPosition(index, difference.m_vec[0], difference.m_vec[1]);
+
+        // Rotate animat by heading matrix
+        auto const blockCount = animat.getBlockCount();
+
+        // First update the point mass positions
+        for (auto lay = 0 ; lay <= blockCount; ++lay) {
+            auto & layer = animat.getLayer(lay);
+            auto const indexLeft = layer.getIndexLeft();
+            auto const indexRight = layer.getIndexRight();
+            auto & leftPos = physicsEngine.getPointMassPositionRef(indexLeft);
+            auto & rightPos = physicsEngine.getPointMassPositionRef(indexRight);
+            leftPos *= headingMatrix;
+            rightPos *= headingMatrix;
+        }
+
+        // ...and translate back again
+        doTranslateAnimatPosition(index, -difference.m_vec[0], -difference.m_vec[1]);
+
     }
 
     void AnimatWorld::update()
@@ -48,9 +102,9 @@ namespace simulator {
         return m_animats[index];
     }
 
-    void AnimatWorld::translateAnimatPosition(int const index,
-                                              double const x, 
-                                              double const y)
+    void AnimatWorld::doTranslateAnimatPosition(int const index,
+                                                double const x, 
+                                                double const y)
     {
         auto & animat = m_animats[index];
         auto & physicsEngine = animat.getPhysicsEngine();

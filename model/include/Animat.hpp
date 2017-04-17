@@ -48,8 +48,14 @@ namespace model {
         /// Retrieve number of blocks or body segments
         int getBlockCount() const;
 
+        /// Updated after each physics update
         void updateBoundingCircles();
+
+        /// Retrieve a given bounding circle
         std::pair<physics::Vector3, double> getBoundingCircle(int const index);
+
+        /// Computes the central point of the animat
+        physics::Vector3 getCentralPoint() const;
 
       private:
         std::vector<AnimatLayer> m_layers;

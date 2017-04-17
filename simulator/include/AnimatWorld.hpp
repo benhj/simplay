@@ -33,8 +33,11 @@ namespace simulator {
          std::vector<model::Animat> m_animats;
 
          /// Move animat to new relative position in world
-         void translateAnimatPosition(int const index,
-                                      double const x, 
-                                      double const y);
+         void doTranslateAnimatPosition(int const index,
+                                        double const x, 
+                                        double const y);
+
+         /// Rotates animat along the z-axis
+         void doSetHeading(int const index, double const angle);
     };
 }

@@ -16,8 +16,8 @@ namespace model {
       , m_antennaeMutex(std::make_shared<std::mutex>())
     {
         // construct layers
-        auto yOffset = blockHeight;
-        auto xOffset = 0;
+        auto yOffset = 0;
+        auto xOffset = -(layerWidth / 2); // around zero
         for (int layer = 0; layer < layers; ++layer) {
             m_layers.emplace_back(xOffset, yOffset, layerWidth, m_physicsEngine);
             yOffset += blockHeight;
@@ -195,5 +195,21 @@ namespace model {
     int Animat::getBlockCount() const
     {
         return m_blocks.size();
+    }
+
+    physics::Vector3 Animat::getCentralPoint() const
+    {
+        // Rotate animat by heading matrix
+        physics::Vector3 accumVector;
+
+        // First update the point mass positions
+        for (auto & layer : m_layers) {
+            auto const indexLeft = layer.getIndexLeft();
+            auto const indexRight = layer.getIndexRight();
+            accumVector += m_physicsEngine.getPointMassPosition(indexLeft);
+            accumVector += m_physicsEngine.getPointMassPosition(indexRight);
+        }
+        accumVector /= (m_layers.size() * 2);
+        return accumVector;
     }
 }
