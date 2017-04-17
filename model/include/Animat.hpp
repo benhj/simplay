@@ -55,7 +55,8 @@ namespace model {
         std::pair<physics::Vector3, double> getBoundingCircle(int const index);
 
         /// Computes the central point of the animat
-        physics::Vector3 getCentralPoint() const;
+        /// (point, radius)
+        std::pair<physics::Vector3, double>  getCentralPoint() const;
 
       private:
         std::vector<AnimatLayer> m_layers;
@@ -63,7 +64,7 @@ namespace model {
         physics::PhysicsEngine m_physicsEngine;
         physics::Vector3 m_leftAntenna;
         physics::Vector3 m_rightAntenna;
-        physics::Vector3 m_centralPoint;
+        std::pair<physics::Vector3, double> m_centralPoint;
         mutable std::shared_ptr<std::mutex> m_antennaeMutex;
         mutable std::shared_ptr<std::mutex> m_centralPointMutex;
 

@@ -37,7 +37,15 @@ namespace simulator {
                                         double const x, 
                                         double const y);
 
+         /// Randomize the position of a single animat
+         void doRandomizePosition(int const index,
+                                  double const x,
+                                  double const y);
+
          /// Rotates animat along the z-axis
          void doSetHeading(int const index, double const angle);
+
+         /// Check if animat overlaps another
+         bool nearAnotherAnimat(int const index);
     };
 }

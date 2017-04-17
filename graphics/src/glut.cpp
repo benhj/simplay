@@ -23,7 +23,7 @@ std::atomic<bool> displayAxis(true);
 std::thread testThread;
 
 int blocks = 8;
-int popSize = 3;
+int popSize = 20;
 simulator::AnimatWorld animatWorld(popSize,{blocks, 3.0, 5.0});
 
 void setScene()

@@ -221,11 +221,31 @@ namespace model {
         }
 
         std::lock_guard<std::mutex> lg(*m_centralPointMutex);
-        m_centralPoint = accumVector / (m_layers.size() * 2);
+        m_centralPoint.first = accumVector / (m_layers.size() * 2);
+
+        auto layer0 = m_layers[0];
+        auto layerN = m_layers[m_layers.size() - 1];
+        auto const index1 = layer0.getIndexLeft();
+        auto const index2 = layer0.getIndexRight();
+        auto const index3 = layer0.getIndexLeft();
+        auto const index4 = layer0.getIndexRight();
+        double distances[4];
+        distances[0] = m_centralPoint.first.distance(m_physicsEngine.getPointMassPosition(index1));
+        distances[1] = m_centralPoint.first.distance(m_physicsEngine.getPointMassPosition(index2));
+        distances[2] = m_centralPoint.first.distance(m_physicsEngine.getPointMassPosition(index3));
+        distances[3] = m_centralPoint.first.distance(m_physicsEngine.getPointMassPosition(index2));
+        double radius = 0;
+        for (auto & d : distances) {
+            if (d > radius) {
+                radius = d;
+            }
+        }
+        m_centralPoint.second = radius;
 
     }
 
-    physics::Vector3 Animat::getCentralPoint() const
+    std::pair<physics::Vector3, double> 
+    Animat::getCentralPoint() const
     {
         std::lock_guard<std::mutex> lg(*m_centralPointMutex);
         return m_centralPoint;

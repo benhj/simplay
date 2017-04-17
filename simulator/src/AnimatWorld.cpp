@@ -23,24 +23,54 @@ namespace simulator {
         ::srand(::time(NULL));
     }
 
+    bool AnimatWorld::nearAnotherAnimat(int const index)
+    {
+        auto centralPointIndex = m_animats[index].getCentralPoint();
+        for (int i = 0; i < index; ++i) {
+            auto centralPointOther = m_animats[i].getCentralPoint();
+            if (centralPointIndex.first.distance(centralPointOther.first) 
+                < centralPointIndex.second) {
+                return true;
+            }
+        }
+        for (int i = m_animats.size() - 1; i > index; --i) {
+            auto centralPointOther = m_animats[i].getCentralPoint();
+            if (centralPointIndex.first.distance(centralPointOther.first) 
+                < centralPointIndex.second) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void AnimatWorld::randomizePositions(double const boundX,
                                          double const boundY)
     {
         for (auto i = 0; i < m_animats.size(); ++i) {
-            auto randomX = ((double) rand() / (RAND_MAX)) * boundX;
-            auto randomY = ((double) rand() / (RAND_MAX)) * boundY;
-            auto posOrNeg = ((double) rand() / (RAND_MAX));
-            if (posOrNeg >= 0.5) {
-                randomX = -randomX;
+            doRandomizePosition(i, boundX, boundY);
+            while (nearAnotherAnimat(i)) {
+                doRandomizePosition(i, boundX, boundY);
             }
-            posOrNeg = ((double) rand() / (RAND_MAX));
-            if (posOrNeg >= 0.5) {
-                randomY = -randomY;
-            }
-            doTranslateAnimatPosition(i, randomX, randomY);
-            auto angle = ((double) rand() / (RAND_MAX)) * (3.14159265 * 2);
-            doSetHeading(i, angle);
         }
+    }
+
+    void AnimatWorld::doRandomizePosition(int const index,
+                                          double const boundX,
+                                          double const boundY)
+    {
+        auto randomX = ((double) rand() / (RAND_MAX)) * boundX;
+        auto randomY = ((double) rand() / (RAND_MAX)) * boundY;
+        auto posOrNeg = ((double) rand() / (RAND_MAX));
+        if (posOrNeg >= 0.5) {
+            randomX = -randomX;
+        }
+        posOrNeg = ((double) rand() / (RAND_MAX));
+        if (posOrNeg >= 0.5) {
+            randomY = -randomY;
+        }
+        doTranslateAnimatPosition(index, randomX, randomY);
+        auto angle = ((double) rand() / (RAND_MAX)) * (3.14159265 * 2);
+        doSetHeading(index, angle);
     }
 
     void AnimatWorld::doSetHeading(int const index,
@@ -71,7 +101,7 @@ namespace simulator {
         auto & physicsEngine = animat.getPhysicsEngine();
         auto centerPoint = animat.getCentralPoint();
         auto difference = physicsEngine.getPointMassPosition(animat.getLayer(0).getIndexLeft())
-                        - centerPoint;
+                        - centerPoint.first;
         doTranslateAnimatPosition(index, difference.m_vec[0], difference.m_vec[1]);
 
         // Rotate animat by heading matrix

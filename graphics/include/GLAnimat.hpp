@@ -6,6 +6,7 @@
 #include "Animat.hpp"
 #include <OpenGL/gl.h>
 #include <cmath>
+#include <atomic>
 
 namespace graphics {
 
@@ -28,7 +29,8 @@ namespace graphics {
     {
 
         explicit GLAnimat(model::Animat & animat)
-          : m_animat(animat) 
+          : m_animat(animat)
+          , m_highlighted(false) 
         {
         }
 
@@ -39,11 +41,28 @@ namespace graphics {
             drawBody();
             drawAntennae();
             drawBoundingCircles();
+            if (m_highlighted) {
+                drawBigBoundingCircle();
+            }
+        }
+
+        void highlight()
+        {
+            m_highlighted = true;
+        }
+
+        void dehighlight()
+        {
+            m_highlighted = false;
         }
 
       private:
 
         model::Animat & m_animat;
+
+        /// If mouse pointer over animat, draw big bounding circle around it
+        /// to indicate it's 'selected'
+        std::atomic<bool> m_highlighted;
 
         void drawBody()
         {
@@ -101,6 +120,14 @@ namespace graphics {
                                    centerPoint.m_vec[1],
                                    boundingPair.second, 20);
             }
+        }
+
+        void drawBigBoundingCircle()
+        {
+            auto boundingPair = m_animat.getCentralPoint();
+            detail::drawCircle(boundingPair.first.m_vec[0], 
+                               boundingPair.first.m_vec[1],
+                               boundingPair.second, 20);
         }   
     };
 }
