@@ -28,8 +28,8 @@ namespace graphics {
             }
             for (int ii = 0; ii < num_segments; ii++)   {
                 float theta = 2.0f * 3.1415926f * float(ii) / float(num_segments);//get the current angle 
-                float x = r * cosf(theta);//calculate the x component 
-                float y = r * sinf(theta);//calculate the y component 
+                float x = r * ::cosf(theta);//calculate the x component 
+                float y = r * ::sinf(theta);//calculate the y component 
                 glVertex3f(x + cx, y + cy, 0);//output vertex 
             }
             glEnd();

@@ -4,6 +4,7 @@
 #include "AnimatWorld.hpp"
 #include "Spring.hpp"
 #include "GLAnimat.hpp"
+#include "GLCompass.hpp"
 
 // The OpenGL libraries, make sure to include the GLUT and OpenGL frameworks
 #include <GLUT/glut.h>
@@ -18,6 +19,9 @@
 int windowWidth = 800;
 int windowHeight = 800;
 double viewDistance = 0.1;
+
+double angleZ = 0;
+
 std::atomic<bool> displayAxis(true);
 
 std::thread testThread;
@@ -52,11 +56,7 @@ void setScene()
             -10000, 10000);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    /*
-    glRotatef(angleX,1.0,0.0,0.0);
-    glRotatef(angleY,0.0,1.0,0.0);
-    glRotatef(angleZ,0.0,0.0,1.0);
-    */
+    glRotatef(angleZ, 0.0, 0.0, 1.0);
 }
 
 // This is just an example using basic glut functionality.
@@ -84,6 +84,7 @@ void init() // Called before main loop to set up the program
 
 void drawAxis()
 {
+    glColor4f(87 / 255.0, 89 / 255.0, 92 / 255.0, 1);
     glBegin(GL_LINES);
     glVertex3f(0, -(windowHeight/2), 0);
     glVertex3f(0, (windowHeight/2), 0);
@@ -98,11 +99,11 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     setScene();
-    glLoadIdentity();
     if(displayAxis) { drawAxis(); }
     for (int p = 0; p < popSize; ++p) {
         glAnimats[p].draw();
     }
+    //graphics::GLCompass(angleZ, windowWidth, windowHeight).draw();
     glutSwapBuffers();
 }
 
@@ -111,6 +112,7 @@ void reshape(int w, int h)
 {
     windowWidth = w;
     windowHeight = h;
+    setScene();
 }
 
 void loop()
