@@ -19,9 +19,13 @@ namespace graphics {
 
     namespace detail {
 
-        inline void drawCircle(float cx, float cy, float r, int num_segments) 
+        inline void drawCircle(float cx, float cy, float r, int num_segments, bool const filled = false) 
         {
-            glBegin(GL_LINE_LOOP);
+            if (!filled) {
+                glBegin(GL_LINE_LOOP);
+            } else {
+                glBegin(GL_POLYGON);
+            }
             for (int ii = 0; ii < num_segments; ii++)   {
                 float theta = 2.0f * 3.1415926f * float(ii) / float(num_segments);//get the current angle 
                 float x = r * cosf(theta);//calculate the x component 
@@ -73,9 +77,9 @@ namespace graphics {
 
         model::Animat & m_animat;
 
-        Color m_basicColor { 87.0, 89.0, 92.0 };
+        Color m_basicColor { 87, 89, 92 };
         Color m_segmentColor { 197, 217, 200 };
-        Color m_antennaeColor { 0, 0, 0 };
+        Color m_antennaeColor { 222, 153, 153 };
 
         /// If mouse pointer over animat, draw big bounding circle around it
         /// to indicate it's 'selected'
@@ -134,11 +138,17 @@ namespace graphics {
                 glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], 0);
                 glVertex3f(rightAnt.m_vec[0], rightAnt.m_vec[1], 0);
             glEnd();
-            glLineWidth(1.0);
 
             // Draw 'bobbles' on the end of each antenna
+            detail::setColor(m_antennaeColor); 
+            detail::drawCircle(leftAnt.m_vec[0], leftAnt.m_vec[1], 0.5, 5, true /* filled */);
+            detail::drawCircle(rightAnt.m_vec[0], rightAnt.m_vec[1], 0.5, 5, true);
+
+            // Outline
+            detail::setColor(m_basicColor);
             detail::drawCircle(leftAnt.m_vec[0], leftAnt.m_vec[1], 0.5, 5);
             detail::drawCircle(rightAnt.m_vec[0], rightAnt.m_vec[1], 0.5, 5);
+            glLineWidth(1.0);
         }
 
         void drawBoundingCircles()
