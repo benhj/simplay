@@ -11,6 +11,12 @@
 
 namespace graphics {
 
+    struct Color {
+        double R;
+        double G;
+        double B;
+    };
+
     namespace detail {
 
         inline void drawCircle(float cx, float cy, float r, int num_segments) 
@@ -23,6 +29,11 @@ namespace graphics {
                 glVertex3f(x + cx, y + cy, 0);//output vertex 
             }
             glEnd();
+        }
+
+        inline void setColor(Color const & color)
+        {
+            glColor4f(color.R / 255.0, color.G / 255.0, color.B / 255.0, 1.0);
         }
     }
 
@@ -39,6 +50,7 @@ namespace graphics {
 
         void draw()
         {
+            detail::setColor(m_basicColor);
             drawBody();
             drawAntennae();
             drawBoundingCircles();
@@ -61,12 +73,17 @@ namespace graphics {
 
         model::Animat & m_animat;
 
+        Color m_basicColor { 87.0, 89.0, 92.0 };
+        Color m_segmentColor { 197, 217, 200 };
+        Color m_antennaeColor { 0, 0, 0 };
+
         /// If mouse pointer over animat, draw big bounding circle around it
         /// to indicate it's 'selected'
         std::shared_ptr<std::atomic<bool>> m_highlighted;
 
         void drawBody()
         {
+            glLineWidth(5.0);
             auto & physicsEngine = m_animat.getPhysicsEngine();
             for(int b = 0; b < m_animat.getBlockCount(); ++b) {
                 auto block = m_animat.getBlock(b);
@@ -77,6 +94,7 @@ namespace graphics {
                 auto layer2Left = layer2.getPositionLeft(physicsEngine);
                 auto layer2Right = layer2.getPositionRight(physicsEngine);
 
+                detail::setColor(m_basicColor);
                 glBegin(GL_LINES);
                     glVertex3f(layer1Left.m_vec[0], layer1Left.m_vec[1], 0);
                     glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], 0);
@@ -87,11 +105,21 @@ namespace graphics {
                     glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], 0);
                     glVertex3f(layer2Right.m_vec[0], layer2Right.m_vec[1], 0);
                 glEnd();
+                detail::setColor(m_segmentColor);
+                glBegin(GL_QUADS);
+                    glVertex3f(layer1Left.m_vec[0], layer1Left.m_vec[1], 0);
+                    glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], 0);
+                    glVertex3f(layer2Right.m_vec[0], layer2Right.m_vec[1], 0);
+                    glVertex3f(layer2Left.m_vec[0], layer2Left.m_vec[1], 0);
+                glEnd();
             }
+            detail::setColor(m_basicColor);
+            glLineWidth(1.0);
         }
 
         void drawAntennae()
         {
+            glLineWidth(3.0);
             auto & physicsEngine = m_animat.getPhysicsEngine();
             auto blocks = m_animat.getBlockCount();
             // Draw antennae
@@ -106,6 +134,7 @@ namespace graphics {
                 glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], 0);
                 glVertex3f(rightAnt.m_vec[0], rightAnt.m_vec[1], 0);
             glEnd();
+            glLineWidth(1.0);
 
             // Draw 'bobbles' on the end of each antenna
             detail::drawCircle(leftAnt.m_vec[0], leftAnt.m_vec[1], 0.5, 5);
