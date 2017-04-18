@@ -103,7 +103,7 @@ void display()
     for (int p = 0; p < popSize; ++p) {
         glAnimats[p].draw();
     }
-    //graphics::GLCompass(angleZ, windowWidth, windowHeight).draw();
+    graphics::GLCompass(angleZ, windowWidth, windowHeight).draw();
     glutSwapBuffers();
 }
 
