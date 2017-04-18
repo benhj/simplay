@@ -80,6 +80,7 @@ namespace graphics {
         Color m_basicColor { 87, 89, 92 };
         Color m_segmentColor { 197, 217, 200 };
         Color m_antennaeColor { 222, 153, 153 };
+        Color m_bigCircleColor { 222, 90, 90 };
 
         /// If mouse pointer over animat, draw big bounding circle around it
         /// to indicate it's 'selected'
@@ -87,7 +88,7 @@ namespace graphics {
 
         void drawBody()
         {
-            glLineWidth(5.0);
+            glLineWidth(2.0);
             auto & physicsEngine = m_animat.getPhysicsEngine();
             for(int b = 0; b < m_animat.getBlockCount(); ++b) {
                 auto block = m_animat.getBlock(b);
@@ -123,7 +124,7 @@ namespace graphics {
 
         void drawAntennae()
         {
-            glLineWidth(3.0);
+            glLineWidth(2.0);
             auto & physicsEngine = m_animat.getPhysicsEngine();
             auto blocks = m_animat.getBlockCount();
             // Draw antennae
@@ -164,10 +165,12 @@ namespace graphics {
 
         void drawBigBoundingCircle()
         {
+            detail::setColor(m_bigCircleColor);
             auto boundingPair = m_animat.getCentralPoint();
             detail::drawCircle(boundingPair.first.m_vec[0], 
                                boundingPair.first.m_vec[1],
                                boundingPair.second, 20);
+            detail::setColor(m_basicColor);
         }   
     };
 }
