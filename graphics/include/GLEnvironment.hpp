@@ -1,3 +1,5 @@
+// Copyright (c) 2017 Ben Jones
+
 #pragma once
 
 #include "Color.hpp"
@@ -35,7 +37,7 @@ namespace graphics {
 
         void draw()
         {
-            if(m_displayAxis) { drawAxis(); }
+            if (m_displayAxis) { drawAxis(); }
             detail::setScene(m_windowWidth, 
                              m_windowHeight, 
                              m_viewDistance, 
@@ -43,10 +45,22 @@ namespace graphics {
             for (int p = 0; p < m_animatWorld.getPopSize(); ++p) {
                 m_glAnimats[p].draw();
             }
-            graphics::GLCompass(m_windowWidth, 
-                                m_windowHeight,
-                                m_viewDistance,
-                                m_worldOrientation).draw();
+            if (m_displayCompass) {
+                graphics::GLCompass(m_windowWidth, 
+                                    m_windowHeight,
+                                    m_viewDistance,
+                                    m_worldOrientation).draw();
+            }
+        }
+
+        void compassOn()
+        {
+            m_displayCompass = true;
+        }
+
+        void compassOff()
+        {
+            m_displayCompass = false;
         }
 
         void toggleAxisDisplay()
@@ -84,6 +98,7 @@ namespace graphics {
         Color m_backGoundColour { 209, 220, 235};
         Color m_axisColor { 87, 79, 92 };
         std::atomic<bool> m_displayAxis{true};
+        std::atomic<bool> m_displayCompass{false};
 
         void drawAxis()
         {

@@ -1,3 +1,5 @@
+// Copyright (c) 2017 Ben Jones
+
 #pragma once
 
 #include <OpenGL/gl.h>

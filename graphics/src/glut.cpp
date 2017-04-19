@@ -103,11 +103,22 @@ void keyboardHandler(int key, int x, int y)
     else if (key == GLUT_KEY_RIGHT) {
         auto computed = angleZ;
         computed -= 5;
+        glEnvironment.compassOn();
         angleZ = computed;
     } else if (key == GLUT_KEY_LEFT) {
         auto computed = angleZ;
         computed += 5;
+        glEnvironment.compassOn();
         angleZ = computed;
+    }
+}
+
+void keyboardUPHandler(int key, int x, int y)
+{
+    if (key == GLUT_KEY_RIGHT) {
+        glEnvironment.compassOff();
+    } else if (key == GLUT_KEY_LEFT) {
+        glEnvironment.compassOff();
     }
 }
 
@@ -141,6 +152,7 @@ int main(int argc, char **argv)
     glutIdleFunc(display);
     glutPassiveMotionFunc(passiveMouseFunc);
     glutSpecialFunc(keyboardHandler);
+    glutSpecialUpFunc(keyboardUPHandler);
 
     init();
 
