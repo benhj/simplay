@@ -6,6 +6,7 @@
 #include "AnimatWorld.hpp"
 #include "GLAnimat.hpp"
 #include "GLCompass.hpp"
+#include "GLAxis.hpp"
 #include "SetScene.hpp"
 #include "WorldToScreen.hpp"
 
@@ -37,7 +38,12 @@ namespace graphics {
 
         void draw()
         {
-            if (m_displayAxis) { drawAxis(); }
+            if (m_displayAxis) { 
+                graphics::GLAxis(m_windowWidth, 
+                                 m_windowHeight,
+                                 m_viewDistance,
+                                 m_worldOrientation).draw();
+            }
             detail::setScene(m_windowWidth, 
                              m_windowHeight, 
                              m_viewDistance, 
@@ -96,19 +102,7 @@ namespace graphics {
         simulator::AnimatWorld & m_animatWorld;
         std::vector<graphics::GLAnimat> m_glAnimats;
         Color m_backGoundColour { 209, 220, 235};
-        Color m_axisColor { 87, 79, 92 };
         std::atomic<bool> m_displayAxis{true};
         std::atomic<bool> m_displayCompass{false};
-
-        void drawAxis()
-        {
-            detail::setColor(m_axisColor);
-            glBegin(GL_LINES);
-            glVertex3f(0, -(m_windowHeight/2), 0);
-            glVertex3f(0, (m_windowHeight/2), 0);
-            glVertex3f(-(m_windowWidth/2), 0, 0);
-            glVertex3f((m_windowWidth/2), 0, 0);
-            glEnd();
-        }
     };
 }
