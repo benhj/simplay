@@ -4,18 +4,13 @@
 
 #include "PhysicsEngine.hpp"
 #include "Animat.hpp"
+#include "Color.hpp"
 #include <OpenGL/gl.h>
 #include <cmath>
 #include <atomic>
 #include <memory>
 
 namespace graphics {
-
-    struct Color {
-        double R;
-        double G;
-        double B;
-    };
 
     namespace detail {
 
@@ -33,11 +28,6 @@ namespace graphics {
                 glVertex3f(x + cx, y + cy, 0);//output vertex 
             }
             glEnd();
-        }
-
-        inline void setColor(Color const & color)
-        {
-            glColor4f(color.R / 255.0, color.G / 255.0, color.B / 255.0, 1.0);
         }
     }
 

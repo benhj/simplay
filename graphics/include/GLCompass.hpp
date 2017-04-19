@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Color.hpp"
 #include <OpenGL/gl.h>
 #include <cmath>
 
@@ -36,28 +37,49 @@ namespace graphics {
 
         void draw()
         {
-
-            
             setCompassScene();
-            glColor4f(0.8,0.9,0.8, 1.0);
-
             glPushMatrix();
-
             glLoadIdentity();
             glTranslatef(m_windowWidth / 2.5, m_windowHeight / 2.5, 0);
             glRotatef(m_angle, 0.0, 0.0, 1.0);
             auto const rad = 50.0;
 
-            glColor4f(1,0.5,0.5,1.0);
+            // Draw outer compass circle
+            detail::setColor(m_compassOutline, 0.5 /* opacity */);
+            glLineWidth(3.0);
             glBegin(GL_LINE_LOOP);
                 for (double angle = 0; angle < 3.1415926f * 2; angle += 0.25) {
                     glVertex2f(::sin(angle) * rad, ::cos(angle) * rad);
                 }
             glEnd();
+            glLineWidth(1.0);
 
+            // Draw blue 'north' part of pointer
+            detail::setColor(m_pointerUp);
             glBegin(GL_POLYGON);
                 glVertex3f(0, 50, 0);
                 glVertex3f(-5, 0,0);
+                glVertex3f(5, 0,0);
+            glEnd();
+
+            // Draw white 'south' part of pointer
+            detail::setColor(m_pointerDown);
+            glBegin(GL_POLYGON);
+                glVertex3f(0, -50, 0);
+                glVertex3f(-5, 0,0);
+                glVertex3f(5, 0,0);
+            glEnd();
+
+            // Draw outline around pointer
+            detail::setColor(m_pointerOutline);
+            glBegin(GL_LINES);
+                glVertex3f(0, 50, 0);
+                glVertex3f(-5, 0,0);
+                glVertex3f(0, 50, 0);
+                glVertex3f(5, 0,0);
+                glVertex3f(0, -50, 0);
+                glVertex3f(-5, 0,0);
+                glVertex3f(0, -50, 0);
                 glVertex3f(5, 0,0);
             glEnd();
             glPopMatrix();
@@ -69,6 +91,10 @@ namespace graphics {
         double & m_angle;
         int & m_windowWidth;
         int & m_windowHeight;
+        Color m_pointerUp { 0, 0, 255 };
+        Color m_pointerDown { 255, 255, 255};
+        Color m_pointerOutline { 0, 0, 0 };
+        Color m_compassOutline { 100, 100, 100 };
     };
 
 

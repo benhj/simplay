@@ -104,6 +104,7 @@ void display()
         glAnimats[p].draw();
     }
     graphics::GLCompass(angleZ, windowWidth, windowHeight).draw();
+    setScene();
     glutSwapBuffers();
 }
 
@@ -112,12 +113,10 @@ void reshape(int w, int h)
 {
     windowWidth = w;
     windowHeight = h;
-    setScene();
 }
 
 void loop()
 {
-    
     for(int tick = 0; tick < 5; ++tick) {
         for(int integ = 0; integ < 10; ++integ) {
 
@@ -144,8 +143,20 @@ void keyboardHandler(int key, int x, int y)
         viewDistance -= 0.01;
     } else if (key == '-') /* '-' */ {
         viewDistance += 0.01;
-    } else if (key == 'a') {
+    } 
+    // centre axis on/off
+    else if (key == 'a') {
         displayAxis = !displayAxis;
+    } 
+    // world rotation control
+    else if (key == GLUT_KEY_RIGHT) {
+        auto computed = angleZ;
+        computed -= 5;
+        angleZ = computed;
+    } else if (key == GLUT_KEY_LEFT) {
+        auto computed = angleZ;
+        computed += 5;
+        angleZ = computed;
     }
 }
 
