@@ -29,6 +29,8 @@ namespace simulator {
          /// Retrieve an animat
          model::Animat & animat(int const index);
 
+         int getPopSize() const;
+
        private:
          std::vector<model::Animat> m_animats;
 

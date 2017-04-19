@@ -23,6 +23,11 @@ namespace simulator {
         ::srand(::time(NULL));
     }
 
+    int AnimatWorld::getPopSize() const
+    {
+        return m_animats.size();
+    }
+
     bool AnimatWorld::nearAnotherAnimat(int const index)
     {
         auto centralPointIndex = m_animats[index].getCentralPoint();

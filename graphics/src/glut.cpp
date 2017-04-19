@@ -5,6 +5,7 @@
 #include "Spring.hpp"
 #include "GLAnimat.hpp"
 #include "GLCompass.hpp"
+#include "GLEnvironment.hpp"
 
 // The OpenGL libraries, make sure to include the GLUT and OpenGL frameworks
 #include <GLUT/glut.h>
@@ -13,7 +14,6 @@
 
 #include <iostream>
 #include <thread>
-#include <atomic>
 #include <unistd.h>
 
 int windowWidth = 800;
@@ -22,46 +22,19 @@ double viewDistance = 0.1;
 
 double angleZ = 0;
 
-std::atomic<bool> displayAxis(true);
-
 std::thread testThread;
 
 int blocks = 8;
 int popSize = 20;
 simulator::AnimatWorld animatWorld(popSize,{blocks, 3.0, 5.0});
-std::vector<graphics::GLAnimat> glAnimats;
-
-void worldToScreen(double const wx, double const wy,
-                   double & sx, double & sy)
-{
-    double sz;
-    GLdouble projection[16];
-    GLdouble modelview[16];
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    glGetDoublev(GL_PROJECTION_MATRIX, projection);
-    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-    gluProject(wx, wy, 0, modelview, projection, viewport, &sx, &sy, &sz);
-}
-
-void setScene()
-{
-    glViewport(0, 0, windowWidth, windowHeight);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho((-windowWidth/2)*viewDistance, 
-            (windowWidth/2)*viewDistance, 
-            (-windowHeight/2)*viewDistance, 
-            (windowHeight/2)*viewDistance, 
-            -10000, 10000);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glRotatef(angleZ, 0.0, 0.0, 1.0);
-}
+graphics::GLEnvironment glEnvironment(windowWidth, 
+                                      windowHeight, 
+                                      viewDistance, 
+                                      angleZ,
+                                      animatWorld);
 
 // This is just an example using basic glut functionality.
 // If you want specific Apple functionality, look up AGL
-
 void init() // Called before main loop to set up the program
 {
     glClearColor(209.0 / 255.0, 
@@ -75,22 +48,6 @@ void init() // Called before main loop to set up the program
     glEnable(GL_POLYGON_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glShadeModel(GL_SMOOTH);
-    glAnimats.reserve(popSize);
-    for (int p = 0; p < popSize; ++p) {
-        glAnimats.emplace_back(animatWorld.animat(p));
-    }
-    setScene();
-}
-
-void drawAxis()
-{
-    glColor4f(87 / 255.0, 89 / 255.0, 92 / 255.0, 1);
-    glBegin(GL_LINES);
-    glVertex3f(0, -(windowHeight/2), 0);
-    glVertex3f(0, (windowHeight/2), 0);
-    glVertex3f(-(windowWidth/2), 0, 0);
-    glVertex3f((windowWidth/2), 0, 0);
-    glEnd();
 }
 
 // Called at the start of the program, after a glutPostRedisplay() and during idle
@@ -98,13 +55,7 @@ void drawAxis()
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    setScene();
-    if(displayAxis) { drawAxis(); }
-    for (int p = 0; p < popSize; ++p) {
-        glAnimats[p].draw();
-    }
-    graphics::GLCompass(angleZ, windowWidth, windowHeight).draw();
-    setScene();
+    glEnvironment.draw();
     glutSwapBuffers();
 }
 
@@ -146,7 +97,7 @@ void keyboardHandler(int key, int x, int y)
     } 
     // centre axis on/off
     else if (key == 'a') {
-        displayAxis = !displayAxis;
+        glEnvironment.toggleAxisDisplay();
     } 
     // world rotation control
     else if (key == GLUT_KEY_RIGHT) {
@@ -162,25 +113,7 @@ void keyboardHandler(int key, int x, int y)
 
 void passiveMouseFunc(int x, int y)
 {
-    // Convert animat central points to world points
-    // and then figure out if world mouse if within
-    // range of world animat
-    for (int p = 0; p < popSize; ++p) {
-        auto & animat = animatWorld.animat(p);
-        auto centralPoint = animat.getCentralPoint();
-        auto & pos = centralPoint.first;
-        auto cx = pos.m_vec[0];
-        auto cy = pos.m_vec[1];
-        double sx, sy;
-        worldToScreen(cx, -cy, sx, sy);
-        auto absDiffX = std::abs(sx - x);
-        auto absDiffY = std::abs(sy - y);
-        if (absDiffX < 40 && absDiffY < 40) {
-            glAnimats[p].highlight();
-        } else {
-            glAnimats[p].dehighlight();
-        }
-    }
+    glEnvironment.checkForAnimatHighlight(x, y);
 }
 
 int main(int argc, char **argv)

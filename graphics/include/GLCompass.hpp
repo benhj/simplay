@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Color.hpp"
+#include "SetScene.hpp"
 #include <OpenGL/gl.h>
 #include <cmath>
 
@@ -11,33 +12,21 @@ namespace graphics {
     class GLCompass
     {
       public:
-        GLCompass(double & angle,
-                  int & windowWidth,
-                  int & windowHeight)
-          : m_angle(angle)
-          , m_windowWidth(windowWidth)
+        GLCompass(int & windowWidth,
+                  int & windowHeight,
+                  double & viewDistance,
+                  double & angle)
+          : m_windowWidth(windowWidth)
           , m_windowHeight(windowHeight)
+          , m_viewDistance(viewDistance)
+          , m_angle(angle)
         {
         }
         GLCompass() = delete;
 
-        void setCompassScene()
-        {
-            glViewport(0, 0, m_windowWidth, m_windowHeight);
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            glOrtho((-m_windowWidth/2) * 1, 
-                    (m_windowWidth/2) * 1, 
-                    (-m_windowHeight/2)* 1, 
-                    (m_windowHeight/2) * 1, 
-                    -10000, 10000);
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
-        }
-
         void draw()
         {
-            setCompassScene();
+            detail::setScene(m_windowWidth, m_windowHeight, 1, 0);
             glPushMatrix();
             glLoadIdentity();
             glTranslatef(m_windowWidth / 2.5, m_windowHeight / 2.5, 0);
@@ -85,12 +74,14 @@ namespace graphics {
             glPopMatrix();
 
             glColor4f(87 / 255.0, 89 / 255.0, 92 / 255.0, 1);
+            detail::setScene(m_windowWidth, m_windowHeight, m_viewDistance, m_angle);
         }
 
       private:
-        double & m_angle;
         int & m_windowWidth;
         int & m_windowHeight;
+        double & m_viewDistance;
+        double & m_angle;
         Color m_pointerUp { 0, 0, 255 };
         Color m_pointerDown { 255, 255, 255};
         Color m_pointerOutline { 0, 0, 0 };
