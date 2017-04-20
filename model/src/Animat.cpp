@@ -116,10 +116,12 @@ namespace model {
                                   int const side, 
                                   double const force)
     {
+        // Blocks go from foot to head so need to invert
+        auto inverted = m_blocks.size() - block - 1;
         if (side == 0) {
-            m_blocks[block].contractLeftSide(m_physicsEngine, force);
+            m_blocks[inverted].contractLeftSide(m_physicsEngine, force);
         } else {
-            m_blocks[block].contractRightSide(m_physicsEngine, force);
+            m_blocks[inverted].contractRightSide(m_physicsEngine, force);
         }
     }
 
