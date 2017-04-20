@@ -9,10 +9,12 @@
 #include "GLAxis.hpp"
 #include "SetScene.hpp"
 #include "WorldToScreen.hpp"
+#include "ThreadRunner.hpp"
 
 #include <OpenGL/gl.h>
 #include <vector>
 #include <atomic>
+#include <chrono>
 
 namespace graphics {
     class GLEnvironment
@@ -20,8 +22,8 @@ namespace graphics {
       public:
         GLEnvironment(int & windowWidth,
                       int & windowHeight,
-                      double & viewDistance,
-                      double & worldOrientation,
+                      std::atomic<double> & viewDistance,
+                      std::atomic<double> & worldOrientation,
                       simulator::AnimatWorld & animatWorld)
         : m_windowWidth(windowWidth)
         , m_windowHeight(windowHeight)
@@ -94,15 +96,44 @@ namespace graphics {
             }
         }
 
+        void spinLeft()
+        {
+            m_threadRunner.go([&]{ 
+                m_displayCompass = true;
+                for (auto i = 0 ; i < 90 ; ++i) {
+                    auto computed = m_worldOrientation.load();
+                    ++computed;
+                    m_worldOrientation = computed;
+                    std::this_thread::sleep_for(std::chrono::milliseconds(5));               
+                }
+                m_displayCompass = false;
+             });
+        }
+
+        void spinRight()
+        {
+             m_threadRunner.go([&]{ 
+                m_displayCompass = true;
+                for (auto i = 0 ; i < 90 ; ++i) {
+                    auto computed = m_worldOrientation.load();
+                    --computed;
+                    m_worldOrientation = computed;
+                    std::this_thread::sleep_for(std::chrono::milliseconds(5));               
+                }
+                m_displayCompass = false;
+             });
+        }
+
       private:
         int & m_windowWidth;
         int & m_windowHeight;
-        double & m_viewDistance;
-        double & m_worldOrientation;
+        std::atomic<double> & m_viewDistance;
+        std::atomic<double> & m_worldOrientation;
         simulator::AnimatWorld & m_animatWorld;
         std::vector<graphics::GLAnimat> m_glAnimats;
         Color m_backGoundColour { 209, 220, 235};
         std::atomic<bool> m_displayAxis{true};
         std::atomic<bool> m_displayCompass{false};
+        detail::ThreadRunner m_threadRunner;
     };
 }

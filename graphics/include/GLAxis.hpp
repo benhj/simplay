@@ -5,6 +5,7 @@
 #include "Color.hpp"
 #include "AnimatWorld.hpp"
 #include "SetScene.hpp"
+#include <atomic>
 #include <OpenGL/gl.h>
 
 namespace graphics {
@@ -13,8 +14,8 @@ namespace graphics {
       public:
         GLAxis(int & windowWidth,
                int & windowHeight,
-               double & viewDistance,
-               double & worldOrientation)
+               std::atomic<double> & viewDistance,
+               std::atomic<double> & worldOrientation)
         : m_windowWidth(windowWidth)
         , m_windowHeight(windowHeight)
         , m_viewDistance(viewDistance)
@@ -44,8 +45,8 @@ namespace graphics {
       private:
         int & m_windowWidth;
         int & m_windowHeight;
-        double & m_viewDistance;
-        double & m_worldOrientation;
+        std::atomic<double> & m_viewDistance;
+        std::atomic<double> & m_worldOrientation;
         Color m_axisColor { 87, 79, 92 };
     };
 }

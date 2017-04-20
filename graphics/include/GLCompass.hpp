@@ -5,6 +5,7 @@
 #include "Color.hpp"
 #include "SetScene.hpp"
 #include <OpenGL/gl.h>
+#include <atomic>
 #include <cmath>
 
 namespace graphics {
@@ -14,8 +15,8 @@ namespace graphics {
       public:
         GLCompass(int & windowWidth,
                   int & windowHeight,
-                  double & viewDistance,
-                  double & angle)
+                  std::atomic<double> & viewDistance,
+                  std::atomic<double> & angle)
           : m_windowWidth(windowWidth)
           , m_windowHeight(windowHeight)
           , m_viewDistance(viewDistance)
@@ -80,8 +81,8 @@ namespace graphics {
       private:
         int & m_windowWidth;
         int & m_windowHeight;
-        double & m_viewDistance;
-        double & m_angle;
+        std::atomic<double> & m_viewDistance;
+        std::atomic<double> & m_angle;
         Color m_pointerUp { 0, 0, 255 };
         Color m_pointerDown { 255, 255, 255};
         Color m_pointerOutline { 0, 0, 0 };

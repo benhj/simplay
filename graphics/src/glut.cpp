@@ -14,13 +14,15 @@
 
 #include <iostream>
 #include <thread>
+#include <atomic>
+#include <memory>
 #include <unistd.h>
 
 int windowWidth = 800;
 int windowHeight = 800;
-double viewDistance = 0.1;
+std::atomic<double> viewDistance{0.1};
 
-double angleZ = 0;
+std::atomic<double> angleZ{0};
 
 std::thread testThread;
 
@@ -91,9 +93,13 @@ void keyboardHandler(int key, int x, int y)
 {
     // zoom control
     if (key == '+') /* '+' */ {
-        viewDistance -= 0.01;
+        auto loaded = viewDistance.load();
+        loaded -= 0.01;
+        viewDistance = loaded;
     } else if (key == '-') /* '-' */ {
-        viewDistance += 0.01;
+        auto loaded = viewDistance.load();
+        loaded += 0.01;
+        viewDistance = loaded;
     } 
     // centre axis on/off
     else if (key == 'a') {
@@ -101,24 +107,9 @@ void keyboardHandler(int key, int x, int y)
     } 
     // world rotation control
     else if (key == GLUT_KEY_RIGHT) {
-        auto computed = angleZ;
-        computed -= 5;
-        glEnvironment.compassOn();
-        angleZ = computed;
+        glEnvironment.spinRight();    
     } else if (key == GLUT_KEY_LEFT) {
-        auto computed = angleZ;
-        computed += 5;
-        glEnvironment.compassOn();
-        angleZ = computed;
-    }
-}
-
-void keyboardUPHandler(int key, int x, int y)
-{
-    if (key == GLUT_KEY_RIGHT) {
-        glEnvironment.compassOff();
-    } else if (key == GLUT_KEY_LEFT) {
-        glEnvironment.compassOff();
+        glEnvironment.spinLeft(); 
     }
 }
 
@@ -152,7 +143,6 @@ int main(int argc, char **argv)
     glutIdleFunc(display);
     glutPassiveMotionFunc(passiveMouseFunc);
     glutSpecialFunc(keyboardHandler);
-    glutSpecialUpFunc(keyboardUPHandler);
 
     init();
 
