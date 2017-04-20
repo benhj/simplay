@@ -29,7 +29,7 @@ namespace graphics { namespace detail {
 		std::mutex m_mutex;
 		std::condition_variable m_cond;
       	std::thread m_incThread;
-	    std::atomic<bool> m_shutdown;
+	    std::atomic<bool> m_shutdown{false};
 
 	    void go()
 		{
