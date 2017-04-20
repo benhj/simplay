@@ -98,7 +98,7 @@ namespace graphics {
 
         void spinLeft()
         {
-            m_threadRunner.go([&]{ 
+            m_threadRunner.add([&]{ 
                 m_displayCompass = true;
                 for (auto i = 0 ; i < 90 ; ++i) {
                     auto computed = m_worldOrientation.load();
@@ -112,7 +112,7 @@ namespace graphics {
 
         void spinRight()
         {
-             m_threadRunner.go([&]{ 
+             m_threadRunner.add([&]{ 
                 m_displayCompass = true;
                 for (auto i = 0 ; i < 90 ; ++i) {
                     auto computed = m_worldOrientation.load();
