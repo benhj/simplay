@@ -36,7 +36,7 @@ namespace graphics { namespace detail {
 			m_incThread = std::thread([&]{ 
 				while (!m_shutdown) {
 					std::unique_lock<std::mutex> ul(m_mutex);
-					while (m_queue.empty()) { m_cond.wait(ul); }
+					m_cond.wait(ul, [&]{ return !m_queue.empty();});
 					m_queue.front()();
 					m_queue.pop();
 				}
