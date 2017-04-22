@@ -10,5 +10,6 @@ namespace simulator {
       public:
         virtual double getLeftMotorOutput(int const i) const = 0;
         virtual double getRightMotorOutput(int const i) const = 0;
+        virtual void update() = 0;
     };
 }

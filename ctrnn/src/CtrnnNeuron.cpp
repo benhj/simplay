@@ -1,5 +1,5 @@
 
-#include "Neuron.hpp"
+#include "CtrnnNeuron.hpp"
 
 #include <cmath>
 #include <iostream>
@@ -7,7 +7,7 @@
 
 namespace ctrnn {
 
-    Neuron::Neuron(double const tau) 
+    CtrnnNeuron::CtrnnNeuron(double const tau) 
       : m_membranePotential(0)
       , m_activation(0)
       , m_oldActivation(0)
@@ -18,7 +18,7 @@ namespace ctrnn {
     }
 
     void
-    Neuron::reset()
+    CtrnnNeuron::reset()
     {
         m_membranePotential = 0;
         m_activation = 0;
@@ -27,19 +27,19 @@ namespace ctrnn {
     }
 
     void
-    Neuron::setStartingActivation(double const u)
+    CtrnnNeuron::setStartingActivation(double const u)
     {
         m_membranePotential += u;
     }
 
     void
-    Neuron::updateU(double const inner)
+    CtrnnNeuron::updateU(double const inner)
     {
         m_membranePotential += (inner + m_externalInput - m_membranePotential) / m_tau;
     }
 
-    void Neuron::computeActivation(std::vector<Neuron> & otherNeurons, 
-                                   std::vector<construct> & connections)
+    void CtrnnNeuron::computeActivation(std::vector<CtrnnNeuron> & otherNeurons, 
+                                        std::vector<construct> & connections)
     {
 
         // Compute current going into connections
@@ -59,21 +59,21 @@ namespace ctrnn {
         m_activation = tanh(m_membranePotential);
     }
 
-    double Neuron::activation() const 
+    double CtrnnNeuron::activation() const 
     {
         return m_activation;
     }
 
-    double Neuron::oldActivation() const  
+    double CtrnnNeuron::oldActivation() const  
     {
         return m_oldActivation;
     }
 
-    void Neuron::setExternalInput(double const externalInput)
+    void CtrnnNeuron::setExternalInput(double const externalInput)
     {
         m_externalInput = externalInput;
     }
 
-    double Neuron::getMembranePotential() const { return m_membranePotential; }
+    double CtrnnNeuron::getMembranePotential() const { return m_membranePotential; }
 
 }

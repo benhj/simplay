@@ -62,7 +62,7 @@ namespace physics {
         auto layerTwoLeftPosition = m_layerOne.getPositionLeft(m_physicsEngine);
         auto difference = layerOneLeftPosition - layerTwoLeftPosition;
         auto length = difference.length();
-        return length * 3.0;
+        return length * 10.0;
     }
 
     double
@@ -72,13 +72,13 @@ namespace physics {
         auto layerTwoRightPosition = m_layerOne.getPositionRight(m_physicsEngine);
         auto difference = layerOneRightPosition - layerTwoRightPosition;
         auto length = difference.length();
-        return length * 3.0;
+        return length * 10.0;
     }
 
     void WaterForceGenerator::apply()
     {
         // Coefficients
-        auto nFactor(5.0);
+        auto nFactor(6.0);
         auto tFactor(0.0875);
 
         // get normal components

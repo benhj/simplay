@@ -16,5 +16,9 @@ namespace simulator {
         {
             return ((double) rand() / (RAND_MAX));
         }
+        void update() override
+        {
+
+        }
     };
 }

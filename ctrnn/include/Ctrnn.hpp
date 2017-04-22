@@ -16,15 +16,15 @@
 
 
 #include "construct.hpp"
-#include "Neuron.hpp"
+#include "CtrnnNeuron.hpp"
 
 namespace ctrnn {
 
-    class Network
+    class Ctrnn
     {
       public:
 
-        Network(int const nCount, double const neuronTC);
+        Ctrnn(int const nCount, double const neuronTC);
 
         /// Zeros out the network
         void reset();
@@ -35,7 +35,7 @@ namespace ctrnn {
 
         /// Create a fully connected network. Connectivity
         /// will be determined by weight
-        void createNetwork();
+        void createCtrnn();
 
         void connect(int const i, int const j, double const w);
 
@@ -60,7 +60,7 @@ namespace ctrnn {
         double m_neuronTC;
 
         /// The network's neurons
-        std::vector<Neuron> m_neurons;
+        std::vector<CtrnnNeuron> m_neurons;
 
         /// Basically the weight matrix
         std::vector<std::vector<construct>> m_connections;

@@ -6,7 +6,7 @@
 #include "GLAnimat.hpp"
 #include "GLCompass.hpp"
 #include "GLEnvironment.hpp"
-#include "RandomOutputController.hpp"
+#include "CTRNNController.hpp"
 #include "Agent.hpp"
 
 // The OpenGL libraries, make sure to include the GLUT and OpenGL frameworks
@@ -29,8 +29,8 @@ std::atomic<double> angleZ{0};
 std::thread testThread;
 
 int blocks = 8;
-int popSize = 50;
-simulator::AnimatWorld animatWorld(popSize,{blocks, 3.0, 5.0});
+int popSize = 100;
+simulator::AnimatWorld animatWorld(popSize,{blocks, 3.0, 4.0});
 graphics::GLEnvironment glEnvironment(windowWidth, 
                                       windowHeight, 
                                       viewDistance, 
@@ -40,7 +40,7 @@ graphics::GLEnvironment glEnvironment(windowWidth,
 // Just for testing, this controller generates random
 // motor output. Eventually, it will be replaced with
 // evolved CTRNN controllers.
-simulator::RandomOutputController controller;
+simulator::CTRNNController controller;
 
 // This is just an example using basic glut functionality.
 // If you want specific Apple functionality, look up AGL
