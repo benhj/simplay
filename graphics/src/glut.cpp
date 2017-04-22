@@ -6,6 +6,8 @@
 #include "GLAnimat.hpp"
 #include "GLCompass.hpp"
 #include "GLEnvironment.hpp"
+#include "RandomOutputController.hpp"
+#include "Agent.hpp"
 
 // The OpenGL libraries, make sure to include the GLUT and OpenGL frameworks
 #include <GLUT/glut.h>
@@ -27,13 +29,18 @@ std::atomic<double> angleZ{0};
 std::thread testThread;
 
 int blocks = 8;
-int popSize = 20;
+int popSize = 50;
 simulator::AnimatWorld animatWorld(popSize,{blocks, 3.0, 5.0});
 graphics::GLEnvironment glEnvironment(windowWidth, 
                                       windowHeight, 
                                       viewDistance, 
                                       angleZ,
                                       animatWorld);
+
+// Just for testing, this controller generates random
+// motor output. Eventually, it will be replaced with
+// evolved CTRNN controllers.
+simulator::RandomOutputController controller;
 
 // This is just an example using basic glut functionality.
 // If you want specific Apple functionality, look up AGL
@@ -70,17 +77,14 @@ void reshape(int w, int h)
 
 void loop()
 {
-    for(int tick = 0; tick < 5; ++tick) {
+    for(int tick = 0; tick < 100; ++tick) {
         for(int integ = 0; integ < 10; ++integ) {
 
             for (int p = 0; p < popSize; ++p) {
 
                 auto & animat = animatWorld.animat(p);
 
-                for(int b = 0;b<blocks;++b) {
-                    animat.applyBlockContraction(b, 0, 20);
-                    animat.applyBlockContraction(b, 1, 20);
-                }
+                simulator::Agent(animat, controller).actuate();
                 animat.applyWaterForces();    
                 animat.update();
             }
