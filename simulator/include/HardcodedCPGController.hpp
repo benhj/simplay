@@ -18,14 +18,21 @@ namespace simulator {
     {
       public:
         HardcodedCPGController(int const phaseOffset, 
-                               int const waveLength)
+                               int const waveLength,
+                               int const segs)
           : m_phaseOffset(phaseOffset)
           , m_waveLength(waveLength)
+          , m_segs(segs)
         {
-            for (auto i = 0; i < 10; ++i) {
-                Actuator left{i * phaseOffset, 0, false, waveLength};
-                Actuator right{(i + 1) * phaseOffset + waveLength, 0, false, waveLength};
+            for (auto i = 0; i < segs; ++i) {
+
+                
+                Actuator left{(i-(segs/2)) * phaseOffset, 0, false, waveLength};
                 m_leftActuators.push_back(left);
+                
+
+                Actuator right{(i+(segs/2)) * phaseOffset, 0, false, waveLength};
+                
                 m_rightActuators.push_back(right);
             }
         }
@@ -41,7 +48,7 @@ namespace simulator {
         void update() override
         {
             static long counter = 0;
-            for (auto i = 0; i < 10; ++i) {
+            for (auto i = 0; i < m_segs; ++i) {
                 auto & left = m_leftActuators[i];
                 auto & right = m_rightActuators[i];
                 if (counter > left.start && left.counter % left.waveLength == 0) {
@@ -60,6 +67,7 @@ namespace simulator {
       private:
         int m_phaseOffset;
         int m_waveLength;
+        int m_segs;
         std::vector<Actuator> m_leftActuators;
         std::vector<Actuator> m_rightActuators;
 

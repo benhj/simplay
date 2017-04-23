@@ -38,7 +38,6 @@ namespace model {
                                   layerB,
                                   constant,
                                   m_physicsEngine);
-            //constant += 2;
         }
 
         // construct bounding circles

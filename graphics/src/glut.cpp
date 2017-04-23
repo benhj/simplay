@@ -124,7 +124,7 @@ int main(int argc, char **argv)
     animatWorld.randomizePositions(20, 20);
 
     for(int i = 0;i<popSize;++i){
-        controllers.push_back(simulator::HardcodedCPGController(8,60));
+        controllers.push_back(simulator::HardcodedCPGController(4,66, blocks));
         //controllers.push_back(simulator::CTRNNController());
     }
 
