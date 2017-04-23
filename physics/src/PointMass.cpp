@@ -60,7 +60,13 @@ namespace physics {
     void PointMass::setPosition(Vector3 const & pos)
     {
         std::lock_guard<std::mutex> lg(*m_positionMutex);
-        m_position = pos;
+        bool isnan=false;
+        if (!isnan)isnan = (std::isnan(pos.m_vec[0])||std::isinf(pos.m_vec[0]));
+        if (!isnan)isnan = (std::isnan(pos.m_vec[1])||std::isinf(pos.m_vec[1]));
+        if (!isnan)isnan = (std::isnan(pos.m_vec[2])||std::isinf(pos.m_vec[2]));
+        if (!isnan) {
+            m_position = pos;
+        }
         m_position.m_vec[2] = 0;
     }
 
@@ -73,7 +79,13 @@ namespace physics {
 
     void PointMass::setVelocity(Vector3 const & vel)
     {
-        m_velocity = vel;
+        bool isnan=false;
+        if (!isnan)isnan = (std::isnan(vel.m_vec[0])||std::isinf(vel.m_vec[0]));
+        if (!isnan)isnan = (std::isnan(vel.m_vec[1])||std::isinf(vel.m_vec[1]));
+        if (!isnan)isnan = (std::isnan(vel.m_vec[2])||std::isinf(vel.m_vec[2]));
+        if (!isnan) {
+            m_velocity = vel;
+        }
         m_velocity.m_vec[2] = 0;
     }
 

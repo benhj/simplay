@@ -37,8 +37,8 @@ namespace model {
         /// initialization when position is randomly set.
         void updateDerivedComponents();
 
-        AnimatBlock const & getBlock(int const b) const;
-        AnimatLayer const & getLayer(int const layer) const;
+        AnimatBlock & getBlock(int const b);
+        AnimatLayer & getLayer(int const layer);
 
         physics::PhysicsEngine & getPhysicsEngine();
 

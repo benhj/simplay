@@ -30,12 +30,15 @@ namespace model {
         }
 
         // construct blocks
+        auto constant = 30;
         for (int block = 0; block < m_layers.size() - 1; ++block) {
             auto & layerA = m_layers[block];
             auto & layerB = m_layers[block + 1];
             m_blocks.emplace_back(layerA, 
                                   layerB,
+                                  constant,
                                   m_physicsEngine);
+            //constant += 2;
         }
 
         // construct bounding circles
@@ -138,8 +141,8 @@ namespace model {
     void Animat::applyWaterForces()
     {
         for (auto & block : m_blocks) {
-            auto layerOne = block.getLayerOne();
-            auto layerTwo = block.getLayerTwo();
+            auto & layerOne = block.getLayerOne();
+            auto & layerTwo = block.getLayerTwo();
             physics::WaterForceGenerator(layerOne, layerTwo, m_physicsEngine).apply();
         }
     }
@@ -182,7 +185,7 @@ namespace model {
         updateCentralPoint();
     }
 
-    AnimatBlock const & Animat::getBlock(int const b) const
+    AnimatBlock & Animat::getBlock(int const b)
     {
         if (b > m_blocks.size()) {
             throw std::runtime_error("Animat::getBlock: index out of bounds");
@@ -190,7 +193,7 @@ namespace model {
         return m_blocks[b];
     }
 
-    AnimatLayer const & Animat::getLayer(int const layer) const
+    AnimatLayer & Animat::getLayer(int const layer)
     {
 
         if (layer > m_layers.size()) {

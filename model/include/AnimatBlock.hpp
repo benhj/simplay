@@ -19,16 +19,17 @@ namespace model {
     {
       public:
         
-        AnimatBlock(AnimatLayer const & layerOne,
-                    AnimatLayer const & layerTwo,
+        AnimatBlock(AnimatLayer & layerOne,
+                    AnimatLayer & layerTwo,
+                    double const constant,
                     physics::PhysicsEngine & physicsEngine);
         AnimatBlock() = delete;
 
         /**
          * Access the animat layers making up the segment
          */
-        AnimatLayer const & getLayerOne() const;
-        AnimatLayer const & getLayerTwo() const;
+        AnimatLayer & getLayerOne();
+        AnimatLayer & getLayerTwo();
 
         void contractLeftSide(physics::PhysicsEngine & physicsEngine,
                               double const forceMagnitude);
@@ -45,8 +46,8 @@ namespace model {
 
       private:
 
-        AnimatLayer const & m_layerOne;
-        AnimatLayer const & m_layerTwo;
+        AnimatLayer & m_layerOne;
+        AnimatLayer & m_layerTwo;
         int m_leftSpringIndex;
         int m_rightSpringIndex;
     };

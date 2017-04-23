@@ -6,6 +6,7 @@
 #include "GLAnimat.hpp"
 #include "GLCompass.hpp"
 #include "GLEnvironment.hpp"
+#include "HardcodedCPGController.hpp"
 #include "CTRNNController.hpp"
 #include "Agent.hpp"
 
@@ -22,15 +23,15 @@
 
 int windowWidth = 800;
 int windowHeight = 800;
-std::atomic<double> viewDistance{0.1};
+std::atomic<double> viewDistance{0.2};
 
 std::atomic<double> angleZ{0};
 
 std::thread testThread;
 
-int blocks = 8;
-int popSize = 100;
-simulator::AnimatWorld animatWorld(popSize,{blocks, 3.0, 4.0});
+int blocks = 10;
+int popSize = 1;
+simulator::AnimatWorld animatWorld(popSize,{blocks, 2.0, 3.8611});
 graphics::GLEnvironment glEnvironment(windowWidth, 
                                       windowHeight, 
                                       viewDistance, 
@@ -40,7 +41,8 @@ graphics::GLEnvironment glEnvironment(windowWidth,
 // Just for testing, this controller generates random
 // motor output. Eventually, it will be replaced with
 // evolved CTRNN controllers.
-simulator::CTRNNController controller;
+std::vector<simulator::HardcodedCPGController> controllers;
+//std::vector<simulator::CTRNNController> controllers;
 
 // This is just an example using basic glut functionality.
 // If you want specific Apple functionality, look up AGL
@@ -77,19 +79,13 @@ void reshape(int w, int h)
 
 void loop()
 {
-    for(int tick = 0; tick < 100; ++tick) {
-        for(int integ = 0; integ < 10; ++integ) {
-
-            for (int p = 0; p < popSize; ++p) {
-
-                auto & animat = animatWorld.animat(p);
-
-                simulator::Agent(animat, controller).actuate();
-                animat.applyWaterForces();    
-                animat.update();
-            }
-            usleep(50000);
+    for(int tick = 0; tick < 10000; ++tick) {
+        
+        for (int p = 0; p < popSize; ++p) {
+            auto & animat = animatWorld.animat(p);
+            simulator::Agent(animat, controllers[p]).actuate();
         }
+        usleep(5000);
     }
 }
 
@@ -126,6 +122,11 @@ int main(int argc, char **argv)
 {
 
     animatWorld.randomizePositions(20, 20);
+
+    for(int i = 0;i<popSize;++i){
+        controllers.push_back(simulator::HardcodedCPGController(8,60));
+        //controllers.push_back(simulator::CTRNNController());
+    }
 
     glutInit(&argc, argv); // Initializes glut
 

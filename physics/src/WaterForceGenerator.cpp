@@ -17,7 +17,7 @@ namespace physics {
     WaterForceGenerator::computeFaceNormalLeft() const
     {
         auto layerOneLeftPosition = m_layerOne.getPositionLeft(m_physicsEngine);
-        auto layerTwoLeftPosition = m_layerOne.getPositionLeft(m_physicsEngine);
+        auto layerTwoLeftPosition = m_layerTwo.getPositionLeft(m_physicsEngine);
         auto distance = layerOneLeftPosition - layerTwoLeftPosition;
         auto pv = distance / 2;
         auto rv = pv + layerTwoLeftPosition;
@@ -38,7 +38,7 @@ namespace physics {
     WaterForceGenerator::computeFaceNormalRight() const
     {
         auto layerOneRightPosition = m_layerOne.getPositionRight(m_physicsEngine);
-        auto layerTwoRightPosition = m_layerOne.getPositionRight(m_physicsEngine);
+        auto layerTwoRightPosition = m_layerTwo.getPositionRight(m_physicsEngine);
         auto distance = layerOneRightPosition - layerTwoRightPosition;
         auto pv = distance / 2;
         auto rv = pv + layerTwoRightPosition;
@@ -59,33 +59,33 @@ namespace physics {
     WaterForceGenerator::computeLeftSideArea() const
     {
         auto layerOneLeftPosition = m_layerOne.getPositionLeft(m_physicsEngine);
-        auto layerTwoLeftPosition = m_layerOne.getPositionLeft(m_physicsEngine);
+        auto layerTwoLeftPosition = m_layerTwo.getPositionLeft(m_physicsEngine);
         auto difference = layerOneLeftPosition - layerTwoLeftPosition;
         auto length = difference.length();
-        return length * 10.0;
+        return length * 3.0;
     }
 
     double
     WaterForceGenerator::computeRightSideArea() const
     {
         auto layerOneRightPosition = m_layerOne.getPositionRight(m_physicsEngine);
-        auto layerTwoRightPosition = m_layerOne.getPositionRight(m_physicsEngine);
+        auto layerTwoRightPosition = m_layerTwo.getPositionRight(m_physicsEngine);
         auto difference = layerOneRightPosition - layerTwoRightPosition;
         auto length = difference.length();
-        return length * 10.0;
+        return length * 3.0;
     }
 
     void WaterForceGenerator::apply()
     {
         // Coefficients
-        auto nFactor(6.0);
+        auto nFactor(5);
         auto tFactor(0.0875);
 
         // get normal components
         auto normalLeft = computeFaceNormalLeft();
         auto normalRight = computeFaceNormalRight();
         auto tangentLeft = getTangentLeft();
-        auto tangentRight = getTangentLeft();
+        auto tangentRight = getTangentRight();
 
         // get average velocities
         auto velocityLeftLayerOne = m_layerOne.getVelocityLeft(m_physicsEngine);
@@ -138,7 +138,7 @@ namespace physics {
     WaterForceGenerator::getTangentLeft() const
     {
         auto layerOneLeftPosition = m_layerOne.getPositionLeft(m_physicsEngine);
-        auto layerTwoLeftPosition = m_layerOne.getPositionLeft(m_physicsEngine);
+        auto layerTwoLeftPosition = m_layerTwo.getPositionLeft(m_physicsEngine);
         auto firstApprox = layerOneLeftPosition - layerTwoLeftPosition;
         firstApprox.normalize();
         return firstApprox;
@@ -148,7 +148,7 @@ namespace physics {
     WaterForceGenerator::getTangentRight() const
     {
         auto layerOneRightPosition = m_layerOne.getPositionRight(m_physicsEngine);
-        auto layerTwoRightPosition = m_layerOne.getPositionRight(m_physicsEngine);
+        auto layerTwoRightPosition = m_layerTwo.getPositionRight(m_physicsEngine);
         auto firstApprox = layerOneRightPosition - layerTwoRightPosition;
         firstApprox.normalize();
         return firstApprox;

@@ -120,7 +120,7 @@ namespace graphics {
             // Draw antennae
             auto leftAnt = m_animat.getLeftAntennaePoint();
             auto rightAnt = m_animat.getRightAntennaePoint();
-            auto layer1 = m_animat.getBlock(blocks-1).getLayerTwo();
+            auto & layer1 = m_animat.getBlock(blocks-1).getLayerTwo();
             auto layer1Left = layer1.getPositionLeft(physicsEngine);
             auto layer1Right = layer1.getPositionRight(physicsEngine);
             glBegin(GL_LINES);
@@ -132,13 +132,13 @@ namespace graphics {
 
             // Draw 'bobbles' on the end of each antenna
             detail::setColor(m_antennaeColor); 
-            detail::drawCircle(leftAnt.m_vec[0], leftAnt.m_vec[1], 0.5, 5, true /* filled */);
-            detail::drawCircle(rightAnt.m_vec[0], rightAnt.m_vec[1], 0.5, 5, true);
+            detail::drawCircle(leftAnt.m_vec[0], leftAnt.m_vec[1], 0.2, 10, true /* filled */);
+            detail::drawCircle(rightAnt.m_vec[0], rightAnt.m_vec[1], 0.2, 10, true);
 
             // Outline
             detail::setColor(m_basicColor);
-            detail::drawCircle(leftAnt.m_vec[0], leftAnt.m_vec[1], 0.5, 5);
-            detail::drawCircle(rightAnt.m_vec[0], rightAnt.m_vec[1], 0.5, 5);
+            detail::drawCircle(leftAnt.m_vec[0], leftAnt.m_vec[1], 0.2, 10);
+            detail::drawCircle(rightAnt.m_vec[0], rightAnt.m_vec[1], 0.2, 10);
             glLineWidth(1.0);
         }
 
