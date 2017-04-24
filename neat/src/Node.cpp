@@ -58,6 +58,7 @@ namespace neat {
       , m_externalInput(other.m_externalInput)
       , m_incomingConnections()
     {
+        m_incomingConnections.reserve(50);
     }
 
     Node & Node::operator=(Node const & other)
@@ -92,8 +93,8 @@ namespace neat {
             assert(otherNode.getNodeType() != NodeType::Output);
         }
 
-        m_incomingConnections.emplace_back(*this, 
-                                           otherNode, 
+        m_incomingConnections.emplace_back(otherNode, 
+                                           *this, 
                                            weightBound, 
                                            mutProb);
     }

@@ -5,6 +5,8 @@
 #include "Ctrnn.hpp"
 #include "NeuralSubstrate.hpp"
 #include "neat/Network.hpp"
+#include "neat/Node.hpp"
+#include "neat/Connection.hpp"
 #include <cstdlib>
 
 namespace simulator {

@@ -9,6 +9,7 @@
 #include "HardcodedCPGController.hpp"
 #include "CTRNNController.hpp"
 #include "Agent.hpp"
+#include "neat/Network.hpp"
 
 // The OpenGL libraries, make sure to include the GLUT and OpenGL frameworks
 #include <GLUT/glut.h>
@@ -30,7 +31,7 @@ std::atomic<double> angleZ{0};
 std::thread testThread;
 
 int blocks = 10;
-int popSize = 1;
+int popSize = 80;
 simulator::AnimatWorld animatWorld(popSize,{blocks, 2.0, 3.8611});
 graphics::GLEnvironment glEnvironment(windowWidth, 
                                       windowHeight, 
@@ -41,8 +42,9 @@ graphics::GLEnvironment glEnvironment(windowWidth,
 // Just for testing, this controller generates random
 // motor output. Eventually, it will be replaced with
 // evolved CTRNN controllers.
-std::vector<simulator::HardcodedCPGController> controllers;
-//std::vector<simulator::CTRNNController> controllers;
+//std::vector<simulator::HardcodedCPGController> controllers;
+std::vector<simulator::CTRNNController> controllers;
+std::vector<neat::Network> neats;
 
 // This is just an example using basic glut functionality.
 // If you want specific Apple functionality, look up AGL
@@ -122,10 +124,12 @@ int main(int argc, char **argv)
 {
 
     animatWorld.randomizePositions(20, 20);
+    neats.reserve(popSize);
 
     for(int i = 0;i<popSize;++i){
-        controllers.push_back(simulator::HardcodedCPGController(4,66, blocks));
-        //controllers.push_back(simulator::CTRNNController());
+        neats.emplace_back(4, 1, 20, 0.2, 0.2, 0.2, 6.0);
+        //controllers.push_back(simulator::HardcodedCPGController(4,66, blocks));
+        controllers.push_back(simulator::CTRNNController(blocks, neats[i]));
     }
 
     glutInit(&argc, argv); // Initializes glut
