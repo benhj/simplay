@@ -9,6 +9,7 @@ file(GLOB_RECURSE physics physics/src/*.cpp physics/include/*.hpp)
 file(GLOB_RECURSE ctrnn ctrnn/src/*.cpp ctrnn/include/*.hpp)
 file(GLOB_RECURSE model model/src/*.cpp model/include/*.hpp)
 file(GLOB_RECURSE simulator simulator/src/*.cpp simulator/include/*.hpp)
+file(GLOB_RECURSE neat neat/src/*.cpp neat/include/*.hpp)
 
 # ensure headers in the src folder are compiler-found
 include_directories(physics/include)
@@ -16,6 +17,7 @@ include_directories(ctrnn/include)
 include_directories(model/include)
 include_directories(graphics/include)
 include_directories(simulator/include)
+include_directories(neat/include)
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
 
 # break above sub-folders into individual libraries
@@ -23,8 +25,9 @@ add_library(physics_lib ${physics})
 add_library(ctrnn_lib ${ctrnn})
 add_library(model_lib ${model})
 add_library(simulator_lib ${simulator})
+add_library(neat_lib ${neat})
 add_executable(stest graphics/src/glut.cpp)
-target_link_libraries(stest model_lib ctrnn_lib physics_lib simulator_lib ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+target_link_libraries(stest model_lib ctrnn_lib physics_lib simulator_lib neat_lib ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
 
 # compile options. Lots of redundancy here. Can prob clean up.
 set(COMP_FLAGS -std=c++14 -O3 -ffast-math -funroll-loops -Wno-ctor-dtor-privacy -fno-pic)
@@ -32,4 +35,5 @@ target_compile_options(physics_lib PUBLIC ${COMP_FLAGS})
 target_compile_options(ctrnn_lib PUBLIC ${COMP_FLAGS})
 target_compile_options(model_lib PUBLIC ${COMP_FLAGS})
 target_compile_options(simulator_lib PUBLIC ${COMP_FLAGS})
+target_compile_options(neat_lib PUBLIC ${COMP_FLAGS})
 target_compile_options(stest PUBLIC ${COMP_FLAGS})
