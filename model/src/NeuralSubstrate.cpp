@@ -9,7 +9,7 @@ namespace {
     {
         auto div = 2.0 / (segmentCount + 1);
         auto interval = div/2.0;
-        auto yCoord = -1.0 + interval;
+        auto yCoord = - 1.0 + interval;
         for (auto i = 0; i < segmentCount; ++i) {
             neuronCoords.emplace_back(xCoord, yCoord);
             yCoord += interval;

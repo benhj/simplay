@@ -24,14 +24,14 @@
 
 int windowWidth = 800;
 int windowHeight = 800;
-std::atomic<double> viewDistance{0.2};
+std::atomic<double> viewDistance{0.4};
 
 std::atomic<double> angleZ{0};
 
 std::thread testThread;
 
 int blocks = 10;
-int popSize = 80;
+int popSize = 150;
 simulator::AnimatWorld animatWorld(popSize,{blocks, 2.0, 3.8611});
 graphics::GLEnvironment glEnvironment(windowWidth, 
                                       windowHeight, 
