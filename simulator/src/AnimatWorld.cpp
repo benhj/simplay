@@ -59,6 +59,13 @@ namespace simulator {
         }
     }
 
+    void AnimatWorld::randomizePositionSingleAnimat(int const index,
+                                                    double const boundX,
+                                                    double const boundY)
+    {
+        doRandomizePosition(index, boundX, boundY);
+    }
+
     void AnimatWorld::doRandomizePosition(int const index,
                                           double const boundX,
                                           double const boundY)

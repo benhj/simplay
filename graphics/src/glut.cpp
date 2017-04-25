@@ -85,7 +85,11 @@ void loop()
         
         for (int p = 0; p < popSize; ++p) {
             auto & animat = animatWorld.animat(p);
-            simulator::Agent(animat, controllers[p]).actuate();
+
+            // if physics broke, reinit position in world
+            if(simulator::Agent(animat, controllers[p]).update() == -1) {
+                animatWorld.randomizePositionSingleAnimat(p, 100, 100);
+            }
         }
         usleep(5000);
     }

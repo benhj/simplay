@@ -9,7 +9,7 @@ namespace simulator {
     {
     }
 
-    void Agent::actuate()
+    int Agent::update()
     {
         auto blockCount = m_animat.getBlockCount();
         for(int integ = 0; integ < 10; ++integ) {
@@ -21,7 +21,11 @@ namespace simulator {
             }
             m_animat.applyWaterForces();    
             m_animat.update();
+            if (m_animat.broke()) {
+                return -1;
+            }
         }   
         m_controller.update();
+        return 0;
     }
 }

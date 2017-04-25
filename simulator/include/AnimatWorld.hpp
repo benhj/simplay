@@ -23,6 +23,10 @@ namespace simulator {
          void randomizePositions(double const boundX,
                                  double const boundY);
 
+         void randomizePositionSingleAnimat(int const index,
+                                            double const boundX,
+                                            double const boundY);
+
          /// Updates the simulation world
          void update();
 

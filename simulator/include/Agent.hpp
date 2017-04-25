@@ -15,7 +15,8 @@ namespace simulator {
         Agent(model::Animat & animat, Controller & controller);
 
         /// Actuate the animat based on control output
-        void actuate();
+        /// Returns 0 on success, -1 if problem
+        int update();
 
       private:
         model::Animat & m_animat;

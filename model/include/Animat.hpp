@@ -58,6 +58,9 @@ namespace model {
         /// (point, radius)
         std::pair<physics::Vector3, double>  getCentralPoint() const;
 
+        /// Indicates if physics broke
+        bool broke() const;
+
       private:
         std::vector<AnimatLayer> m_layers;
         std::vector<AnimatBlock> m_blocks;
@@ -69,7 +72,7 @@ namespace model {
         mutable std::shared_ptr<std::mutex> m_centralPointMutex;
 
         /// To indicate if the physics became unstable during an update
-        bool m_physicsBecameUnstable;
+        mutable bool m_physicsBecameUnstable;
 
         /// Useful for collision detection and resolution
         std::vector<std::pair<physics::Vector3, double>> m_boundingCircles;

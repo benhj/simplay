@@ -276,6 +276,13 @@ namespace model {
             layer.toInitialPosition(m_physicsEngine);
         }
     }
+
+    bool Animat::broke() const
+    {
+        auto const rem = m_physicsBecameUnstable;
+        m_physicsBecameUnstable = false;
+        return rem;
+    }
 }
 
 
