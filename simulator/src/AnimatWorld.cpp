@@ -34,14 +34,14 @@ namespace simulator {
         for (int i = 0; i < index; ++i) {
             auto centralPointOther = m_animats[i].getCentralPoint();
             if (centralPointIndex.first.distance(centralPointOther.first) 
-                < centralPointIndex.second) {
+                < centralPointIndex.second + centralPointOther.second) {
                 return true;
             }
         }
         for (int i = m_animats.size() - 1; i > index; --i) {
             auto centralPointOther = m_animats[i].getCentralPoint();
             if (centralPointIndex.first.distance(centralPointOther.first) 
-                < centralPointIndex.second) {
+                < centralPointIndex.second + centralPointOther.second) {
                 return true;
             }
         }
@@ -64,6 +64,9 @@ namespace simulator {
                                                     double const boundY)
     {
         doRandomizePosition(index, boundX, boundY);
+        while (nearAnotherAnimat(index)) {
+            doRandomizePosition(index, boundX, boundY);
+        }
     }
 
     void AnimatWorld::doRandomizePosition(int const index,

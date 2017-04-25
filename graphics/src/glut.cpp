@@ -88,7 +88,7 @@ void loop()
 
             // if physics broke, reinit position in world
             if(simulator::Agent(animat, controllers[p]).update() == -1) {
-                animatWorld.randomizePositionSingleAnimat(p, 100, 100);
+                animatWorld.randomizePositionSingleAnimat(p, 10, 10);
             }
         }
         usleep(5000);
@@ -127,7 +127,7 @@ void passiveMouseFunc(int x, int y)
 int main(int argc, char **argv)
 {
 
-    animatWorld.randomizePositions(20, 20);
+    animatWorld.randomizePositions(10, 10);
     neats.reserve(popSize);
 
     for(int i = 0;i<popSize;++i){
