@@ -68,6 +68,9 @@ namespace model {
         mutable std::shared_ptr<std::mutex> m_antennaeMutex;
         mutable std::shared_ptr<std::mutex> m_centralPointMutex;
 
+        /// To indicate if the physics became unstable during an update
+        bool m_physicsBecameUnstable;
+
         /// Useful for collision detection and resolution
         std::vector<std::pair<physics::Vector3, double>> m_boundingCircles;
         void constructAntennae();
@@ -80,6 +83,14 @@ namespace model {
         /// animat to be used for course collision detection
         /// and resolution
         void updateCentralPoint();
+
+        /// When the animat's physics have become so unstable
+        /// that it needs resetting
+        bool totallyBuggered() const;
+
+        /// To reset the animat structure after bad physics
+        void resetAnimatStructure();
+
     };
 }
 

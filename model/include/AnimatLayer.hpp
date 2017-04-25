@@ -41,6 +41,9 @@ namespace model {
         physics::Vector3 getVelocityLeft(physics::PhysicsEngine const & physicsEngine) const;
         physics::Vector3 getVelocityRight(physics::PhysicsEngine const & physicsEngine) const;
 
+        // For resetting the animats position and shape
+        void toInitialPosition(physics::PhysicsEngine & physicsEngine);
+
      private:
        int m_indexLeft;
        int m_indexRight;

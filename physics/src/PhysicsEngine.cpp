@@ -103,4 +103,9 @@ namespace physics {
                       std::end(m_masses), 
                       [](PointMass & p) { p.reset(); });
     }
+
+    void PhysicsEngine::pointMassToInitialPosition(int const i)
+    {
+        m_masses[i].toInitialPosition();
+    }
 }

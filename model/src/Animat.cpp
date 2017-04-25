@@ -15,6 +15,7 @@ namespace model {
       : m_physicsEngine(layers * 2 /* number of point masses */)
       , m_antennaeMutex(std::make_shared<std::mutex>())
       , m_centralPointMutex(std::make_shared<std::mutex>())
+      , m_physicsBecameUnstable(false)
     {
 
         m_layers.reserve(layers);
@@ -118,12 +119,10 @@ namespace model {
                                   int const side, 
                                   double const force)
     {
-        // Blocks go from foot to head so need to invert
-        auto const inverted = m_blocks.size() - block - 1;
         if (side == 0) {
-            m_blocks[inverted].contractLeftSide(m_physicsEngine, force);
+            m_blocks[block].contractLeftSide(m_physicsEngine, force);
         } else {
-            m_blocks[inverted].contractRightSide(m_physicsEngine, force);
+            m_blocks[block].contractRightSide(m_physicsEngine, force);
         }
     }
 
@@ -170,6 +169,11 @@ namespace model {
     {
         m_physicsEngine.update(0.1);
         doUpdateDerivedComponents();
+
+        // That is meant to be an assignment!
+        if((m_physicsBecameUnstable = totallyBuggered())) {
+
+        }
     }
 
     void Animat::updateDerivedComponents()
@@ -253,6 +257,24 @@ namespace model {
     {
         std::lock_guard<std::mutex> lg(*m_centralPointMutex);
         return m_centralPoint;
+    }
+
+    bool Animat::totallyBuggered() const
+    {
+        std::lock_guard<std::mutex> lg(*m_centralPointMutex);
+        auto isnan = false;
+        auto & point = m_centralPoint.first;
+        if (!isnan)isnan = (std::isnan(point.m_vec[0])||std::isinf(point.m_vec[0]));
+        if (!isnan)isnan = (std::isnan(point.m_vec[1])||std::isinf(point.m_vec[1]));
+        if (!isnan)isnan = (std::isnan(point.m_vec[2])||std::isinf(point.m_vec[2]));
+        return isnan;
+    }
+
+    void Animat::resetAnimatStructure()
+    {
+        for (auto & layer : m_layers) {
+            layer.toInitialPosition(m_physicsEngine);
+        }
     }
 }
 

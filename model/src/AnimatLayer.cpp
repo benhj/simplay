@@ -93,4 +93,11 @@ namespace model {
     {
         return physicsEngine.getPointMassVelocity(m_indexLeft);
     }
+
+    void AnimatLayer::toInitialPosition(physics::PhysicsEngine & physicsEngine)
+    {
+        physicsEngine.pointMassToInitialPosition(m_indexLeft);
+        physicsEngine.pointMassToInitialPosition(m_indexRight);
+    }
+
 }

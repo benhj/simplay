@@ -47,6 +47,9 @@ namespace physics {
         void update(double const dv);
         void reset();
 
+        /// Resets a point mass's position
+        void pointMassToInitialPosition(int const i);
+
       private:
         /// Collection of point masses
         mutable std::vector<PointMass> m_masses;

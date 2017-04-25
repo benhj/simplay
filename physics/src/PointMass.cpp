@@ -9,6 +9,7 @@ namespace physics {
                          double const mass,
                          bool const frozen)
     : m_position(position)
+    , m_initialPosition(position)
     , m_mass(mass)
     , m_frozen(frozen)
     , m_positionMutex(std::make_shared<std::mutex>())
@@ -24,7 +25,6 @@ namespace physics {
 
     void PointMass::accumulateForce(Vector3 const & force)
     {
-        //std::cout<<m_forceAccum<<std::endl;
         m_forceAccum += force;
         m_forceAccum[2] = 0;
     }
@@ -102,5 +102,15 @@ namespace physics {
         m_velocity.toZero();
         m_acceleration.toZero();
         m_forceAccum.toZero();
+    }
+
+    void
+    PointMass::toInitialPosition()
+    {
+        std::lock_guard<std::mutex> lg(*m_positionMutex);
+        m_position = m_initialPosition;
+        m_acceleration.toZero();
+        m_forceAccum.toZero();
+        m_velocity.toZero();
     }
 }

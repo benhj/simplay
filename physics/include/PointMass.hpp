@@ -40,9 +40,15 @@ namespace physics {
 
         void reset();
 
+        void toInitialPosition();
+
       private:
 
         Vector3 m_position;
+
+        // When the shape of the animat needs to be reset
+        Vector3 m_initialPosition;
+
         double m_mass;
         bool m_frozen;
         
