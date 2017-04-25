@@ -172,7 +172,7 @@ namespace model {
 
         // That is meant to be an assignment!
         if((m_physicsBecameUnstable = totallyBuggered())) {
-
+            resetAnimatStructure();
         }
     }
 
