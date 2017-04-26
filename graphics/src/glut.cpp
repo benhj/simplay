@@ -91,7 +91,7 @@ void loop()
                 animatWorld.randomizePositionSingleAnimat(p, 10, 10);
             }
         }
-        usleep(5000);
+        usleep(500);
     }
 }
 
