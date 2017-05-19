@@ -22,13 +22,11 @@ namespace graphics {
       public:
         GLEnvironment(int & windowWidth,
                       int & windowHeight,
-                      std::atomic<double> & viewDistance,
-                      std::atomic<double> & worldOrientation,
                       simulator::AnimatWorld & animatWorld)
         : m_windowWidth(windowWidth)
         , m_windowHeight(windowHeight)
-        , m_viewDistance(viewDistance)
-        , m_worldOrientation(worldOrientation)
+        , m_viewDistance(0.4)
+        , m_worldOrientation(0)
         , m_animatWorld(animatWorld)
         {
             auto const popSize = m_animatWorld.getPopSize();
@@ -124,11 +122,22 @@ namespace graphics {
              });
         }
 
+        void setViewDistance(double const newDistance)
+        {
+            m_viewDistance = newDistance;
+        }
+
+        void updateWidthHeight(int const width, int const height)
+        {
+            m_windowWidth = width;
+            m_windowHeight = height;
+        }
+
       private:
         int & m_windowWidth;
         int & m_windowHeight;
-        std::atomic<double> & m_viewDistance;
-        std::atomic<double> & m_worldOrientation;
+        std::atomic<double> m_viewDistance;
+        std::atomic<double> m_worldOrientation;
         simulator::AnimatWorld & m_animatWorld;
         std::vector<graphics::GLAnimat> m_glAnimats;
         Color m_backGoundColour { 209, 220, 235};

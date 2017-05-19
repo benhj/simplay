@@ -19,9 +19,6 @@
 
 int windowWidth = 800;
 int windowHeight = 800;
-std::atomic<double> viewDistance{0.4};
-
-std::atomic<double> angleZ{0};
 
 std::thread testThread;
 
@@ -30,8 +27,6 @@ int popSize = 150;
 simulator::AnimatWorld animatWorld(popSize,{blocks, 2.0, 3.8611});
 graphics::GLEnvironment glEnvironment(windowWidth, 
                                       windowHeight, 
-                                      viewDistance, 
-                                      angleZ,
                                       animatWorld);
 
 std::unique_ptr<graphics::Graphics> graphix;
@@ -98,7 +93,7 @@ int main(int argc, char **argv)
     glutSpecialFunc(keyboardHandler);
 
     // GUI agnostics GL calls
-    graphix.reset(new graphics::Graphics(windowWidth, windowHeight, glEnvironment));
+    graphix.reset(new graphics::Graphics(glEnvironment));
 
     testThread = std::thread(loop);
 

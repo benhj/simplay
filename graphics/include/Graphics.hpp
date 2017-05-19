@@ -7,9 +7,8 @@ namespace graphics {
     class Graphics
     {
       public:
-        Graphics(int const windowWidth, 
-                 int const windowHeight,
-                 GLEnvironment & glEnviro);
+        explicit Graphics(GLEnvironment & glEnviro);
+        Graphics() = delete;
         void display();
         void reshape(int const w, int const h);
         void passiveMouseFunc(int const x, int const y);
@@ -17,8 +16,6 @@ namespace graphics {
                              int const x, 
                              int const y);
       private:
-        int m_windowWidth;
-        int m_windowHeight;
         GLEnvironment & m_glEnviro;
         std::atomic<double> m_viewDistance;
     };

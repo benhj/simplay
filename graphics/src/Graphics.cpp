@@ -23,12 +23,8 @@ namespace {
 }
 
 namespace graphics {
-    Graphics::Graphics(int const windowWidth, 
-                       int const windowHeight,
-                       GLEnvironment & glEnviro)
-      : m_windowWidth(windowWidth)
-      , m_windowHeight(windowHeight)
-      , m_glEnviro(glEnviro)
+    Graphics::Graphics(GLEnvironment & glEnviro)
+      : m_glEnviro(glEnviro)
       , m_viewDistance(0.4)
     {
         init();
@@ -43,8 +39,7 @@ namespace graphics {
 
     void Graphics::reshape(int const w, int const h)
     {
-        m_windowWidth = w;
-        m_windowHeight = h;
+        m_glEnviro.updateWidthHeight(w, h);
     }
 
     void Graphics::passiveMouseFunc(int const x, int const y)
@@ -61,19 +56,21 @@ namespace graphics {
             auto loaded = m_viewDistance.load();
             loaded -= 0.01;
             m_viewDistance = loaded;
+            m_glEnviro.setViewDistance(loaded);
         } else if (key == '-') {
             auto loaded = m_viewDistance.load();
             loaded += 0.01;
             m_viewDistance = loaded;
+            m_glEnviro.setViewDistance(loaded);
         } 
         // centre axis on/off
         else if (key == 'a') {
             m_glEnviro.toggleAxisDisplay();
         } 
         // world rotation control
-        else if (key == GLUT_KEY_RIGHT) {
+        else if (key == 102) /* right arrow */{
             m_glEnviro.spinRight();    
-        } else if (key == GLUT_KEY_LEFT) {
+        } else if (key == 100) /* left arrow */{
             m_glEnviro.spinLeft(); 
         }
     }
