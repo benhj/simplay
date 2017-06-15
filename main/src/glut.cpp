@@ -2,19 +2,14 @@
 
 #include "Animat.hpp"
 #include "AnimatWorld.hpp"
-#include "Spring.hpp"
-#include "GLAnimat.hpp"
-#include "GLCompass.hpp"
+
 #include "GLEnvironment.hpp"
-#include "HardcodedCPGController.hpp"
+#include "Graphics.hpp"
 #include "CTRNNController.hpp"
 #include "Agent.hpp"
 #include "neat/Network.hpp"
 
-// The OpenGL libraries, make sure to include the GLUT and OpenGL frameworks
 #include <GLUT/glut.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
 
 #include <iostream>
 #include <thread>
@@ -24,9 +19,6 @@
 
 int windowWidth = 800;
 int windowHeight = 800;
-std::atomic<double> viewDistance{0.4};
-
-std::atomic<double> angleZ{0};
 
 std::thread testThread;
 
@@ -35,50 +27,21 @@ int popSize = 150;
 simulator::AnimatWorld animatWorld(popSize,{blocks, 2.0, 3.8611});
 graphics::GLEnvironment glEnvironment(windowWidth, 
                                       windowHeight, 
-                                      viewDistance, 
-                                      angleZ,
                                       animatWorld);
 
-// Just for testing, this controller generates random
-// motor output. Eventually, it will be replaced with
-// evolved CTRNN controllers.
-//std::vector<simulator::HardcodedCPGController> controllers;
+std::unique_ptr<graphics::Graphics> graphix;
+
 std::vector<simulator::CTRNNController> controllers;
 std::vector<neat::Network> neats;
 
-// This is just an example using basic glut functionality.
-// If you want specific Apple functionality, look up AGL
-void init() // Called before main loop to set up the program
-{
-    glClearColor(209.0 / 255.0, 
-                 220.0 / 255.0, 
-                 235.0 / 255.0, 0.0);
-    glEnable(GL_BLEND);
-    glEnable(GL_DEPTH);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_POINT_SMOOTH);
-    glEnable(GL_POLYGON_SMOOTH);
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    glShadeModel(GL_SMOOTH);
-}
+/// GLUT CALLBACKS. N.B. eventually this will change
+/// once I've figured out a nicer graphics lib.
+void display() { graphix->display(); }
+void reshape(int w, int h) { graphix->reshape(w, h); }
+void keyboardHandler(int key, int x, int y) { graphix->keyboardHandler(key, x, y); }
+void passiveMouseFunc(int x, int y) { graphix->passiveMouseFunc(x, y); }
 
-// Called at the start of the program, after a glutPostRedisplay() and during idle
-// to display a frame
-void display()
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnvironment.draw();
-    glutSwapBuffers();
-}
-
-// Called every time a window is resized to resize the projection matrix
-void reshape(int w, int h)
-{
-    windowWidth = w;
-    windowHeight = h;
-}
-
+/// Hacky simulation loop. To be pulled into separate class.
 void loop()
 {
     for(int tick = 0; tick < 10000; ++tick) {
@@ -95,34 +58,6 @@ void loop()
     }
 }
 
-void keyboardHandler(int key, int x, int y)
-{
-    // zoom control
-    if (key == '+') /* '+' */ {
-        auto loaded = viewDistance.load();
-        loaded -= 0.01;
-        viewDistance = loaded;
-    } else if (key == '-') /* '-' */ {
-        auto loaded = viewDistance.load();
-        loaded += 0.01;
-        viewDistance = loaded;
-    } 
-    // centre axis on/off
-    else if (key == 'a') {
-        glEnvironment.toggleAxisDisplay();
-    } 
-    // world rotation control
-    else if (key == GLUT_KEY_RIGHT) {
-        glEnvironment.spinRight();    
-    } else if (key == GLUT_KEY_LEFT) {
-        glEnvironment.spinLeft(); 
-    }
-}
-
-void passiveMouseFunc(int x, int y)
-{
-    glEnvironment.checkForAnimatHighlight(x, y);
-}
 
 int main(int argc, char **argv)
 {
@@ -157,7 +92,8 @@ int main(int argc, char **argv)
     glutPassiveMotionFunc(passiveMouseFunc);
     glutSpecialFunc(keyboardHandler);
 
-    init();
+    // GUI agnostics GL calls
+    graphix.reset(new graphics::Graphics(glEnvironment));
 
     testThread = std::thread(loop);
 
