@@ -15,9 +15,11 @@ namespace {
             for (auto j = 0; j < oldNodes.size(); ++j) {
                 if (i == j) { continue; }
                 if (oldNodes[j].hasConnectionFrom(i)) {
+                    auto weight = oldNodes[i].getConnectionWeightFrom(i);
                     newNodes[j].addIncomingConnectionFrom(newNodes[i], 
                                                           weightInitBound,
-                                                          weightChangeProb);
+                                                          weightChangeProb,
+                                                          weight);
                 }
             }
         }

@@ -157,6 +157,17 @@ namespace neat {
                             }) != std::end(m_incomingConnections);
     }
 
+    double Node::getConnectionWeightFrom(int const i) const
+    {
+        auto theConnection = std::find_if(std::begin(m_incomingConnections),
+                             std::end(m_incomingConnections),
+                             [i](Connection & con) {
+                                return con.getNodeRefA().getIndex() == i;
+                             });
+
+        return theConnection->weight();
+    }
+
     void Node::perturbNodeFunction()
     {
         if (((double) rand() / (RAND_MAX)) < m_mutationProbability) {

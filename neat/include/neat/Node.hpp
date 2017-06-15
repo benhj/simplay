@@ -61,6 +61,9 @@ namespace neat {
         /// Indicates if this has connection from node i
         bool hasConnectionFrom(int const i) const;
 
+        /// Retrieve the connection weight from node i
+        double getConnectionWeightFrom(int const i) const;
+
       private:
 
         /// Indexes node in typical matrix i,j fashion
