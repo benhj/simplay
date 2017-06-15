@@ -280,7 +280,7 @@ namespace model {
     bool Animat::broke() const
     {
         auto const rem = m_physicsBecameUnstable;
-        m_physicsBecameUnstable = false;
+        return m_physicsBecameUnstable;
         return rem;
     }
 }

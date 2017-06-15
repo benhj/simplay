@@ -14,6 +14,12 @@ namespace neat {
                    double const weightBound, 
                    double const mutationProbability);
 
+        Connection(Node & nodeA,
+                   Node & nodeB,
+                   double const weightBound, 
+                   double const mutationProbability,
+                   double const weight);
+
         // Since we have references as member vars,
         // we need explicit copy and assignment operators.
         // Applying rule of 4, also have the move equivalents.

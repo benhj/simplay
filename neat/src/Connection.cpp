@@ -27,6 +27,18 @@ namespace neat {
     {
     }
 
+    Connection::Connection(Node & nodeA,
+                           Node & nodeB,
+                           double const weightBound, 
+                           double const mutationProbability,
+                           double const weight)
+      : m_nodeA(nodeA)
+      , m_nodeB(nodeB)
+      , m_mutationProbability(mutationProbability)
+      , m_weight(weight)
+    {
+    }
+
     Connection::Connection(Connection const & other)
       : m_nodeA(other.m_nodeA)
       , m_nodeB(other.m_nodeB)
