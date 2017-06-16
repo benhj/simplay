@@ -4,6 +4,7 @@
 #include "neat/NodeType.hpp"
 #include "neat/Node.hpp"
 #include "neat/Connection.hpp"
+#include "neat/MutationParameters.hpp"
 
 namespace {
     void restoreConnectivity(std::vector<neat::Node> const & oldNodes,
@@ -30,16 +31,12 @@ namespace neat {
     Network::Network(int const inputCount, 
                      int const outputCount,
                      int const maxSize,
-                     double const nodeAdditionProb,
-                     double const nodeFunctionChangeProb,
-                     double const weightChangeProb,
+                     MutationParameters const & muts,
                      double const weightInitBound)
       : m_inputCount(inputCount)
       , m_outputCount(outputCount)
       , m_maxSize(maxSize)
-      , m_nodeAdditionProb(nodeAdditionProb)
-      , m_nodeFunctionChangeProb(nodeFunctionChangeProb)
-      , m_weightChangeProb(weightChangeProb)
+      , m_muts(muts)
       , m_weightInitBound(weightInitBound)
     {
         m_nodes.reserve(maxSize);
@@ -51,9 +48,7 @@ namespace neat {
       : m_inputCount(other.m_inputCount)
       , m_outputCount(other.m_outputCount)
       , m_maxSize(other.m_maxSize)
-      , m_nodeAdditionProb(other.m_nodeAdditionProb)
-      , m_nodeFunctionChangeProb(other.m_nodeFunctionChangeProb)
-      , m_weightChangeProb(other.m_weightChangeProb)
+      , m_muts(other.m_muts)
       , m_weightInitBound(other.m_weightInitBound)
       , m_nodes(other.m_nodes)
       , m_outputIDs(other.m_outputIDs)
@@ -62,7 +57,7 @@ namespace neat {
         restoreConnectivity(other.m_nodes, 
                             m_nodes, 
                             m_weightInitBound, 
-                            m_weightChangeProb);
+                            m_muts.weightChangeProb);
     }
 
     Network & Network::operator=(Network const & other)
@@ -71,19 +66,17 @@ namespace neat {
         if (&other == this) {
             return *this;
         }
-        m_inputCount = (other.m_inputCount);
-        m_outputCount = (other.m_outputCount);
-        m_maxSize = (other.m_maxSize);
-        m_nodeAdditionProb = (other.m_nodeAdditionProb);
-        m_nodeFunctionChangeProb = (other.m_nodeFunctionChangeProb);
-        m_weightChangeProb = (other.m_weightChangeProb);
-        m_weightInitBound = (other.m_weightInitBound);
+        m_inputCount = other.m_inputCount;
+        m_outputCount = other.m_outputCount;
+        m_maxSize = other.m_maxSize;
+        m_muts = other.m_muts;
+        m_weightInitBound = other.m_weightInitBound;
         m_nodes = other.m_nodes;
         // now restore connectivity
         restoreConnectivity(other.m_nodes, 
                             m_nodes, 
                             m_weightInitBound, 
-                            m_weightChangeProb);
+                            m_muts.weightChangeProb);
         return *this;
     }
         
@@ -92,12 +85,14 @@ namespace neat {
     {
         // Input and output node creation. 
         for (auto i = 0; i < m_inputCount; ++i) {
-            m_nodes.emplace_back(i, NodeType::Input, m_nodeFunctionChangeProb);
+            m_nodes.emplace_back(i, NodeType::Input, 
+                                 m_muts.nodeFunctionChangeProb);
             // Also set bias to each input to 1
             m_nodes[i].setExternalInput(1.0);
         }
         for (auto i = m_inputCount; i < m_inputCount + m_outputCount; ++i) {
-            m_nodes.emplace_back(i, NodeType::Output, m_nodeFunctionChangeProb);
+            m_nodes.emplace_back(i, NodeType::Output, 
+                                 m_muts.nodeFunctionChangeProb);
             m_outputIDs.push_back(i);
         }
 
@@ -106,7 +101,7 @@ namespace neat {
             for (auto j = m_inputCount; j < m_inputCount + m_outputCount; ++j) {
                 m_nodes[j].addIncomingConnectionFrom(m_nodes[i], 
                                                      m_weightInitBound, 
-                                                     m_weightChangeProb);
+                                                     m_muts.weightChangeProb);
             }
         }
     }
@@ -128,7 +123,8 @@ namespace neat {
         // is less than max permitted size
         auto id = m_nodes.size();
         if (id < m_maxSize) {
-            m_nodes.emplace_back(id, NodeType::Hidden, m_nodeFunctionChangeProb);
+            m_nodes.emplace_back(id, NodeType::Hidden, 
+                                 m_muts.nodeFunctionChangeProb);
 
             // Find out original connectivity
             auto & nodePre = con.getNodeRefA();
@@ -141,12 +137,12 @@ namespace neat {
             // Add new connection from nodePre to new node
             m_nodes[id].addIncomingConnectionFrom(nodePre, 
                                                   m_weightInitBound, 
-                                                  m_weightChangeProb);
+                                                  m_muts.weightChangeProb);
 
             // ..and from new node to node post
             nodePost.addIncomingConnectionFrom(m_nodes[id], 
                                                m_weightInitBound, 
-                                               m_weightChangeProb);
+                                               m_muts.weightChangeProb);
         }
     }
 

@@ -8,6 +8,7 @@
 #include "CTRNNController.hpp"
 #include "Agent.hpp"
 #include "neat/Network.hpp"
+#include "neat/MutationParameters.hpp"
 
 #include <GLUT/glut.h>
 
@@ -66,7 +67,8 @@ int main(int argc, char **argv)
     neats.reserve(popSize);
 
     for(int i = 0;i<popSize;++i){
-        neats.emplace_back(4, 1, 20, 0.2, 0.2, 0.2, 6.0);
+
+        neats.emplace_back(4, 1, 20, neat::MutationParameters{0.2, 0.2, 0.2, 0.2}, 6.0);
         //controllers.push_back(simulator::HardcodedCPGController(4,66, blocks));
         controllers.push_back(simulator::CTRNNController(blocks, neats[i]));
     }
