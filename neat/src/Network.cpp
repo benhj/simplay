@@ -43,6 +43,7 @@ namespace neat {
       , m_weightInitBound(weightInitBound)
     {
         m_nodes.reserve(maxSize);
+        m_outputIDs.reserve(outputCount);
         initNet();
     }
 
@@ -55,6 +56,7 @@ namespace neat {
       , m_weightChangeProb(other.m_weightChangeProb)
       , m_weightInitBound(other.m_weightInitBound)
       , m_nodes(other.m_nodes)
+      , m_outputIDs(other.m_outputIDs)
     {
         // now restore connectivity
         restoreConnectivity(other.m_nodes, 
@@ -96,6 +98,7 @@ namespace neat {
         }
         for (auto i = m_inputCount; i < m_inputCount + m_outputCount; ++i) {
             m_nodes.emplace_back(i, NodeType::Output, m_nodeFunctionChangeProb);
+            m_outputIDs.push_back(i);
         }
 
         // Fully connect from inputs to outputs (i.e. feed-forward)
@@ -115,7 +118,7 @@ namespace neat {
 
     double Network::getOutput(int const i) const
     {
-        auto outputIndex = i + m_inputCount;
+        auto outputIndex = m_outputIDs[i];
         return m_nodes[outputIndex].getOutput();
     }
 

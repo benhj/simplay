@@ -36,6 +36,7 @@ namespace neat {
         double m_weightChangeProb;
         double m_weightInitBound;
         std::vector<Node> m_nodes;
+        std::vector<int> m_outputIDs;
 
         /// Fully connect all inputs to all outputs
         void initNet();
