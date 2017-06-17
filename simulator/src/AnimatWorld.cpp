@@ -1,6 +1,6 @@
 /// Copyright (c) 2017 Ben Jones
 
-#include "AnimatWorld.hpp"
+#include "simulator/AnimatWorld.hpp"
 #include "Matrix.hpp"
 #include <cstdlib> // rand
 #include <ctime> // time

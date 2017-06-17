@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Color.hpp"
-#include "AnimatWorld.hpp"
+#include "simulator/AnimatWorld.hpp"
 #include "SetScene.hpp"
 #include <atomic>
 #include <OpenGL/gl.h>

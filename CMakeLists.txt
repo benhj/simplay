@@ -8,7 +8,7 @@ find_package(GLUT REQUIRED)
 file(GLOB_RECURSE physics physics/src/*.cpp physics/include/*.hpp)
 file(GLOB_RECURSE ctrnn ctrnn/src/*.cpp ctrnn/include/*.hpp)
 file(GLOB_RECURSE model model/src/*.cpp model/include/*.hpp)
-file(GLOB_RECURSE simulator simulator/src/*.cpp simulator/include/*.hpp)
+file(GLOB_RECURSE simulator simulator/src/*.cpp simulator/include/simulator/*.hpp)
 file(GLOB_RECURSE neat neat/src/*.cpp neat/include/*.hpp)
 file(GLOB_RECURSE graphics graphics/src/*.cpp graphics/include/*.hpp)
 

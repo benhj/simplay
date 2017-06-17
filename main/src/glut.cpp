@@ -1,12 +1,12 @@
 // Hacky test
 
 #include "Animat.hpp"
-#include "AnimatWorld.hpp"
+#include "simulator/AnimatWorld.hpp"
 
 #include "GLEnvironment.hpp"
 #include "Graphics.hpp"
-#include "CTRNNController.hpp"
-#include "Agent.hpp"
+#include "simulator/CTRNNController.hpp"
+#include "simulator/Agent.hpp"
 #include "neat/Network.hpp"
 
 #include <GLUT/glut.h>

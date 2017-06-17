@@ -1,6 +1,6 @@
 /// Copyright (c) 2017 Ben Jones
 
-#include "Agent.hpp"
+#include "simulator/Agent.hpp"
 
 namespace simulator {
     Agent::Agent(model::Animat & animat, Controller & controller)
