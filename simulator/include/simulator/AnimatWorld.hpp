@@ -5,8 +5,8 @@
 /// For describing a population of animats in a given world.
 /// Responsible for initializing and updating the world.
 
-#include "Animat.hpp"
-#include "AnimatProperties.hpp"
+#include "model/Animat.hpp"
+#include "model/AnimatProperties.hpp"
 #include <vector>
 
 namespace simulator {

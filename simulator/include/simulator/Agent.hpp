@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "Animat.hpp"
 #include "Controller.hpp"
+#include "model/Animat.hpp"
 
 namespace simulator {
 

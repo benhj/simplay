@@ -3,7 +3,7 @@
 #pragma once
 
 #include "PhysicsEngine.hpp"
-#include "Animat.hpp"
+#include "model/Animat.hpp"
 #include "Color.hpp"
 #include <OpenGL/gl.h>
 #include <cmath>

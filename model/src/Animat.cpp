@@ -1,6 +1,6 @@
 /// Copyright (c) 2017 Ben Jones
 
-#include "Animat.hpp"
+#include "model/Animat.hpp"
 #include "Spring.hpp"
 #include "PointMass.hpp"
 #include "Vector3.hpp"

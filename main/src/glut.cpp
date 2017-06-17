@@ -1,6 +1,6 @@
 // Hacky test
 
-#include "Animat.hpp"
+#include "model/Animat.hpp"
 #include "simulator/AnimatWorld.hpp"
 
 #include "GLEnvironment.hpp"

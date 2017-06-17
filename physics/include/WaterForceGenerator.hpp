@@ -1,8 +1,8 @@
 /// Copyright (c) 2017 Ben Jones
 #pragma once
 
+#include "model/AnimatLayer.hpp"
 #include "PhysicsEngine.hpp"
-#include "AnimatLayer.hpp"
 #include "Vector3.hpp"
 
 namespace physics {

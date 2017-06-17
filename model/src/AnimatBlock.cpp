@@ -1,5 +1,6 @@
 /// Copyright (c) 2017 Ben Jones
-#include "AnimatBlock.hpp"
+
+#include "model/AnimatBlock.hpp"
 
 #include <cassert>
 #include <cmath>

@@ -3,7 +3,7 @@
 #pragma once
 #include "Controller.hpp"
 #include "Ctrnn.hpp"
-#include "NeuralSubstrate.hpp"
+#include "model/NeuralSubstrate.hpp"
 #include "neat/Network.hpp"
 #include "neat/Node.hpp"
 #include "neat/Connection.hpp"

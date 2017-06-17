@@ -1,6 +1,6 @@
 /// Copyright (c) 2017 Ben Jones
 
-#include "NeuralSubstrate.hpp"
+#include "model/NeuralSubstrate.hpp"
 
 namespace {
     void createNeuronColumn(int const segmentCount,
