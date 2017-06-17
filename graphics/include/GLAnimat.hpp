@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "PhysicsEngine.hpp"
+#include "physics/PhysicsEngine.hpp"
 #include "model/Animat.hpp"
 #include "Color.hpp"
 #include <OpenGL/gl.h>

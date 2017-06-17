@@ -1,7 +1,7 @@
 /// Copyright (c) 2017 Ben Jones
-#include <math.h>
-#include "Vector3.hpp"
 
+#include "physics/Vector3.hpp"
+#include <math.h>
 
 physics::Vector3 const physics::Vector3::Zero(0.0, 0.0, 0.0);
 physics::Vector3 const physics::Vector3::X_Axis(1.0, 0.0, 0.0);

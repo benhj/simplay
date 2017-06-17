@@ -1,10 +1,12 @@
 /// Copyright (c) 2017 Ben Jones
 #pragma once
 
-#include "PhysicsEngine.hpp"
 #include "AnimatLayer.hpp"
 #include "AnimatBlock.hpp"
-#include "Vector3.hpp"
+
+#include "physics/Vector3.hpp"
+#include "physics/PhysicsEngine.hpp"
+
 #include <vector>
 #include <mutex>
 #include <memory>

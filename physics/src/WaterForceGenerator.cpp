@@ -1,6 +1,6 @@
 /// Copyright (c) 2017 Ben Jones
 
-#include "WaterForceGenerator.hpp"
+#include "physics/WaterForceGenerator.hpp"
 
 namespace physics {
 

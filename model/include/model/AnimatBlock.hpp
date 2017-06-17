@@ -10,8 +10,8 @@
  */
 
 #include "AnimatLayer.hpp"
-#include "PhysicsEngine.hpp"
-#include "Vector3.hpp"
+#include "physics/PhysicsEngine.hpp"
+#include "physics/Vector3.hpp"
 
 namespace model {
 

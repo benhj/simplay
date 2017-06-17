@@ -5,7 +5,7 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 
 # put all source code in one place for convenience
-file(GLOB_RECURSE physics physics/src/*.cpp physics/include/*.hpp)
+file(GLOB_RECURSE physics physics/src/*.cpp physics/include/physics/*.hpp)
 file(GLOB_RECURSE ctrnn ctrnn/src/*.cpp ctrnn/include/*.hpp)
 file(GLOB_RECURSE model model/src/*.cpp model/include/model/*.hpp)
 file(GLOB_RECURSE simulator simulator/src/*.cpp simulator/include/simulator/*.hpp)

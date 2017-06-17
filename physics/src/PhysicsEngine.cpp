@@ -1,8 +1,8 @@
 /// Copyright (c) 2017 Ben Jones
 
-#include "PhysicsEngine.hpp"
-#include "PointMass.hpp"
-#include "Vector3.hpp"
+#include "physics/PhysicsEngine.hpp"
+#include "physics/PointMass.hpp"
+#include "physics/Vector3.hpp"
 
 namespace physics {
 

@@ -1,6 +1,6 @@
 /// Copyright (c) 2017 Ben Jones
 
-#include "PointMass.hpp"
+#include "physics/PointMass.hpp"
 #include <cmath>
 
 namespace physics {

@@ -1,10 +1,10 @@
 /// Copyright (c) 2017 Ben Jones
 
 #include "model/Animat.hpp"
-#include "Spring.hpp"
-#include "PointMass.hpp"
-#include "Vector3.hpp"
-#include "WaterForceGenerator.hpp"
+#include "physics/Spring.hpp"
+#include "physics/PointMass.hpp"
+#include "physics/Vector3.hpp"
+#include "physics/WaterForceGenerator.hpp"
 #include <cmath>
 
 namespace model {
