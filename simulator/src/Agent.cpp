@@ -4,11 +4,19 @@
 #include "simulator/CTRNNController.hpp"
 #include "neat/MutationParameters.hpp"
 
+namespace {
+    int const NEAT_INPUTS = 4;
+    int const NEAT_OUTPUTS = 1;
+    int const MAX_NEAT_NODES = 20;
+}
 
 namespace simulator {
     Agent::Agent(model::Animat & animat)
       : m_animat(animat)
-      , m_neat(4, 1, 20, neat::MutationParameters{0.2, 0.2, 0.2, 0.2}, 6.0)
+      , m_neat(NEAT_INPUTS, 
+               NEAT_OUTPUTS, 
+               MAX_NEAT_NODES, 
+               neat::MutationParameters{0.2, 0.2, 0.2, 0.2}, 6.0)
       , m_controller(std::make_shared<CTRNNController>(animat.getBlockCount(), m_neat))
     {
     }

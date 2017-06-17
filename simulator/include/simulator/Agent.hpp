@@ -22,8 +22,15 @@ namespace simulator {
         int update();
 
       private:
+
+        /// The physical shell of the animat agent  
         model::Animat & m_animat;
+
+        /// The neat network that will encode the 
+        /// connectivity of the controller
         neat::Network m_neat;
+
+        /// Controls the animat agent, it's movements etc.
         std::shared_ptr<Controller> m_controller;
 
     };
