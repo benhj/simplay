@@ -7,16 +7,16 @@
 
 namespace ctrnn {
 
-    class CtrnnNeuron
+    class Neuron
     {
       public:
-        explicit CtrnnNeuron(double const tau);
+        explicit Neuron(double const tau);
         void reset();
 
         void setStartingActivation(double const);
         void setExternalInput(double const input);
 
-        void computeActivation(std::vector<CtrnnNeuron> & otherNeurons, // optimisation
+        void computeActivation(std::vector<Neuron> & otherNeurons, // optimisation
                                std::vector<construct> & connections);
 
         double activation() const;

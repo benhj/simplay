@@ -2,7 +2,7 @@
 
 #pragma once
 #include "Controller.hpp"
-#include "Ctrnn.hpp"
+#include "ctrnn/Network.hpp"
 #include "model/NeuralSubstrate.hpp"
 #include "neat/Network.hpp"
 #include "neat/Node.hpp"
@@ -56,6 +56,6 @@ namespace simulator {
             m_ctrnn.update();
         }
       private:
-        mutable ctrnn::Ctrnn m_ctrnn;
+        mutable ctrnn::Network m_ctrnn;
     };
 }
