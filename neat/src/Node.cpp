@@ -94,7 +94,7 @@ namespace neat {
         }
 
         m_incomingConnections.emplace_back(otherNode, 
-                                           *this, 
+                                           *this,
                                            weightBound, 
                                            mutProb);
     }

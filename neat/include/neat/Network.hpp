@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "neat/MutationParameters.hpp"
 #include <vector>
 
 namespace neat {
@@ -15,9 +16,7 @@ namespace neat {
         Network(int const inputCount, 
                 int const outputCount,
                 int const maxSize,
-                double const nodeAdditionProb,
-                double const nodeFunctionChangeProb,
-                double const weightChangeProb,
+                MutationParameters const & mutationParams,
                 double const weightInitBound);
 
         Network(Network const & other);
@@ -31,11 +30,12 @@ namespace neat {
         int m_inputCount;
         int m_outputCount;
         int m_maxSize;
-        double m_nodeAdditionProb;
-        double m_nodeFunctionChangeProb;
-        double m_weightChangeProb;
+        
+        // Controls the rate at which the network changes
+        MutationParameters m_muts;
         double m_weightInitBound;
         std::vector<Node> m_nodes;
+        std::vector<int> m_outputIDs;
 
         /// Fully connect all inputs to all outputs
         void initNet();
