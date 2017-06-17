@@ -1,7 +1,7 @@
 // Hacky test
 
 #include "model/Animat.hpp"
-#include "simulator/AnimatWorld.hpp"
+#include "model/AnimatWorld.hpp"
 #include "simulator/Agent.hpp"
 
 #include "graphics/GLEnvironment.hpp"
@@ -22,7 +22,7 @@ std::thread testThread;
 
 int blocks = 10;
 int popSize = 150;
-simulator::AnimatWorld animatWorld(popSize,{blocks, 2.0, 3.8611});
+model::AnimatWorld animatWorld(popSize,{blocks, 2.0, 3.8611});
 graphics::GLEnvironment glEnvironment(windowWidth, 
                                       windowHeight, 
                                       animatWorld);

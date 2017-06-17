@@ -1,12 +1,12 @@
 /// Copyright (c) 2017 Ben Jones
 
-#include "simulator/AnimatWorld.hpp"
+#include "model/AnimatWorld.hpp"
 #include "physics/Matrix.hpp"
 #include <cstdlib> // rand
 #include <ctime> // time
 #include <cmath>
 
-namespace simulator {
+namespace model {
     AnimatWorld::AnimatWorld(int const populationSize,
                              model::AnimatProperties const & animatProperties)
       : m_animats()

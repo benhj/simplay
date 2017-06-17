@@ -3,13 +3,14 @@
 #pragma once
 
 #include "Color.hpp"
-#include "simulator/AnimatWorld.hpp"
 #include "GLAnimat.hpp"
 #include "GLCompass.hpp"
 #include "GLAxis.hpp"
 #include "SetScene.hpp"
 #include "WorldToScreen.hpp"
 #include "ThreadRunner.hpp"
+
+#include "model/AnimatWorld.hpp"
 
 #include <OpenGL/gl.h>
 #include <vector>
@@ -22,7 +23,7 @@ namespace graphics {
       public:
         GLEnvironment(int & windowWidth,
                       int & windowHeight,
-                      simulator::AnimatWorld & animatWorld)
+                      model::AnimatWorld & animatWorld)
         : m_windowWidth(windowWidth)
         , m_windowHeight(windowHeight)
         , m_viewDistance(0.4)
@@ -138,7 +139,7 @@ namespace graphics {
         int & m_windowHeight;
         std::atomic<double> m_viewDistance;
         std::atomic<double> m_worldOrientation;
-        simulator::AnimatWorld & m_animatWorld;
+        model::AnimatWorld & m_animatWorld;
         std::vector<graphics::GLAnimat> m_glAnimats;
         Color m_backGoundColour { 209, 220, 235};
         std::atomic<bool> m_displayAxis{true};
