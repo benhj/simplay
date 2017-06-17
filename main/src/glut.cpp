@@ -2,13 +2,13 @@
 
 #include "model/Animat.hpp"
 #include "simulator/AnimatWorld.hpp"
-
-#include "GLEnvironment.hpp"
-#include "Graphics.hpp"
 #include "simulator/CTRNNController.hpp"
 #include "simulator/Agent.hpp"
 #include "neat/Network.hpp"
 #include "neat/MutationParameters.hpp"
+
+#include "graphics/GLEnvironment.hpp"
+#include "graphics/Graphics.hpp"
 
 #include <GLUT/glut.h>
 

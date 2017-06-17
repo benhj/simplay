@@ -10,7 +10,7 @@ file(GLOB_RECURSE ctrnn ctrnn/src/*.cpp ctrnn/include/ctrnn/*.hpp)
 file(GLOB_RECURSE model model/src/*.cpp model/include/model/*.hpp)
 file(GLOB_RECURSE simulator simulator/src/*.cpp simulator/include/simulator/*.hpp)
 file(GLOB_RECURSE neat neat/src/*.cpp neat/include/*.hpp)
-file(GLOB_RECURSE graphics graphics/src/*.cpp graphics/include/*.hpp)
+file(GLOB_RECURSE graphics graphics/src/*.cpp graphics/include/graphics/*.hpp)
 
 # ensure headers in the src folder are compiler-found
 include_directories(physics/include)

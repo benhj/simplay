@@ -1,6 +1,6 @@
 // Copyright (c) 2017 Ben Jones
 
-#include "Graphics.hpp"
+#include "graphics/Graphics.hpp"
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
