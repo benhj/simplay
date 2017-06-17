@@ -3,7 +3,7 @@
 #include "model/Animat.hpp"
 #include "model/AnimatWorld.hpp"
 #include "simulator/Agent.hpp"
-#include "simulator/Simulator.hpp"
+#include "simulator/Simulation.hpp"
 
 #include "graphics/GLEnvironment.hpp"
 #include "graphics/Graphics.hpp"
@@ -20,7 +20,7 @@ int windowWidth = 800;
 int windowHeight = 800;
 int popSize = 150;
 
-simulator::Simulator sim(popSize);
+simulator::Simulation sim(popSize);
 
 model::AnimatWorld & animatWorld = sim.animatWorld();
 graphics::GLEnvironment glEnvironment(windowWidth, 

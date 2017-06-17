@@ -8,10 +8,10 @@
 #include <vector>
 
 namespace simulator {
-    class Simulator
+    class Simulation
     {
       public:
-        Simulator(int const popSize);
+        Simulation(int const popSize);
 
         /// Initializes and starts the main simulation thread
         void start();

@@ -1,10 +1,10 @@
 /// Copyright (c) 2017 Ben Jones
 
-#include "simulator/Simulator.hpp"
+#include "simulator/Simulation.hpp"
 #include <unistd.h>
 
 namespace simulator {
-    Simulator::Simulator(int const popSize)
+    Simulation::Simulation(int const popSize)
     : m_popSize(popSize)
     , m_animatWorld(popSize)
     {
@@ -15,17 +15,17 @@ namespace simulator {
         }
     }
 
-    model::AnimatWorld & Simulator::animatWorld()
+    model::AnimatWorld & Simulation::animatWorld()
     {
         return m_animatWorld;
     }
 
-    void Simulator::start()
+    void Simulation::start()
     {
-        m_simThread = std::thread(&Simulator::loop, this);
+        m_simThread = std::thread(&Simulation::loop, this);
     }
 
-    void Simulator::loop()
+    void Simulation::loop()
     {
         for(int tick = 0; tick < 10000; ++tick) {
             
