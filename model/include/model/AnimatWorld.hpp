@@ -6,15 +6,13 @@
 /// Responsible for initializing and updating the world.
 
 #include "Animat.hpp"
-#include "AnimatProperties.hpp"
 #include <vector>
 
 namespace model {
     class AnimatWorld
     {
        public:
-         AnimatWorld(int const populationSize,
-                     model::AnimatProperties const & animatProperties);
+         AnimatWorld(int const populationSize);
          AnimatWorld() = delete;
 
          /// Randomizes individual placements with bounds

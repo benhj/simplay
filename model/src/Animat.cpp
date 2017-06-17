@@ -9,20 +9,20 @@
 
 namespace model {
 
-    Animat::Animat(int const layers,
-                   double const layerWidth,
-                   double const blockHeight)
-      : m_physicsEngine(layers * 2 /* number of point masses */)
+    Animat::Animat(AnimatProperties const & props)
+      : m_physicsEngine((props.blocks+1) * 2 /* number of point masses */)
       , m_antennaeMutex(std::make_shared<std::mutex>())
       , m_centralPointMutex(std::make_shared<std::mutex>())
       , m_physicsBecameUnstable(false)
     {
-
+        auto const layers = props.blocks + 1;
         m_layers.reserve(layers);
         m_blocks.reserve(layers + 1);
         m_boundingCircles.reserve(layers + 1);
 
         // construct layers
+        auto const layerWidth = props.blockWidth;
+        auto const blockHeight = props.blockHeight;
         auto yOffset = 0;
         auto xOffset = -(layerWidth / 2); // around zero
         for (int layer = 0; layer < layers; ++layer) {

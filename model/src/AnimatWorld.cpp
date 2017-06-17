@@ -7,16 +7,13 @@
 #include <cmath>
 
 namespace model {
-    AnimatWorld::AnimatWorld(int const populationSize,
-                             model::AnimatProperties const & animatProperties)
+    AnimatWorld::AnimatWorld(int const populationSize)
       : m_animats()
     {
         m_animats.reserve(populationSize);
 
         for (int p = 0; p < populationSize; ++p) {
-            m_animats.emplace_back(animatProperties.blocks + 1,
-                                   animatProperties.blockWidth,
-                                   animatProperties.blockHeight);
+            m_animats.push_back(Animat());
         }
 
         // seed random generator for random pop placement

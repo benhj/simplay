@@ -20,9 +20,8 @@ int windowHeight = 800;
 
 std::thread testThread;
 
-int blocks = 10;
 int popSize = 150;
-model::AnimatWorld animatWorld(popSize,{blocks, 2.0, 3.8611});
+model::AnimatWorld animatWorld(popSize);
 graphics::GLEnvironment glEnvironment(windowWidth, 
                                       windowHeight, 
                                       animatWorld);

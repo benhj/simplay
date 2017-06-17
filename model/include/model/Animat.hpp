@@ -3,6 +3,7 @@
 
 #include "AnimatLayer.hpp"
 #include "AnimatBlock.hpp"
+#include "AnimatProperties.hpp"
 
 #include "physics/Vector3.hpp"
 #include "physics/PhysicsEngine.hpp"
@@ -17,9 +18,9 @@ namespace model {
     {
 
       public:
-        Animat(int const layers,
-               double const layerWidth,
-               double const blockHeight);
+        /// Initialize animat with default properties (10 segments
+        /// a with of 2.0 and a height of 3.8611)
+        Animat(AnimatProperties const & props = {10, 2.0, 3.8611});
    
         void applyBlockContraction(int const block, 
                                    int const side, 
