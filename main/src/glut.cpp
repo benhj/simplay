@@ -2,10 +2,7 @@
 
 #include "model/Animat.hpp"
 #include "simulator/AnimatWorld.hpp"
-#include "simulator/CTRNNController.hpp"
 #include "simulator/Agent.hpp"
-#include "neat/Network.hpp"
-#include "neat/MutationParameters.hpp"
 
 #include "graphics/GLEnvironment.hpp"
 #include "graphics/Graphics.hpp"
@@ -32,8 +29,7 @@ graphics::GLEnvironment glEnvironment(windowWidth,
 
 std::unique_ptr<graphics::Graphics> graphix;
 
-std::vector<simulator::CTRNNController> controllers;
-std::vector<neat::Network> neats;
+std::vector<simulator::Agent> agents;
 
 /// GLUT CALLBACKS. N.B. eventually this will change
 /// once I've figured out a nicer graphics lib.
@@ -48,10 +44,10 @@ void loop()
     for(int tick = 0; tick < 10000; ++tick) {
         
         for (int p = 0; p < popSize; ++p) {
-            auto & animat = animatWorld.animat(p);
+            auto & agent = agents[p];
 
             // if physics broke, reinit position in world
-            if(simulator::Agent(animat, controllers[p]).update() == -1) {
+            if(agent.update() == -1) {
                 animatWorld.randomizePositionSingleAnimat(p, 10, 10);
             }
         }
@@ -64,13 +60,10 @@ int main(int argc, char **argv)
 {
 
     animatWorld.randomizePositions(10, 10);
-    neats.reserve(popSize);
+    agents.reserve(popSize);
 
     for(int i = 0;i<popSize;++i){
-
-        neats.emplace_back(4, 1, 20, neat::MutationParameters{0.2, 0.2, 0.2, 0.2}, 6.0);
-        //controllers.push_back(simulator::HardcodedCPGController(4,66, blocks));
-        controllers.push_back(simulator::CTRNNController(blocks, neats[i]));
+        agents.emplace_back(animatWorld.animat(i));
     }
 
     glutInit(&argc, argv); // Initializes glut

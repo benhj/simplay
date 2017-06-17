@@ -4,6 +4,9 @@
 
 #include "Controller.hpp"
 #include "model/Animat.hpp"
+#include "neat/Network.hpp"
+
+#include <memory>
 
 namespace simulator {
 
@@ -12,7 +15,7 @@ namespace simulator {
     class Agent 
     {
       public:
-        Agent(model::Animat & animat, Controller & controller);
+        Agent(model::Animat & animat);
 
         /// Actuate the animat based on control output
         /// Returns 0 on success, -1 if problem
@@ -20,6 +23,8 @@ namespace simulator {
 
       private:
         model::Animat & m_animat;
-        Controller & m_controller;
+        neat::Network m_neat;
+        std::shared_ptr<Controller> m_controller;
+
     };
 }

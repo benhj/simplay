@@ -2,13 +2,12 @@
 
 #pragma once
 
+#include "neat/Connection.hpp"
 #include "neat/MutationParameters.hpp"
+#include "neat/Node.hpp"
 #include <vector>
 
 namespace neat {
-
-    class Node;
-    class Connection;
 
     class Network
     {

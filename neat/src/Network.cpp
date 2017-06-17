@@ -2,9 +2,6 @@
 
 #include "neat/Network.hpp"
 #include "neat/NodeType.hpp"
-#include "neat/Node.hpp"
-#include "neat/Connection.hpp"
-#include "neat/MutationParameters.hpp"
 
 namespace {
     void restoreConnectivity(std::vector<neat::Node> const & oldNodes,
