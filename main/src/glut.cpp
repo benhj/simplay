@@ -3,6 +3,7 @@
 #include "model/Animat.hpp"
 #include "model/AnimatWorld.hpp"
 #include "simulator/Agent.hpp"
+#include "simulator/Simulator.hpp"
 
 #include "graphics/GLEnvironment.hpp"
 #include "graphics/Graphics.hpp"
@@ -17,18 +18,16 @@
 
 int windowWidth = 800;
 int windowHeight = 800;
-
-std::thread testThread;
-
 int popSize = 150;
-model::AnimatWorld animatWorld(popSize);
+
+simulator::Simulator sim(popSize);
+
+model::AnimatWorld & animatWorld = sim.animatWorld();
 graphics::GLEnvironment glEnvironment(windowWidth, 
                                       windowHeight, 
                                       animatWorld);
 
 std::unique_ptr<graphics::Graphics> graphix;
-
-std::vector<simulator::Agent> agents;
 
 /// GLUT CALLBACKS. N.B. eventually this will change
 /// once I've figured out a nicer graphics lib.
@@ -37,33 +36,8 @@ void reshape(int w, int h) { graphix->reshape(w, h); }
 void keyboardHandler(int key, int x, int y) { graphix->keyboardHandler(key, x, y); }
 void passiveMouseFunc(int x, int y) { graphix->passiveMouseFunc(x, y); }
 
-/// Hacky simulation loop. To be pulled into separate class.
-void loop()
-{
-    for(int tick = 0; tick < 10000; ++tick) {
-        
-        for (int p = 0; p < popSize; ++p) {
-            auto & agent = agents[p];
-
-            // if physics broke, reinit position in world
-            if(agent.update() == -1) {
-                animatWorld.randomizePositionSingleAnimat(p, 10, 10);
-            }
-        }
-        usleep(500);
-    }
-}
-
-
 int main(int argc, char **argv)
 {
-
-    animatWorld.randomizePositions(10, 10);
-    agents.reserve(popSize);
-
-    for(int i = 0;i<popSize;++i){
-        agents.emplace_back(animatWorld.animat(i));
-    }
 
     glutInit(&argc, argv); // Initializes glut
 
@@ -89,7 +63,8 @@ int main(int argc, char **argv)
     // GUI agnostics GL calls
     graphix.reset(new graphics::Graphics(glEnvironment));
 
-    testThread = std::thread(loop);
+    // Start the main simulation loop
+    sim.start();
 
     // Starts the program.
     glutMainLoop();
