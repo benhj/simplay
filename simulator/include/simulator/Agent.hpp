@@ -24,6 +24,9 @@ namespace simulator {
         /// Mutates the control mechanism
         void modifyController();
 
+        /// Inherits genome from another agent
+        void inheritNeat(Agent const & other);
+
       private:
 
         /// The physical shell of the animat agent  

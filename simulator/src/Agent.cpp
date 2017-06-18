@@ -44,6 +44,12 @@ namespace simulator {
         return 0;
     }
 
+    void Agent::inheritNeat(Agent const & other)
+    {
+        m_neat = other.m_neat;
+        m_controller->set();
+    }
+
     void Agent::modifyController()
     {
         m_neat.mutate();
