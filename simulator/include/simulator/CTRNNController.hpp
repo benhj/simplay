@@ -15,11 +15,20 @@ namespace simulator {
       public:
         explicit CTRNNController(int const blockCount,
                                  neat::Network & neatNet)
-          : m_ctrnn(blockCount * 4, 10.0)
+          : m_blockCount(blockCount)
+          , m_neatNet(neatNet)
+          , m_ctrnn(blockCount * 4, 10.0)
         {
-            model::NeuralSubstrate neuralSubstrate(blockCount);
+            set();
+        }
 
-            int const nodeCount = blockCount * 4;
+        CTRNNController() = delete;
+
+        void set() override
+        {
+            model::NeuralSubstrate neuralSubstrate(m_blockCount);
+
+            int const nodeCount = m_blockCount * 4;
 
             for(int i = 0 ; i < nodeCount; ++i) {
                 for(int j = 0; j < nodeCount; ++j) {
@@ -28,20 +37,18 @@ namespace simulator {
                         auto iy = neuralSubstrate.getY(i);
                         auto jx = neuralSubstrate.getX(j);
                         auto jy = neuralSubstrate.getY(j);
-                        neatNet.setInput(0, ix);
-                        neatNet.setInput(1, iy);
-                        neatNet.setInput(2, jx);
-                        neatNet.setInput(3, jx);
-                        m_ctrnn.connect(i, j, neatNet.getOutput(0));
+                        m_neatNet.setInput(0, ix);
+                        m_neatNet.setInput(1, iy);
+                        m_neatNet.setInput(2, jx);
+                        m_neatNet.setInput(3, jx);
+                        m_ctrnn.connect(i, j, m_neatNet.getOutput(0));
                     }
                 }
             }
             m_ctrnn.setExternalInput(nodeCount / 2, 1.0);
-            m_ctrnn.setExternalInput(nodeCount - blockCount, 1.0);
+            m_ctrnn.setExternalInput(nodeCount - m_blockCount, 1.0);
             m_ctrnn.update();
         }
-
-        CTRNNController() = delete;
 
         double getLeftMotorOutput(int const i) const override
         {
@@ -56,6 +63,9 @@ namespace simulator {
             m_ctrnn.update();
         }
       private:
+        int const m_blockCount;
+        neat::Network & m_neatNet;
         mutable ctrnn::Network m_ctrnn;
+
     };
 }

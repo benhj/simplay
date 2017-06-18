@@ -11,8 +11,11 @@ namespace {
 
     double const PI = 3.14159265359;
 
-    neat::NodeFunction initNodeFunction()
+    neat::NodeFunction initNodeFunction(neat::NodeType const & nodeType)
     {
+        if(nodeType == neat::NodeType::Input || nodeType == neat::NodeType::Output) {
+            return neat::NodeFunction::HyperbolicTangent;
+        }
         return static_cast<neat::NodeFunction>(rand() % 8);
     }
 
@@ -45,7 +48,7 @@ namespace neat {
       : m_index(index)
       , m_nodeType(nodeType)
       , m_mutationProbability(mutationProbability)
-      , m_nodeFunction(initNodeFunction())
+      , m_nodeFunction(initNodeFunction(nodeType))
       , m_externalInput(0)
     {
     }
@@ -168,10 +171,23 @@ namespace neat {
         return theConnection->weight();
     }
 
+    Connection & Node::getConnectionFrom(int const i)
+    {
+        auto theConnection = std::find_if(std::begin(m_incomingConnections),
+                             std::end(m_incomingConnections),
+                             [i](Connection & con) {
+                                return con.getNodeRefA().getIndex() == i;
+                             });
+        if (theConnection == std::end(m_incomingConnections)) {
+            throw std::logic_error("No connection from node");
+        }
+        return *theConnection;
+    }
+
     void Node::perturbNodeFunction()
     {
         if (((double) rand() / (RAND_MAX)) < m_mutationProbability) {
-            m_nodeFunction = initNodeFunction();
+            m_nodeFunction = initNodeFunction(m_nodeType);
         }
     }
 

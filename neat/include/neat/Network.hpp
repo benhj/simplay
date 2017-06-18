@@ -24,6 +24,9 @@ namespace neat {
         void setInput(int const i, double const value);
         double getOutput(int const i) const;
 
+        /// Mutates the network -- modifies weights, adds connections
+        /// add nodes in place of connections, modifies the node type etc.
+        void mutate();
 
       private:
         int m_inputCount;
@@ -38,6 +41,10 @@ namespace neat {
 
         /// Fully connect all inputs to all outputs
         void initNet();
+
+        /// Loops over all connections going into output and
+        /// calls addNodeInPlaceOf if mutation probability satisfied
+        void addNewNodes();
 
         /// Add a node in place of connection. That is
         /// A--->B becomes A--->C--->B

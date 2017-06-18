@@ -2,6 +2,7 @@
 
 #include "neat/Network.hpp"
 #include "neat/NodeType.hpp"
+#include <cstdlib>
 
 namespace {
     void restoreConnectivity(std::vector<neat::Node> const & oldNodes,
@@ -114,6 +115,28 @@ namespace neat {
         return m_nodes[outputIndex].getOutput();
     }
 
+    void Network::addNewNodes()
+    {
+        // Ouput ID (the node index within the array of nodes)
+        // will always be inputNodeCount + outputNodeCount
+        for(int j = 0 ; j < m_outputCount ; ++j) {
+            auto const outputID = m_inputCount + j;
+            auto & node = m_nodes[outputID];
+            for(int i = 0 ; i < m_nodes.size(); ++i) {
+                if(i == outputID) {
+                    continue;
+                }
+                if(node.hasConnectionFrom(i)) {
+                    if (((double) rand() / (RAND_MAX)) < m_muts.nodeAdditionProb) {
+                        auto & connection = node.getConnectionFrom(i);
+                        addNodeInPlaceOf(connection);
+                    }
+                }
+            }
+        }
+        
+    }
+
     void Network::addNodeInPlaceOf(Connection & con)
     {
         // Create a new node but only if number of nodes
@@ -148,5 +171,11 @@ namespace neat {
         for(auto i = m_inputCount; i < m_nodes.size(); ++i) {
             m_nodes[i].perturbIncomingWeights(byAmount);
         }
+    }
+
+    void Network::mutate()
+    {
+        addNewNodes();
+        perturbWeights(m_weightInitBound / 5.0);
     }
 }

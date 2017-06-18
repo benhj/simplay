@@ -43,4 +43,10 @@ namespace simulator {
         m_controller->update();
         return 0;
     }
+
+    void Agent::modifyController()
+    {
+        m_neat.mutate();
+        m_controller->set();
+    }
 }

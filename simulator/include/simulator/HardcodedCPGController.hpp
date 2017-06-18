@@ -64,6 +64,9 @@ namespace simulator {
             }
             ++counter;
         }
+
+        void set() override {}
+
       private:
         int m_phaseOffset;
         int m_waveLength;

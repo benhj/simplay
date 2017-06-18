@@ -21,6 +21,9 @@ namespace simulator {
         /// Returns 0 on success, -1 if problem
         int update();
 
+        /// Mutates the control mechanism
+        void modifyController();
+
       private:
 
         /// The physical shell of the animat agent  

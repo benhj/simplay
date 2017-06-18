@@ -20,5 +20,9 @@ namespace simulator {
         {
 
         }
+        void set() override
+        {
+            
+        }
     };
 }

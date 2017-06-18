@@ -36,6 +36,12 @@ namespace simulator {
                 if(agent.update() == -1) {
                     m_animatWorld.randomizePositionSingleAnimat(p, 10, 10);
                 }
+
+                /// How often to 'mutate the controllers'
+                if(tick % 100 == 0 && tick > 0) {
+                    agent.modifyController();
+                }
+
             }
             usleep(500);
         }
