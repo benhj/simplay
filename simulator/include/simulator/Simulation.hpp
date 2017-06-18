@@ -35,6 +35,9 @@ namespace simulator {
         void loop();
 
         /// update the agents based on some optimiation process
-        void doOptimizations(int const tick);
+        void doOptimizations(long const tick);
+
+        /// Regenerate the population based on distances travelled
+        void regeneratePopulation();
     };
 }

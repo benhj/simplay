@@ -18,7 +18,7 @@
 
 int windowWidth = 800;
 int windowHeight = 800;
-int popSize = 150;
+int popSize = 50;
 
 simulator::Simulation sim(popSize);
 

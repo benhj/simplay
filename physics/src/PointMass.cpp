@@ -45,8 +45,18 @@ namespace physics {
         m_velocity.m_vec[2] = 0;
         {
             std::lock_guard<std::mutex> lg(*m_positionMutex);
-            m_position += m_velocity * dt;
-            m_position.m_vec[2] = 0;
+            auto pos = m_position;
+            pos += m_velocity * dt;
+            pos.m_vec[2] = 0;
+            auto isnan = false;
+            if (!isnan)isnan = (std::isnan(pos.m_vec[0])||std::isinf(pos.m_vec[0]));
+            if (!isnan)isnan = (std::isnan(pos.m_vec[1])||std::isinf(pos.m_vec[1]));
+            if (!isnan)isnan = (std::isnan(pos.m_vec[2])||std::isinf(pos.m_vec[2]));
+            if (!isnan) {
+                m_position = pos;
+            } else {
+                std::cout<<"isnan!!"<<std::endl;
+            }
         }
         m_acceleration.toZero();
         m_forceAccum.toZero();
@@ -92,7 +102,13 @@ namespace physics {
 
     void PointMass::setAcceleration(Vector3 const & acc)
     {
-        m_acceleration = acc;
+        bool isnan=false;
+        if (!isnan)isnan = (std::isnan(acc.m_vec[0])||std::isinf(acc.m_vec[0]));
+        if (!isnan)isnan = (std::isnan(acc.m_vec[1])||std::isinf(acc.m_vec[1]));
+        if (!isnan)isnan = (std::isnan(acc.m_vec[2])||std::isinf(acc.m_vec[2]));
+        if (!isnan) {
+            m_acceleration = acc;
+        }
         m_acceleration.m_vec[2] = 0;
     }
 

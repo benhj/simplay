@@ -15,8 +15,10 @@ namespace {
     {
         if(nodeType == neat::NodeType::Input || nodeType == neat::NodeType::Output) {
             return neat::NodeFunction::HyperbolicTangent;
+        } else {
+            return neat::NodeFunction::Gaussian;
         }
-        return static_cast<neat::NodeFunction>(rand() % 8);
+        //return static_cast<neat::NodeFunction>(rand() % 8);
     }
 
     double applyNodeFunction(neat::NodeFunction const & nodeFunction, double const in)

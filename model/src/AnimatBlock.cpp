@@ -21,7 +21,7 @@ namespace model {
         auto const layerTwoRightVertIndex = m_layerTwo.getIndexRight();
 
         auto constantB = 300;
-        auto dampener = 3.0;
+        auto dampener = 0.4;
 
         // create springs between point masses ('X')
         m_leftSpringIndex =

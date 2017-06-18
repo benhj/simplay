@@ -54,6 +54,11 @@ namespace neat {
         /// are perturbed byAmount if probability satisfied
         /// by rate stored in actual connection object.
         void perturbWeights(double const byAmount);
+
+        /// Adds a new connection from an unconnected input node 
+        /// to a newly added hidden node
+        void addConnectionToHiddenNode();
+
     };
 
 }

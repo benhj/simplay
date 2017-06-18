@@ -22,7 +22,7 @@ namespace model {
         physics::Vector3 vLeft(xOffset, yOffset, 0);
         physics::Vector3 vRight(xOffset + width, yOffset, 0);
         auto constant = 100;
-        auto dampener = 3.0;
+        auto dampener = 0.9;
         m_indexLeft = physicsEngine.addPointMass(vLeft, 10 /* mass */, false /* not fixed */);
         m_indexRight = physicsEngine.addPointMass(vRight, 10 /* mass */, false /* not fixed */);
         physicsEngine.createSpring(m_indexLeft, m_indexRight, constant, dampener);

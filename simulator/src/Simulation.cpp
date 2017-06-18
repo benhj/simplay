@@ -2,6 +2,7 @@
 
 #include "simulator/Simulation.hpp"
 #include <unistd.h>
+#include <algorithm>
 
 namespace simulator {
     Simulation::Simulation(int const popSize)
@@ -27,7 +28,8 @@ namespace simulator {
 
     void Simulation::loop()
     {
-        for(int tick = 0; tick < 10000; ++tick) {
+        long tick = 0;
+        while(true) {
             
             for (int p = 0; p < m_popSize; ++p) {
                 auto & agent = m_agents[p];
@@ -39,18 +41,62 @@ namespace simulator {
             }
             doOptimizations(tick);
             usleep(500);
+            ++tick;
         }
     }
 
-    void Simulation::doOptimizations(int const tick)
+    void Simulation::regeneratePopulation()
+    {
+        // store all fitness values
+        std::vector<std::pair<int, double> > fitnesses;
+        fitnesses.reserve(m_popSize);
+        auto i = 0;
+        for (auto const & agent : m_agents) {
+            auto dm = agent.distanceMoved();
+            if(dm>50)dm=-1;
+            fitnesses.emplace_back(i, dm);
+            ++i;
+        }
+
+        // sort according to fitness
+        std::sort(std::begin(fitnesses), std::end(fitnesses),
+                  [](std::pair<int, double> const & a,
+                     std::pair<int, double> const & b) {
+                      return b.second < a.second;
+                  });
+
+        for(auto const & f : fitnesses) {
+            std::cout<<f.second<<std::endl;
+        }
+
+        // pick the top 10 and regen rest of population out of those
+        i = 0;
+        for (auto & agent : m_agents) {
+
+            // inherit neat genome from fit agent
+            agent.inheritNeat(m_agents[fitnesses[i].first]);
+
+            // mutate inherited genome
+            agent.modifyController(); 
+            ++i;
+            if (i == 10) {
+                i = 0;
+            }
+        }
+
+    }
+
+    void Simulation::doOptimizations(long const tick)
     {
         /// How often to 'mutate the controllers'
-        if(tick % 250 == 0 && tick > 0) {
+        if(tick % 100 == 0 && tick > 0) {
 
             // record distances travelled for each agent
             for (auto & agent : m_agents) {
                 agent.recordDistanceMoved();
             }
+
+            regeneratePopulation();
 
             m_animatWorld.randomizePositions(10, 10);
 

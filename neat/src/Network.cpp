@@ -14,7 +14,7 @@ namespace {
             for (auto j = 0; j < oldNodes.size(); ++j) {
                 if (i == j) { continue; }
                 if (oldNodes[j].hasConnectionFrom(i)) {
-                    auto const weight = oldNodes[i].getConnectionWeightFrom(i);
+                    auto const weight = oldNodes[j].getConnectionWeightFrom(i);
                     newNodes[j].addIncomingConnectionFrom(newNodes[i], 
                                                           weightInitBound,
                                                           weightChangeProb,
@@ -173,9 +173,29 @@ namespace neat {
         }
     }
 
+    void Network::addConnectionToHiddenNode()
+    {
+        auto it = std::begin(m_nodes) + m_inputCount + m_outputCount;
+        if (it != std::end(m_nodes)) {
+            for(; it != std::end(m_nodes); ++it) {
+                for (int i = 0; i < m_inputCount; ++i) {
+                    if(!it->hasConnectionFrom(i)) {
+                        if (((double) rand() / (RAND_MAX)) < m_muts.connectionAdditionProb) {
+                            it->addIncomingConnectionFrom(m_nodes[i], 
+                                                          m_weightInitBound,
+                                                          m_muts.weightChangeProb);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
     void Network::mutate()
     {
         addNewNodes();
-        perturbWeights(m_weightInitBound / 5.0);
+        perturbWeights(m_weightInitBound / 2.0);
+        addConnectionToHiddenNode();
     }
 }
