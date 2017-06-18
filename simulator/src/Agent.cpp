@@ -68,4 +68,9 @@ namespace simulator {
     {
         m_endPosition = m_animat.getCentralPoint().first;
     }
+
+    double Agent::distanceMoved() const
+    {
+        return m_endPosition.distance(m_startPosition);
+    }
 }

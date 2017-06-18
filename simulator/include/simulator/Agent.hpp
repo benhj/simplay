@@ -32,6 +32,9 @@ namespace simulator {
         void recordStartPosition();
         void recordEndPosition();
 
+        /// use start and end point to compute distance moved
+        double distanceMoved() const;
+
       private:
 
         /// The physical shell of the animat agent  
