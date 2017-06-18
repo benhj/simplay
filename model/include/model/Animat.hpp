@@ -64,6 +64,9 @@ namespace model {
         /// Indicates if physics broke
         bool broke() const;
 
+        /// To reset the animat structure after bad physics
+        void resetAnimatStructure();
+
       private:
         std::vector<AnimatLayer> m_layers;
         std::vector<AnimatBlock> m_blocks;
@@ -93,9 +96,6 @@ namespace model {
         /// When the animat's physics have become so unstable
         /// that it needs resetting
         bool totallyBuggered() const;
-
-        /// To reset the animat structure after bad physics
-        void resetAnimatStructure();
 
     };
 }

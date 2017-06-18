@@ -49,6 +49,7 @@ namespace model {
                                          double const boundY)
     {
         for (auto i = 0; i < m_animats.size(); ++i) {
+            m_animats[i].resetAnimatStructure();
             doRandomizePosition(i, boundX, boundY);
             while (nearAnotherAnimat(i)) {
                 doRandomizePosition(i, boundX, boundY);
