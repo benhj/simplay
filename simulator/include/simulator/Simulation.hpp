@@ -33,5 +33,8 @@ namespace simulator {
 
         /// The simulation loop that runs in thread
         void loop();
+
+        /// update the agents based on some optimiation process
+        void doOptimizations(int const tick);
     };
 }

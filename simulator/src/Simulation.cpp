@@ -37,22 +37,27 @@ namespace simulator {
                     m_animatWorld.randomizePositionSingleAnimat(p, 10, 10);
                 }
             }
-            /// How often to 'mutate the controllers'
-            if(tick % 250 == 0 && tick > 0) {
-
-                // record distances travelled for each agent
-                for (auto & agent : m_agents) {
-                    agent.recordDistanceMoved();
-                }
-
-                m_animatWorld.randomizePositions(10, 10);
-
-                // set agent starting positions
-                for (auto & agent : m_agents) {
-                    agent.recordStartPosition();
-                }
-            }
+            doOptimizations(tick);
             usleep(500);
+        }
+    }
+
+    void Simulation::doOptimizations(int const tick)
+    {
+        /// How often to 'mutate the controllers'
+        if(tick % 250 == 0 && tick > 0) {
+
+            // record distances travelled for each agent
+            for (auto & agent : m_agents) {
+                agent.recordDistanceMoved();
+            }
+
+            m_animatWorld.randomizePositions(10, 10);
+
+            // set agent starting positions
+            for (auto & agent : m_agents) {
+                agent.recordStartPosition();
+            }
         }
     }
 
