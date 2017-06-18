@@ -28,9 +28,10 @@ namespace simulator {
         /// Inherits genome from another agent
         void inheritNeat(Agent const & other);
 
-        /// Set the current cetral starting/ending points
+        /// Set the current central starting
         void recordStartPosition();
-        void recordEndPosition();
+
+        void recordDistanceMoved();
 
         /// use start and end point to compute distance moved
         double distanceMoved() const;
@@ -50,8 +51,7 @@ namespace simulator {
         /// stores start position to compute distance travelled
         physics::Vector3 m_startPosition;
 
-        /// stores end position to compute distance travelled
-        physics::Vector3 m_endPosition;
+        double m_distanceMoved;
 
     };
 }

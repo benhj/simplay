@@ -21,6 +21,7 @@ namespace simulator {
                NEAT_MUTS,
                NEAT_WEIGHT_BOUND)
       , m_controller(std::make_shared<CTRNNController>(animat.getBlockCount(), m_neat))
+      , m_distanceMoved(0)
     {
         // set where the animat currently is in the world
         // will be used as a basis for computing distance moved
@@ -64,13 +65,13 @@ namespace simulator {
         m_startPosition = m_animat.getCentralPoint().first;
     }
 
-    void Agent::recordEndPosition()
+    void Agent::recordDistanceMoved() 
     {
-        m_endPosition = m_animat.getCentralPoint().first;
+        m_distanceMoved = (m_animat.getCentralPoint().first).distance(m_startPosition);
     }
 
     double Agent::distanceMoved() const
     {
-        return m_endPosition.distance(m_startPosition);
+        return m_distanceMoved;
     }
 }

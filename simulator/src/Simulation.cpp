@@ -39,7 +39,18 @@ namespace simulator {
             }
             /// How often to 'mutate the controllers'
             if(tick % 250 == 0 && tick > 0) {
+
+                // record distances travelled for each agent
+                for (auto & agent : m_agents) {
+                    agent.recordDistanceMoved();
+                }
+
                 m_animatWorld.randomizePositions(10, 10);
+
+                // set agent starting positions
+                for (auto & agent : m_agents) {
+                    agent.recordStartPosition();
+                }
             }
             usleep(500);
         }
