@@ -5,6 +5,7 @@
 #include "Controller.hpp"
 #include "model/Animat.hpp"
 #include "neat/Network.hpp"
+#include "physics/Vector3.hpp"
 
 #include <memory>
 
@@ -27,6 +28,10 @@ namespace simulator {
         /// Inherits genome from another agent
         void inheritNeat(Agent const & other);
 
+        /// Set the current cetral starting/ending points
+        void recordStartPosition();
+        void recordEndPosition();
+
       private:
 
         /// The physical shell of the animat agent  
@@ -38,6 +43,12 @@ namespace simulator {
 
         /// Controls the animat agent, it's movements etc.
         std::shared_ptr<Controller> m_controller;
+
+        /// stores start position to compute distance travelled
+        physics::Vector3 m_startPosition;
+
+        /// stores end position to compute distance travelled
+        physics::Vector3 m_endPosition;
 
     };
 }
