@@ -264,9 +264,8 @@ namespace model {
         std::lock_guard<std::mutex> lg(*m_centralPointMutex);
         auto isnan = false;
         auto & point = m_centralPoint.first;
-        if (!isnan)isnan = (std::isnan(point.m_vec[0])||std::isinf(point.m_vec[0]));
-        if (!isnan)isnan = (std::isnan(point.m_vec[1])||std::isinf(point.m_vec[1]));
-        if (!isnan)isnan = (std::isnan(point.m_vec[2])||std::isinf(point.m_vec[2]));
+        if (!isnan)isnan = (std::isnan(point.m_vec[0])||std::isinf(point.m_vec[0]) || (std::abs(point.m_vec[0])>500));
+        if (!isnan)isnan = (std::isnan(point.m_vec[1])||std::isinf(point.m_vec[1]) || (std::abs(point.m_vec[1])>500));
         return isnan;
     }
 
@@ -280,7 +279,7 @@ namespace model {
     bool Animat::broke() const
     {
         auto const rem = m_physicsBecameUnstable;
-        return m_physicsBecameUnstable;
+        m_physicsBecameUnstable = false;
         return rem;
     }
 }

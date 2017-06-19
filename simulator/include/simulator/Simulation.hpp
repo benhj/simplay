@@ -34,10 +34,18 @@ namespace simulator {
         /// The simulation loop that runs in thread
         void loop();
 
+        /// Called by doLoop and when stabilizing the physics model
+        void doLoop(long const tick, 
+                    int const everyN = 100, 
+                    bool const withMutations = true);
+
         /// update the agents based on some optimiation process
-        void doOptimizations(long const tick);
+        void doOptimizations(long const tick, 
+                             int const everyN = 100,
+                             bool const withMutations = true);
 
         /// Regenerate the population based on distances travelled
-        void regeneratePopulation();
+        /// with some offspring updated if withMutations is true
+        void regeneratePopulation(bool const withMutations = true);
     };
 }

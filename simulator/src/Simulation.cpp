@@ -23,29 +23,51 @@ namespace simulator {
 
     void Simulation::start()
     {
+        // stabilise
+        // std::cout<<"Stabilizing.."<<std::endl;
+        // long tick = 0;
+        // while(tick < 3000) {
+        //     doLoop(tick, 100, false);
+        //     ++tick;
+        // }
+        // std::cout<<"\nStabilized.."<<std::endl;
+
+        // m_animatWorld.randomizePositions(10, 10);
+        // for (auto & agent : m_agents) {
+        //     agent.recordStartPosition();
+        // }
+
+        // run simulation proper
         m_simThread = std::thread(&Simulation::loop, this);
+    }
+
+    void Simulation::doLoop(long const tick, 
+                            int const everyN, 
+                            bool const withMutations)
+    {
+        for (int p = 0; p < m_popSize; ++p) {
+            auto & agent = m_agents[p];
+
+            // if physics broke, reinit position in world
+            if(agent.update() == -1) {
+                m_animatWorld.randomizePositionSingleAnimat(p, 10, 10);
+                agent.recordStartPosition();
+            }
+        }
+        doOptimizations(tick, everyN, withMutations);
     }
 
     void Simulation::loop()
     {
         long tick = 0;
         while(true) {
-            
-            for (int p = 0; p < m_popSize; ++p) {
-                auto & agent = m_agents[p];
-
-                // if physics broke, reinit position in world
-                if(agent.update() == -1) {
-                    m_animatWorld.randomizePositionSingleAnimat(p, 10, 10);
-                }
-            }
-            doOptimizations(tick);
+            doLoop(tick, 500);
             usleep(500);
             ++tick;
         }
     }
 
-    void Simulation::regeneratePopulation()
+    void Simulation::regeneratePopulation(bool const withMutations)
     {
         // store all fitness values
         std::vector<std::pair<int, double> > fitnesses;
@@ -53,7 +75,7 @@ namespace simulator {
         auto i = 0;
         for (auto const & agent : m_agents) {
             auto dm = agent.distanceMoved();
-            if(dm>50)dm=-1;
+            if(dm>200)dm=-1;
             fitnesses.emplace_back(i, dm);
             ++i;
         }
@@ -65,38 +87,44 @@ namespace simulator {
                       return b.second < a.second;
                   });
 
-        for(auto const & f : fitnesses) {
-            std::cout<<f.second<<std::endl;
-        }
+        // for(auto const & f : fitnesses) {
+        //     std::cout<<f.second<<std::endl;
+        //}
 
-        // pick the top 10 and regen rest of population out of those
+        // pick the top m_popSize/10 and regen rest of population out of those
         i = 0;
         for (auto & agent : m_agents) {
 
             // inherit neat genome from fit agent
-            agent.inheritNeat(m_agents[fitnesses[i].first]);
+            if (i != fitnesses[i].first) {
+                agent.inheritNeat(m_agents[fitnesses[i].first]);
 
-            // mutate inherited genome
-            agent.modifyController(); 
-            ++i;
-            if (i == 10) {
-                i = 0;
+                // mutate inherited genome
+                if(withMutations) {
+                    agent.modifyController();
+                }
+                ++i;
+                if (i == (m_popSize/10)) {
+                    i = 0;
+                }
             }
         }
 
     }
 
-    void Simulation::doOptimizations(long const tick)
+    void Simulation::doOptimizations(long const tick, 
+                                     int const everyN, 
+                                     bool const withMutations)
     {
         /// How often to 'mutate the controllers'
-        if(tick % 100 == 0 && tick > 0) {
+        if(tick % everyN == 0 && tick > 0) {
 
             // record distances travelled for each agent
             for (auto & agent : m_agents) {
                 agent.recordDistanceMoved();
             }
 
-            regeneratePopulation();
+            regeneratePopulation(withMutations);
 
             m_animatWorld.randomizePositions(10, 10);
 

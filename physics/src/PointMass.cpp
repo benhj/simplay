@@ -54,8 +54,6 @@ namespace physics {
             if (!isnan)isnan = (std::isnan(pos.m_vec[2])||std::isinf(pos.m_vec[2]));
             if (!isnan) {
                 m_position = pos;
-            } else {
-                std::cout<<"isnan!!"<<std::endl;
             }
         }
         m_acceleration.toZero();
