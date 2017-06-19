@@ -36,6 +36,8 @@ namespace simulator {
         /// use start and end point to compute distance moved
         double distanceMoved() const;
 
+        void resetController();
+
       private:
 
         /// The physical shell of the animat agent  

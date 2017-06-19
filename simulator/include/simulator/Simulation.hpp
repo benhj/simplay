@@ -31,6 +31,9 @@ namespace simulator {
         /// The agents to be simulated
         std::vector<simulator::Agent> m_agents;
 
+        /// The index of the elite agent
+        int m_eliteIndex;
+
         /// The simulation loop that runs in thread
         void loop();
 

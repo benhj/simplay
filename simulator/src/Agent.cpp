@@ -57,7 +57,12 @@ namespace simulator {
     void Agent::modifyController()
     {
         m_neat.mutate();
-        m_controller->set();
+    }
+
+    void Agent::resetController()
+    {
+        m_controller.reset();
+        m_controller = std::make_shared<CTRNNController>(m_animat.getBlockCount(), m_neat);
     }
 
     void Agent::recordStartPosition()

@@ -8,6 +8,7 @@ namespace simulator {
     Simulation::Simulation(int const popSize)
     : m_popSize(popSize)
     , m_animatWorld(popSize)
+    , m_eliteIndex(0)
     {
         m_animatWorld.randomizePositions(10, 10);
         m_agents.reserve(popSize);
@@ -52,6 +53,10 @@ namespace simulator {
             if(agent.update() == -1) {
                 m_animatWorld.randomizePositionSingleAnimat(p, 10, 10);
                 agent.recordStartPosition();
+                agent.resetController();
+
+                // give animat a fitter genome, the elite one in fact
+                agent.inheritNeat(m_agents[m_eliteIndex]);
             }
         }
         doOptimizations(tick, everyN, withMutations);
@@ -75,7 +80,6 @@ namespace simulator {
         auto i = 0;
         for (auto const & agent : m_agents) {
             auto dm = agent.distanceMoved();
-            if(dm>200)dm=-1;
             fitnesses.emplace_back(i, dm);
             ++i;
         }
@@ -87,9 +91,12 @@ namespace simulator {
                       return b.second < a.second;
                   });
 
-        // for(auto const & f : fitnesses) {
-        //     std::cout<<f.second<<std::endl;
-        //}
+        // Store index of the fittest to replace broken agents
+        m_eliteIndex = fitnesses[0].first;
+
+        for(auto const & f : fitnesses) {
+            std::cout<<f.second<<std::endl;
+        }
 
         // pick the top m_popSize/10 and regen rest of population out of those
         i = 0;
@@ -102,11 +109,13 @@ namespace simulator {
                 // mutate inherited genome
                 if(withMutations) {
                     agent.modifyController();
-                }
-                ++i;
-                if (i == (m_popSize/10)) {
-                    i = 0;
-                }
+                }  
+            }
+            // put controller back in basal state
+            agent.resetController();
+            ++i;
+            if (i == (m_popSize/10)) {
+                i = 0;
             }
         }
 

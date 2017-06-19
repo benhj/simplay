@@ -17,7 +17,7 @@ namespace simulator {
                                  neat::Network & neatNet)
           : m_blockCount(blockCount)
           , m_neatNet(neatNet)
-          , m_ctrnn(blockCount * 4, 10.0)
+          , m_ctrnn(blockCount * 4, 15.0)
         {
             set();
         }
@@ -40,7 +40,7 @@ namespace simulator {
                         m_neatNet.setInput(0, ix);
                         m_neatNet.setInput(1, iy);
                         m_neatNet.setInput(2, jx);
-                        m_neatNet.setInput(3, jx);
+                        m_neatNet.setInput(3, jy);
                         m_ctrnn.connect(i, j, m_neatNet.getOutput(0));
                     }
                 }
