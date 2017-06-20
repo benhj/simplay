@@ -46,7 +46,7 @@ namespace graphics {
         {
             detail::setColor(m_basicColor);
             drawBody();
-            drawAntennae();
+            //drawAntennae();
             drawBoundingCircles();
             if (*m_highlighted) {
                 drawBigBoundingCircle();

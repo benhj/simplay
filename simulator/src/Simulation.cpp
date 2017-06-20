@@ -4,6 +4,28 @@
 #include <unistd.h>
 #include <algorithm>
 
+namespace {
+    using FitnessPair = std::pair<int, double>;
+    bool 
+    iIsIndexedInTopN(int const i,
+                     int const N,
+                     std::vector<FitnessPair> const & v) 
+    {
+        auto begin = std::begin(v);
+        auto const end = std::begin(v) + N;
+        // auto found = std::find_if(begin, end, 
+        //                           [i](FitnessPair const & fp) {
+        //                               return i == fp.first;
+        //                           });
+        for(; begin != end; ++begin) {
+            if(i == begin->first) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
 namespace simulator {
     Simulation::Simulation(int const popSize)
     : m_popSize(popSize)
@@ -24,20 +46,6 @@ namespace simulator {
 
     void Simulation::start()
     {
-        // stabilise
-        // std::cout<<"Stabilizing.."<<std::endl;
-        // long tick = 0;
-        // while(tick < 3000) {
-        //     doLoop(tick, 100, false);
-        //     ++tick;
-        // }
-        // std::cout<<"\nStabilized.."<<std::endl;
-
-        // m_animatWorld.randomizePositions(10, 10);
-        // for (auto & agent : m_agents) {
-        //     agent.recordStartPosition();
-        // }
-
         // run simulation proper
         m_simThread = std::thread(&Simulation::loop, this);
     }
@@ -75,9 +83,9 @@ namespace simulator {
     void Simulation::regeneratePopulation(bool const withMutations)
     {
         // store all fitness values
-        std::vector<std::pair<int, double> > fitnesses;
+        std::vector<FitnessPair> fitnesses;
         fitnesses.reserve(m_popSize);
-        auto i = 0;
+        int i = 0;
         for (auto const & agent : m_agents) {
             auto dm = agent.distanceMoved();
             fitnesses.emplace_back(i, dm);
@@ -86,37 +94,40 @@ namespace simulator {
 
         // sort according to fitness
         std::sort(std::begin(fitnesses), std::end(fitnesses),
-                  [](std::pair<int, double> const & a,
-                     std::pair<int, double> const & b) {
+                  [](FitnessPair const & a,
+                     FitnessPair const & b) {
                       return b.second < a.second;
                   });
 
         // Store index of the fittest to replace broken agents
         m_eliteIndex = fitnesses[0].first;
-
-        for(auto const & f : fitnesses) {
-            std::cout<<f.second<<std::endl;
-        }
+        std::cout<<m_eliteIndex<<"\t"<<m_agents[m_eliteIndex].distanceMoved()<<std::endl;
 
         // pick the top m_popSize/10 and regen rest of population out of those
         i = 0;
+        int pick = 0;
         for (auto & agent : m_agents) {
 
-            // inherit neat genome from fit agent
-            if (i != fitnesses[i].first) {
-                agent.inheritNeat(m_agents[fitnesses[i].first]);
+            // inherit neat genome from fit agent, but only if
+            // the inheritee isn't elite
+            if (!iIsIndexedInTopN(i, m_popSize / 10, fitnesses)) {
+                agent.inheritNeat(m_agents[fitnesses[pick].first]);
 
                 // mutate inherited genome
                 if(withMutations) {
                     agent.modifyController();
                 }  
+
+                ++pick;
+
+                if(pick == m_popSize / 10) {
+                    pick = 0;
+                }
+
             }
             // put controller back in basal state
             agent.resetController();
             ++i;
-            if (i == (m_popSize/10)) {
-                i = 0;
-            }
         }
 
     }

@@ -52,6 +52,7 @@ namespace neat {
       , m_nodeFunction(initNodeFunction(nodeType))
       , m_externalInput(0)
     {
+        m_incomingConnections.reserve(50);
     }
 
     Node::Node(Node const & other)
@@ -76,6 +77,7 @@ namespace neat {
         m_nodeFunction = other.m_nodeFunction;
         m_externalInput = other.m_externalInput;
         m_incomingConnections.clear();
+        m_incomingConnections.reserve(50);
         return *this;
     }
 

@@ -7,9 +7,9 @@
 namespace {
     int const NEAT_INPUTS = 4;
     int const NEAT_OUTPUTS = 1;
-    int const MAX_NEAT_NODES = 20;
+    int const MAX_NEAT_NODES = 40;
     double const NEAT_WEIGHT_BOUND = 6.0;
-    neat::MutationParameters NEAT_MUTS{0.1, 0.005, 0.1, 0.2};
+    neat::MutationParameters NEAT_MUTS{0.1, 0.1, 0.1, 0.1};
 }
 
 namespace simulator {

@@ -194,8 +194,8 @@ namespace neat {
 
     void Network::mutate()
     {
-        addNewNodes();
-        perturbWeights(m_weightInitBound / 2.0);
+        perturbWeights(m_weightInitBound / 4.0);
         addConnectionToHiddenNode();
+        addNewNodes();
     }
 }
