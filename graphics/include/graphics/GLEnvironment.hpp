@@ -82,8 +82,8 @@ namespace graphics {
                 auto & animat = m_animatWorld.animat(p);
                 auto centralPoint = animat.getCentralPoint();
                 auto & pos = centralPoint.first;
-                auto cx = pos.m_vec[0] + centralPoint.second;
-                auto cy = pos.m_vec[1] + centralPoint.second;
+                auto cx = pos.m_vec[0];
+                auto cy = pos.m_vec[1];
                 double sx, sy;
                 detail::worldToScreen(cx, -cy, sx, sy);
                 auto diffX = (sx - (x + 10));
@@ -134,6 +134,7 @@ namespace graphics {
         {
             m_windowWidth = width;
             m_windowHeight = height;
+            detail::setScene(width, height, m_viewDistance, m_worldOrientation);
         }
 
       private:
