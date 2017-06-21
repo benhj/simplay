@@ -103,5 +103,14 @@ namespace graphics {
         // happen here is disabling the compass
         m_glEnviro.compassOff();
     }
+
+    void Graphics::clickHandler(int const button, 
+                                int const action, 
+                                int const mods)
+    {
+        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+            m_glEnviro.selectAnimat();
+        }
+    }
 }
 

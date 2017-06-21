@@ -30,7 +30,7 @@ namespace graphics {
             detail::setScene(m_windowWidth, m_windowHeight, 1, 0);
             glPushMatrix();
             glLoadIdentity();
-            glTranslatef(m_windowWidth / 2.5, m_windowHeight / 2.5, 0);
+            glTranslatef(m_windowWidth / 2.5, m_windowHeight / 3.0, 0);
             glRotatef(m_angle, 0.0, 0.0, 1.0);
             auto const rad = 50.0;
 

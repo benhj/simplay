@@ -77,17 +77,22 @@ namespace graphics {
 
         void checkForAnimatHighlight(double const x, double const y)
         {
+            /// Hacky as fuck. Nevertheless, does the trick!
             for (int p = 0; p < m_animatWorld.getPopSize(); ++p) {
                 auto & animat = m_animatWorld.animat(p);
                 auto centralPoint = animat.getCentralPoint();
                 auto & pos = centralPoint.first;
-                auto cx = pos.m_vec[0];
-                auto cy = pos.m_vec[1];
+                auto cx = pos.m_vec[0] + centralPoint.second;
+                auto cy = pos.m_vec[1] + centralPoint.second;
                 double sx, sy;
                 detail::worldToScreen(cx, -cy, sx, sy);
-                auto absDiffX = std::abs(sx - x);
-                auto absDiffY = std::abs(sy - y);
-                if (absDiffX < 40 && absDiffY < 40) {
+                auto diffX = (sx - (x + 10));
+                auto diffY = (sy - (y + 10));
+                auto diffXSq = std::sqrt(diffX * diffX);
+                auto diffYSq = std::sqrt(diffY * diffY);
+                auto absDiffX = std::abs(diffXSq);
+                auto absDiffY = std::abs(diffYSq);
+                if (absDiffX < 20 && absDiffY < 20) {
                     m_glAnimats[p].highlight();
                 } else {
                     m_glAnimats[p].dehighlight();
@@ -107,6 +112,17 @@ namespace graphics {
             auto computed = m_worldOrientation.load();
             computed -= 5;
             m_worldOrientation = computed;
+        }
+
+        void selectAnimat()
+        {
+            for (auto & glAnimat : m_glAnimats) {
+                if(glAnimat.isHighlighted()) {
+                    glAnimat.select();
+                } else {
+                    glAnimat.deselect();
+                }
+            }
         }
 
         void setViewDistance(double const newDistance)

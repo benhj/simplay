@@ -37,6 +37,7 @@ namespace graphics {
         explicit GLAnimat(model::Animat & animat)
           : m_animat(animat)
           , m_highlighted(std::make_shared<std::atomic<bool>>(false)) 
+          , m_selected(std::make_shared<std::atomic<bool>>(false)) 
         {
         }
 
@@ -48,7 +49,7 @@ namespace graphics {
             drawBody();
             //drawAntennae();
             drawBoundingCircles();
-            if (*m_highlighted) {
+            if (*m_highlighted || *m_selected) {
                 drawBigBoundingCircle();
             }
         }
@@ -63,6 +64,21 @@ namespace graphics {
             *m_highlighted = false;
         }
 
+        void select()
+        {
+            *m_selected = true;
+        }
+
+        void deselect()
+        {
+            *m_selected = false;
+        }
+
+        bool isHighlighted() const
+        {
+            return *m_highlighted;
+        }
+
       private:
 
         model::Animat & m_animat;
@@ -75,6 +91,10 @@ namespace graphics {
         /// If mouse pointer over animat, draw big bounding circle around it
         /// to indicate it's 'selected'
         std::shared_ptr<std::atomic<bool>> m_highlighted;
+
+        /// To indicate animat is selected in which thicker
+        /// bounding circle will be drawn around animat
+        std::shared_ptr<std::atomic<bool>> m_selected;
 
         void drawBody()
         {
@@ -156,11 +176,15 @@ namespace graphics {
         void drawBigBoundingCircle()
         {
             detail::setColor(m_bigCircleColor);
+            if(*m_selected) {
+                glLineWidth(2.0);
+            }
             auto boundingPair = m_animat.getCentralPoint();
             detail::drawCircle(boundingPair.first.m_vec[0], 
                                boundingPair.first.m_vec[1],
                                boundingPair.second, 20);
             detail::setColor(m_basicColor);
+            glLineWidth(1.0);
         }   
     };
 }

@@ -16,6 +16,9 @@ namespace graphics {
                              int const scancode, 
                              int const action, 
                              int const mods); 
+        void clickHandler(int const button, 
+                          int const action, 
+                          int const mods);
       private:
         GLEnvironment & m_glEnviro;
         std::atomic<double> m_viewDistance;

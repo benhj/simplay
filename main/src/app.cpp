@@ -34,10 +34,15 @@ std::unique_ptr<graphics::Graphics> graphix;
 /// once I've figured out a nicer graphics lib.
 void display() { graphix->display(); }
 void reshape(GLFWwindow *, int w, int h) { graphix->reshape(w, h); }
-void keyboardHandler(GLFWwindow *, int key, int scancode, int action, int mods) { 
+void keyboardHandler(GLFWwindow *, int key, int scancode, int action, int mods) 
+{ 
     graphix->keyboardHandler(key, scancode, action, mods); 
 }
 void passiveMouseFunc(GLFWwindow *, double x, double y) { graphix->passiveMouseFunc(x, y); }
+void clickHandler(GLFWwindow* , int button, int action, int mods) 
+{
+    graphix->clickHandler(button, action, mods);
+}
 
 int main(int argc, char **argv)
 {
@@ -62,6 +67,7 @@ int main(int argc, char **argv)
     glfwSetWindowSizeCallback(window, reshape);
     glfwSetCursorPosCallback(window, passiveMouseFunc);
     glfwSetKeyCallback(window, keyboardHandler);
+    glfwSetMouseButtonCallback(window, clickHandler);
 
     // GUI agnostics GL calls
     graphix.reset(new graphics::Graphics(glEnvironment));
