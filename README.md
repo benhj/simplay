@@ -12,8 +12,8 @@ The plan is to implement the following stuff. I will cross items out as I make p
 * ~~CTRNN implementation for eventual control of an animat.~~
 * ~~Antennae model.~~
 * Collision detection and resolution.
-* Main simulation engine
-* Optimization process
+* ~~Main simulation engine~~
+* ~~Optimization process~~
 * GUI enhancements (T.B.D.)
 * ~~Environment Zoom.~~
 * ~~Environment rotate.~~

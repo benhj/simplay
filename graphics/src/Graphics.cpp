@@ -3,7 +3,7 @@
 #include "graphics/Graphics.hpp"
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
-#include <GLUT/glut.h>
+#include <GLFW/glfw3.h>
 
 namespace {
     void init() // Called before main loop to set up the program
@@ -34,7 +34,6 @@ namespace graphics {
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_glEnviro.draw();
-        glutSwapBuffers();
     }
 
     void Graphics::reshape(int const w, int const h)
@@ -42,17 +41,37 @@ namespace graphics {
         m_glEnviro.updateWidthHeight(w, h);
     }
 
-    void Graphics::passiveMouseFunc(int const x, int const y)
+    void Graphics::passiveMouseFunc(double const x, double const y)
     {
         m_glEnviro.checkForAnimatHighlight(x, y);
     }
 
     void Graphics::keyboardHandler(int const key, 
-                                   int const x, 
-                                   int const y)
+                                   int const scancode, 
+                                   int const action, 
+                                   int const mods) 
+    {
+        if (action == GLFW_PRESS) {
+            handleKeyDown(key);
+        } else if(action == GLFW_RELEASE) {
+            handleKeyUp(key);
+        } else if(action == GLFW_REPEAT) {
+            handleKeyContinuous(key);
+        }
+    }
+
+    void Graphics::handleKeyContinuous(int const key)
+    {
+        // Don't allow continuous axis toggling
+        if (key != 'A') {
+            handleKeyDown(key);
+        }
+    }
+
+    void Graphics::handleKeyDown(int const key)
     {
         // zoom control
-        if (key == '+') {
+        if (key == '+' || key == '=') {
             auto loaded = m_viewDistance.load();
             loaded -= 0.01;
             m_viewDistance = loaded;
@@ -63,16 +82,26 @@ namespace graphics {
             m_viewDistance = loaded;
             m_glEnviro.setViewDistance(loaded);
         } 
-        // centre axis on/off
-        else if (key == 'a') {
+        // centre axis on/off; 
+        // note always code 65 ('A') even for lowercase
+        else if (key == 'A') {
             m_glEnviro.toggleAxisDisplay();
         } 
         // world rotation control
-        else if (key == 102) /* right arrow */{
+        else if (key == 263) /* right arrow */{
+            m_glEnviro.compassOn();
             m_glEnviro.spinRight();    
-        } else if (key == 100) /* left arrow */{
+        } else if (key == 262) /* left arrow */{
+            m_glEnviro.compassOn();
             m_glEnviro.spinLeft(); 
         }
+    }
+
+    void Graphics::handleKeyUp(int const)
+    {
+        // Currently the only thing useful that can
+        // happen here is disabling the compass
+        m_glEnviro.compassOff();
     }
 }
 

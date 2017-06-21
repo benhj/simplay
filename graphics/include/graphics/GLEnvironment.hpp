@@ -75,7 +75,7 @@ namespace graphics {
             m_displayAxis = !m_displayAxis;
         }
 
-        void checkForAnimatHighlight(int const x, int const y)
+        void checkForAnimatHighlight(double const x, double const y)
         {
             for (int p = 0; p < m_animatWorld.getPopSize(); ++p) {
                 auto & animat = m_animatWorld.animat(p);
@@ -97,30 +97,16 @@ namespace graphics {
 
         void spinLeft()
         {
-            m_threadRunner.add([&]{ 
-                m_displayCompass = true;
-                for (auto i = 0 ; i < 90 ; ++i) {
-                    auto computed = m_worldOrientation.load();
-                    ++computed;
-                    m_worldOrientation = computed;
-                    std::this_thread::sleep_for(std::chrono::milliseconds(5));               
-                }
-                m_displayCompass = false;
-             });
+            auto computed = m_worldOrientation.load();
+            computed += 5;
+            m_worldOrientation = computed;
         }
 
         void spinRight()
         {
-             m_threadRunner.add([&]{ 
-                m_displayCompass = true;
-                for (auto i = 0 ; i < 90 ; ++i) {
-                    auto computed = m_worldOrientation.load();
-                    --computed;
-                    m_worldOrientation = computed;
-                    std::this_thread::sleep_for(std::chrono::milliseconds(5));               
-                }
-                m_displayCompass = false;
-             });
+            auto computed = m_worldOrientation.load();
+            computed -= 5;
+            m_worldOrientation = computed;
         }
 
         void setViewDistance(double const newDistance)

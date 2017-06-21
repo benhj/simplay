@@ -13,16 +13,11 @@ namespace {
     {
         auto begin = std::begin(v);
         auto const end = std::begin(v) + N;
-        // auto found = std::find_if(begin, end, 
-        //                           [i](FitnessPair const & fp) {
-        //                               return i == fp.first;
-        //                           });
-        for(; begin != end; ++begin) {
-            if(i == begin->first) {
-                return true;
-            }
-        }
-        return false;
+        auto found = std::find_if(begin, end, 
+                                  [i](FitnessPair const & fp) {
+                                      return i == fp.first;
+                                  });
+        return (found != end);
     }
 }
 
