@@ -57,16 +57,11 @@ namespace graphics {
 
         void handleSelection()
         {
-            if(isHighlighted()) {
+            if(*m_highlighted) {
                 *m_selected = true;
             } else {
                 *m_selected = false;
             }
-        }
-
-        bool isHighlighted() const
-        {
-            return *m_highlighted;
         }
 
         void checkForHighlight(double const x, 
