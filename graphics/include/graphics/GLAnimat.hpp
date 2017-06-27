@@ -55,16 +55,6 @@ namespace graphics {
             }
         }
 
-        void highlight()
-        {
-            *m_highlighted = true;
-        }
-
-        void dehighlight()
-        {
-            *m_highlighted = false;
-        }
-
         void select()
         {
             *m_selected = true;
@@ -95,9 +85,9 @@ namespace graphics {
             auto diffXSq = std::sqrt(diffX * diffX) * viewDistance;
             auto diffYSq = std::sqrt(diffY * diffY) * viewDistance;
             if (diffXSq < 5 && diffYSq < 5) {
-                highlight();
+                *m_highlighted = true;
             } else {
-                dehighlight();
+                *m_highlighted = false;
             }
         }
 
