@@ -72,6 +72,10 @@ int main(int argc, char **argv)
     // GUI agnostics GL calls
     graphix.reset(new graphics::Graphics(glEnvironment));
 
+    // Size correction for small monitor
+    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+    reshape(window, windowWidth, windowHeight);
+
     // Start the main simulation loop
     sim.start();
 

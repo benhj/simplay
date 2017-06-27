@@ -77,7 +77,6 @@ namespace graphics {
 
         void checkForAnimatHighlight(double const x, double const y)
         {
-            /// Hacky as fuck. Nevertheless, does the trick!
             for (auto & glAnimat : m_glAnimats) {
                 glAnimat.checkForHighlight(x, y, m_viewDistance);
             }
