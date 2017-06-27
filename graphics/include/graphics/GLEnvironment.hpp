@@ -75,26 +75,11 @@ namespace graphics {
             m_displayAxis = !m_displayAxis;
         }
 
-        void checkForAnimatHighlight(double x, double y)
+        void checkForAnimatHighlight(double const x, double const y)
         {
             /// Hacky as fuck. Nevertheless, does the trick!
-            for (int p = 0; p < m_animatWorld.getPopSize(); ++p) {
-                auto & animat = m_animatWorld.animat(p);
-                auto centralPoint = animat.getCentralPoint();
-                auto & pos = centralPoint.first;
-                auto cx = pos.m_vec[0];
-                auto cy = pos.m_vec[1];
-                double sx, sy;
-                detail::worldToScreen(cx, -cy, sx, sy);
-                auto diffX = (sx - x);
-                auto diffY = (sy - y);
-                auto diffXSq = std::sqrt(diffX * diffX) * m_viewDistance;
-                auto diffYSq = std::sqrt(diffY * diffY) * m_viewDistance;
-                if (diffXSq < 5 && diffYSq < 5) {
-                    m_glAnimats[p].highlight();
-                } else {
-                    m_glAnimats[p].dehighlight();
-                }
+            for (auto & glAnimat : m_glAnimats) {
+                glAnimat.checkForHighlight(x, y, m_viewDistance);
             }
         }
 
