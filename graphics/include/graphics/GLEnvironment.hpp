@@ -100,11 +100,7 @@ namespace graphics {
         void selectAnimat()
         {
             for (auto & glAnimat : m_glAnimats) {
-                if(glAnimat.isHighlighted()) {
-                    glAnimat.select();
-                } else {
-                    glAnimat.deselect();
-                }
+                glAnimat.handleSelection();
             }
         }
 

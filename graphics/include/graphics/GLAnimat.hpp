@@ -55,14 +55,13 @@ namespace graphics {
             }
         }
 
-        void select()
+        void handleSelection()
         {
-            *m_selected = true;
-        }
-
-        void deselect()
-        {
-            *m_selected = false;
+            if(isHighlighted()) {
+                *m_selected = true;
+            } else {
+                *m_selected = false;
+            }
         }
 
         bool isHighlighted() const
