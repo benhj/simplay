@@ -8,15 +8,17 @@ namespace graphics { namespace detail {
     inline void setScene(int const windowWidth,
                          int const windowHeight,
                          double const viewDistance,
-                         double const orientation)
+                         double const orientation,
+                         double const centerX = 0,
+                         double const centerY = 0)
     {
         glViewport(0, 0, windowWidth, windowHeight);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho((-windowWidth/2)*viewDistance, 
-                (windowWidth/2)*viewDistance, 
-                (-windowHeight/2)*viewDistance, 
-                (windowHeight/2)*viewDistance, 
+        glOrtho((-windowWidth/2)*viewDistance + centerX, 
+                (windowWidth/2)*viewDistance + centerX, 
+                (-windowHeight/2)*viewDistance + centerY, 
+                (windowHeight/2)*viewDistance + centerY, 
                 -10000, 10000);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();

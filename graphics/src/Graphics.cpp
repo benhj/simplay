@@ -94,6 +94,8 @@ namespace graphics {
         } else if (key == GLFW_KEY_LEFT) /* left arrow */{
             m_glEnviro.compassOn();
             m_glEnviro.spinLeft(); 
+        } else if (key == GLFW_KEY_SPACE) {
+            //m_glEnviro.flyIn();
         }
     }
 

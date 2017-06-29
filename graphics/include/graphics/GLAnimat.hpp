@@ -55,27 +55,32 @@ namespace graphics {
             }
         }
 
-        void handleSelection()
+        bool handleSelection()
         {
             if(*m_highlighted) {
                 *m_selected = true;
             } else {
                 *m_selected = false;
             }
+            return *m_selected;
         }
 
-        void checkForHighlight(double const x, 
-                               double const y,
-                               double const viewDistance) 
+        void checkForHighlight(double x, 
+                               double y,
+                               double const viewDistance,
+                               double const centerX,
+                               double const centerY)
         {
+            x -= centerX;
+            y -= centerY;
             auto centralPoint = m_animat.getCentralPoint();
             auto & pos = centralPoint.first;
             auto cx = pos.m_vec[0];
             auto cy = pos.m_vec[1];
             double sx, sy;
             detail::worldToScreen(cx, -cy, sx, sy);
-            auto diffX = (sx - x);
-            auto diffY = (sy - y);
+            auto diffX = ((sx - centerX) - x);
+            auto diffY = ((sy - centerY) - y);
             auto diffXSq = std::sqrt(diffX * diffX) * viewDistance;
             auto diffYSq = std::sqrt(diffY * diffY) * viewDistance;
             if (diffXSq < 5 && diffYSq < 5) {
@@ -83,6 +88,11 @@ namespace graphics {
             } else {
                 *m_highlighted = false;
             }
+        }
+
+        model::Animat & animatRef() 
+        {
+            return m_animat;
         }
 
       private:
