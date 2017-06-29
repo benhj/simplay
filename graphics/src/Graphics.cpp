@@ -63,7 +63,7 @@ namespace graphics {
     void Graphics::handleKeyContinuous(int const key)
     {
         // Don't allow continuous axis toggling
-        if (key != 'A') {
+        if (key != GLFW_KEY_A) {
             handleKeyDown(key);
         }
     }
@@ -76,7 +76,7 @@ namespace graphics {
             loaded -= 0.01;
             m_viewDistance = loaded;
             m_glEnviro.setViewDistance(loaded);
-        } else if (key == '-') {
+        } else if (key == GLFW_KEY_MINUS) {
             auto loaded = m_viewDistance.load();
             loaded += 0.01;
             m_viewDistance = loaded;
@@ -84,14 +84,14 @@ namespace graphics {
         } 
         // centre axis on/off; 
         // note always code 65 ('A') even for lowercase
-        else if (key == 'A') {
+        else if (key == GLFW_KEY_A) {
             m_glEnviro.toggleAxisDisplay();
         } 
         // world rotation control
-        else if (key == 263) /* right arrow */{
+        else if (key == GLFW_KEY_RIGHT) /* right arrow */{
             m_glEnviro.compassOn();
             m_glEnviro.spinRight();    
-        } else if (key == 262) /* left arrow */{
+        } else if (key == GLFW_KEY_LEFT) /* left arrow */{
             m_glEnviro.compassOn();
             m_glEnviro.spinLeft(); 
         }
