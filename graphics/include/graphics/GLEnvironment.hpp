@@ -137,37 +137,35 @@ namespace graphics {
         // WARNING -- the following function is hacky as fuck!!
         void flyIn()
         {
+            // Whether to 'fly in' or 'fly out'
+            static bool in = true;
+
             // Figure out center point to screen point
-            if(m_selected > -1) {
+            if (in) {
+                if(m_selected > -1) {
+                    auto & flAnimat = m_glAnimats[m_selected];
+                    auto & animat = flAnimat.animatRef();
+                    auto centralPoint = animat.getCentralPoint();
+                    auto & pos = centralPoint.first;
+                    auto cx = pos.m_vec[0];
+                    auto cy = pos.m_vec[1];
+                    double sx, sy;
+                    detail::worldToScreen(cx, -cy, sx, sy);
 
-                // Reset world view before transformation
-                m_centerX = 0;
-                m_centerY = 0;
-                detail::setScene(m_windowWidth, 
-                                 m_windowHeight, 
-                                 m_viewDistance, 
-                                 m_worldOrientation,
-                                 m_centerX,
-                                 m_centerY);
+                    auto fx = (sx * m_viewDistance) - (m_windowWidth / 2) * m_viewDistance + m_centerX;
+                    auto fy = (sy * m_viewDistance) - (m_windowHeight / 2) * m_viewDistance + m_centerY;
 
-                auto & flAnimat = m_glAnimats[m_selected];
-                auto & animat = flAnimat.animatRef();
-                auto centralPoint = animat.getCentralPoint();
-                auto & pos = centralPoint.first;
-                auto cx = pos.m_vec[0];
-                auto cy = pos.m_vec[1];
-                double sx, sy;
-                detail::worldToScreen(cx, -cy, sx, sy);
+                    auto distx = std::sqrt((fx - m_centerX) * (fx - m_centerX));
+                    auto disty = std::sqrt((fy - m_centerY) * (fy - m_centerY));
 
-                auto fx = (sx * m_viewDistance) - (m_windowWidth / 2) * m_viewDistance + m_centerX;
-                auto fy = (sy * m_viewDistance) - (m_windowHeight / 2) * m_viewDistance + m_centerY;
-
-                auto distx = std::sqrt((fx - m_centerX) * (fx - m_centerX));
-                auto disty = std::sqrt((fy - m_centerY) * (fy - m_centerY));
-
-                auto centerDivX = distx / 10.0;
-                auto centerDivY = disty / 10.0;
-                processFlyIn(centerDivX, centerDivY, fx, fy);
+                    auto centerDivX = distx / 10.0;
+                    auto centerDivY = disty / 10.0;
+                    processFlyIn(centerDivX, centerDivY, fx, fy);
+                    in = false;
+                }
+            } else {
+                processFlyOut();
+                in = true;
             }
         }
 
@@ -236,6 +234,8 @@ namespace graphics {
             m_oldFlyYDiv /= 10;
             m_oldFlyXDiv /= 10;
             std::function<void()> func([=]() {
+                auto zoomVal = m_viewDistance.load();
+                auto zoomIt = 0.25 / 10.0;
                 for(int i = 0; i < 10; ++i) {
                     auto valX = m_centerX.load();
                     valX -= m_oldFlyXDiv;
@@ -244,7 +244,8 @@ namespace graphics {
                     auto valY = m_centerY.load();
                     valY -= m_oldFlyYDiv;
                     m_centerY.store(valY);
-
+                    zoomVal += zoomIt;
+                    m_viewDistance.store(zoomVal);
                     usleep(10000);
                 }
             });
