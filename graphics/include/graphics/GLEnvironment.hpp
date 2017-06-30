@@ -31,6 +31,8 @@ namespace graphics {
         , m_worldOrientation(0)
         , m_centerX(0)
         , m_centerY(0)
+        , m_oldFlyXDiv(0)
+        , m_oldFlyYDiv(0)
         , m_animatWorld(animatWorld)
         , m_selected(-1)
         {
@@ -84,7 +86,9 @@ namespace graphics {
         void checkForAnimatHighlight(double const x, double const y)
         {
             for (auto & glAnimat : m_glAnimats) {
-                glAnimat.checkForHighlight(x, y, m_viewDistance, m_centerX, -m_centerY);
+                glAnimat.checkForHighlight(x, m_windowHeight - y, 
+                                           m_viewDistance, 
+                                           m_centerX, m_centerY);
             }
         }
 
@@ -130,10 +134,22 @@ namespace graphics {
                              m_centerY);
         }
 
+        // WARNING -- the following function is hacky as fuck!!
         void flyIn()
         {
             // Figure out center point to screen point
             if(m_selected > -1) {
+
+                // Reset world view before transformation
+                m_centerX = 0;
+                m_centerY = 0;
+                detail::setScene(m_windowWidth, 
+                                 m_windowHeight, 
+                                 m_viewDistance, 
+                                 m_worldOrientation,
+                                 m_centerX,
+                                 m_centerY);
+
                 auto & flAnimat = m_glAnimats[m_selected];
                 auto & animat = flAnimat.animatRef();
                 auto centralPoint = animat.getCentralPoint();
@@ -142,38 +158,16 @@ namespace graphics {
                 auto cy = pos.m_vec[1];
                 double sx, sy;
                 detail::worldToScreen(cx, -cy, sx, sy);
+
                 auto fx = (sx * m_viewDistance) - (m_windowWidth / 2) * m_viewDistance + m_centerX;
                 auto fy = (sy * m_viewDistance) - (m_windowHeight / 2) * m_viewDistance + m_centerY;
 
                 auto distx = std::sqrt((fx - m_centerX) * (fx - m_centerX));
                 auto disty = std::sqrt((fy - m_centerY) * (fy - m_centerY));
 
-                std::function<void()> func([=]() {
-                    auto centerDivX = distx / 10.0;
-                    auto centerDivY = disty / 10.0;
-
-                    for(int i = 0; i < 10; ++i) {
-                        auto valX = m_centerX.load();
-                        if (valX < fx - centerDivX) {
-                            valX += centerDivX;
-                        } else if (valX > fx + centerDivX) {
-                            valX -= centerDivX;
-                        }
-                        m_centerX.store(valX);
-
-                        auto valY = m_centerY.load();
-                        if (valY > fy - centerDivY) {
-                            valY += centerDivY;
-                        } else if (valY < fy + centerDivY) {
-                            valY -= centerDivY;
-                        }
-                        m_centerY.store(valY);
-
-                        usleep(10000);
-                    }
-                });
-
-                m_threadRunner.add(func);
+                auto centerDivX = distx / 10.0;
+                auto centerDivY = disty / 10.0;
+                processFlyIn(centerDivX, centerDivY, fx, fy);
             }
         }
 
@@ -187,11 +181,75 @@ namespace graphics {
         std::atomic<double> m_worldOrientation;
         std::atomic<double> m_centerX;
         std::atomic<double> m_centerY;
+        double m_oldFlyXDiv;
+        double m_oldFlyYDiv;
         model::AnimatWorld & m_animatWorld;
         std::vector<graphics::GLAnimat> m_glAnimats;
         Color m_backGoundColour { 209, 220, 235};
         std::atomic<bool> m_displayAxis{true};
         std::atomic<bool> m_displayCompass{false};
         detail::ThreadRunner m_threadRunner;
+
+        void processFlyIn(double const centerDivX, 
+                          double const centerDivY,
+                          double const fx,
+                          double const fy)
+        {
+            m_oldFlyXDiv = 0;
+            m_oldFlyYDiv = 0;
+            m_viewDistance = 0.4;
+            std::function<void()> func([=]() {
+                auto zoomVal = m_viewDistance.load();
+                auto zoomIt = 0.25 / 10.0;
+                for(int i = 0; i < 10; ++i) {
+                    auto valX = m_centerX.load();
+                    if (valX < fx - centerDivX) {
+                        valX += centerDivX;
+                        m_oldFlyXDiv += centerDivX;
+                    } else if (valX > fx + centerDivX) {
+                        valX -= centerDivX;
+                        m_oldFlyXDiv -= centerDivX;
+                    }
+                    m_centerX.store(valX);
+
+                    auto valY = m_centerY.load();
+                    if (valY > fy - centerDivY) {
+                        valY += centerDivY;
+                        m_oldFlyYDiv += centerDivY;
+                    } else if (valY < fy + centerDivY) {
+                        valY -= centerDivY;
+                        m_oldFlyYDiv -= centerDivY;
+                    }
+                    m_centerY.store(valY);
+                    zoomVal -= zoomIt;
+                    m_viewDistance.store(zoomVal);
+
+                    usleep(10000);
+                }
+            });
+
+            m_threadRunner.add(func);
+        }
+
+        void processFlyOut()
+        {
+            m_oldFlyYDiv /= 10;
+            m_oldFlyXDiv /= 10;
+            std::function<void()> func([=]() {
+                for(int i = 0; i < 10; ++i) {
+                    auto valX = m_centerX.load();
+                    valX -= m_oldFlyXDiv;
+                    m_centerX.store(valX);
+
+                    auto valY = m_centerY.load();
+                    valY -= m_oldFlyYDiv;
+                    m_centerY.store(valY);
+
+                    usleep(10000);
+                }
+            });
+
+            m_threadRunner.add(func);
+        }
     };
 }

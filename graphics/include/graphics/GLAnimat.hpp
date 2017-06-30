@@ -71,16 +71,18 @@ namespace graphics {
                                double const centerX,
                                double const centerY)
         {
-            x -= centerX;
+
+            // offset mouse coords
             y -= centerY;
+            x -= centerX;
             auto centralPoint = m_animat.getCentralPoint();
             auto & pos = centralPoint.first;
             auto cx = pos.m_vec[0];
             auto cy = pos.m_vec[1];
             double sx, sy;
-            detail::worldToScreen(cx, -cy, sx, sy);
-            auto diffX = ((sx - centerX) - x);
-            auto diffY = ((sy - centerY) - y);
+            detail::worldToScreen(cx, cy, sx, sy);
+            auto diffX = (sx - x - centerX);
+            auto diffY = centerY - (sy - y);
             auto diffXSq = std::sqrt(diffX * diffX) * viewDistance;
             auto diffYSq = std::sqrt(diffY * diffY) * viewDistance;
             if (diffXSq < 5 && diffYSq < 5) {

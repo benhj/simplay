@@ -95,7 +95,7 @@ namespace graphics {
             m_glEnviro.compassOn();
             m_glEnviro.spinLeft(); 
         } else if (key == GLFW_KEY_SPACE) {
-            //m_glEnviro.flyIn();
+            m_glEnviro.flyIn();
         }
     }
 
