@@ -171,7 +171,8 @@ namespace model {
         doUpdateDerivedComponents();
 
         // That is meant to be an assignment!
-        if((m_physicsBecameUnstable = totallyBuggered())) {
+        if((m_physicsBecameUnstable = totallyBuggered() ||
+                                      checkForInnerCollisions())) {
             resetAnimatStructure();
         }
     }
@@ -281,6 +282,28 @@ namespace model {
         auto const rem = m_physicsBecameUnstable;
         m_physicsBecameUnstable = false;
         return rem;
+    }
+
+    bool Animat::checkForInnerCollisions() const
+    {
+        bool overlappingBit = false;
+
+        for(auto const & outer : m_boundingCircles) {
+            for(auto const & inner : m_boundingCircles) {
+                if(&inner == &outer) {
+                    continue;
+                }
+
+                auto const & outerVec = outer.first;
+                auto const & innerVec = inner.first;
+                auto const seperation = outerVec.distance(innerVec);
+                if (seperation < 1.0) {
+                    return true;
+                }
+
+            }
+        }
+        return false;
     }
 }
 
