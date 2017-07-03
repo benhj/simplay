@@ -27,12 +27,14 @@ namespace neat {
         /// Adds a connection from another node
         void addIncomingConnectionFrom(Node & otherNode,
                                        double const weightBound,
-                                       double const mutProb);
+                                       double const mutProb,
+                                       int const innovNumber);
 
         /// Adds a connection from another node but with a weight
         void addIncomingConnectionFrom(Node & otherNode,
                                        double const weightBound,
                                        double const mutProb,
+                                       int const innovNumber,
                                        double const weight);
 
         /// For removing a connection
@@ -63,6 +65,9 @@ namespace neat {
 
         /// Retrieve the connection weight from node i
         double getConnectionWeightFrom(int const i) const;
+
+        /// Retrieve the innovation number of connection from node i
+        int getInnovNumberForConnectionFrom(int const i) const;
 
         /// Retrieve a reference to an incoming connection
         Connection & getConnectionFrom(int const i);

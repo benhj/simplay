@@ -12,12 +12,14 @@ namespace neat {
         Connection(Node & nodeA,
                    Node & nodeB,
                    double const weightBound, 
-                   double const mutationProbability);
+                   double const mutationProbability,
+                   int const innovationNumber);
 
         Connection(Node & nodeA,
                    Node & nodeB,
                    double const weightBound, 
                    double const mutationProbability,
+                   int const innovationNumber,
                    double const weight);
 
         // Since we have references as member vars,
@@ -36,6 +38,8 @@ namespace neat {
 
         double weight() const;
 
+        int getInnovationNumber() const;
+
       private:
         /// The connection end-points
         Node & m_nodeA;
@@ -43,6 +47,9 @@ namespace neat {
 
         /// Probability of weight changing when updated
         double m_mutationProbability;
+
+        /// The unique innovation number of this connection
+        int m_innovationNumber;
 
         /// The actual connection weight between nodes
         double m_weight;

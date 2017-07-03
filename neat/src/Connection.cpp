@@ -16,13 +16,16 @@ namespace {
 }
 
 namespace neat {
+
     Connection::Connection(Node & nodeA,
                            Node & nodeB,
                            double const weightBound, 
-                           double const mutationProbability)
+                           double const mutationProbability,
+                           int const innovationNumber)
       : m_nodeA(nodeA)
       , m_nodeB(nodeB)
       , m_mutationProbability(mutationProbability)
+      , m_innovationNumber(innovationNumber)
       , m_weight(initWeight(weightBound))
     {
     }
@@ -31,10 +34,12 @@ namespace neat {
                            Node & nodeB,
                            double const weightBound, 
                            double const mutationProbability,
+                           int const innovationNumber,
                            double const weight)
       : m_nodeA(nodeA)
       , m_nodeB(nodeB)
       , m_mutationProbability(mutationProbability)
+      , m_innovationNumber(innovationNumber)
       , m_weight(weight)
     {
     }
@@ -43,6 +48,7 @@ namespace neat {
       : m_nodeA(other.m_nodeA)
       , m_nodeB(other.m_nodeB)
       , m_mutationProbability(other.m_mutationProbability)
+      , m_innovationNumber(other.m_innovationNumber)
       , m_weight(other.m_weight)
     {
     }
@@ -51,6 +57,7 @@ namespace neat {
       : m_nodeA(other.m_nodeA)
       , m_nodeB(other.m_nodeB)
       , m_mutationProbability(std::move(other.m_mutationProbability))
+      , m_innovationNumber(std::move(other.m_innovationNumber))
       , m_weight(std::move(other.m_weight))
     {
     }
@@ -63,6 +70,7 @@ namespace neat {
         m_nodeA = other.m_nodeA;
         m_nodeB = other.m_nodeB;
         m_mutationProbability = other.m_mutationProbability;
+        m_innovationNumber = other.m_innovationNumber;
         m_weight = other.m_weight;
         return *this;
     }
@@ -75,6 +83,7 @@ namespace neat {
         m_nodeA = other.m_nodeA;
         m_nodeB = other.m_nodeB;
         m_mutationProbability = std::move(other.m_mutationProbability);
+        m_innovationNumber = std::move(other.m_innovationNumber);
         m_weight = std::move(other.m_weight);
         return *this;
     }
@@ -82,6 +91,11 @@ namespace neat {
     double Connection::weight() const
     {
         return m_weight;
+    }
+
+    int Connection::getInnovationNumber() const
+    {
+        return m_innovationNumber;
     }
 
     /// Mutates the weight value

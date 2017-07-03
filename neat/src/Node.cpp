@@ -83,7 +83,8 @@ namespace neat {
 
     void Node::addIncomingConnectionFrom(Node & otherNode,
                                          double const weightBound,
-                                         double const mutProb)
+                                         double const mutProb,
+                                         int const innovNumber)
     {
 
         // Nodes can't connect to nodes of same type (or be recurrent)
@@ -102,12 +103,14 @@ namespace neat {
         m_incomingConnections.emplace_back(otherNode, 
                                            *this,
                                            weightBound, 
-                                           mutProb);
+                                           mutProb,
+                                           innovNumber);
     }
 
     void Node::addIncomingConnectionFrom(Node & otherNode,
                                          double const weightBound,
                                          double const mutProb,
+                                         int const innovNumber,
                                          double const weight)
     {
         // Nodes can't connect to nodes of same type (or be recurrent)
@@ -127,6 +130,7 @@ namespace neat {
                                            *this, 
                                            weightBound, 
                                            mutProb,
+                                           innovNumber,
                                            weight);
 
     }
@@ -172,6 +176,16 @@ namespace neat {
                              });
 
         return theConnection->weight();
+    }
+
+    int Node::getInnovNumberForConnectionFrom(int const i) const
+    {
+        auto theConnection = std::find_if(std::begin(m_incomingConnections),
+                             std::end(m_incomingConnections),
+                             [i](Connection & con) {
+                                return con.getNodeRefA().getIndex() == i;
+                             });
+        return theConnection->getInnovationNumber();
     }
 
     Connection & Node::getConnectionFrom(int const i)

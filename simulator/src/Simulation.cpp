@@ -70,7 +70,7 @@ namespace simulator {
         long tick = 0;
         while(true) {
             doLoop(tick, 500);
-            usleep(500);
+            //usleep(500);
             ++tick;
         }
     }

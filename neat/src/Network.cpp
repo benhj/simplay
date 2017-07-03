@@ -2,6 +2,7 @@
 
 #include "neat/Network.hpp"
 #include "neat/NodeType.hpp"
+#include "neat/GlobalInnovationNumber.hpp"
 #include <cstdlib>
 
 namespace {
@@ -15,9 +16,11 @@ namespace {
                 if (i == j) { continue; }
                 if (oldNodes[j].hasConnectionFrom(i)) {
                     auto const weight = oldNodes[j].getConnectionWeightFrom(i);
+                    auto const innovNumber = oldNodes[j].getInnovNumberForConnectionFrom(i);
                     newNodes[j].addIncomingConnectionFrom(newNodes[i], 
                                                           weightInitBound,
                                                           weightChangeProb,
+                                                          innovNumber,
                                                           weight);
                 }
             }
@@ -94,12 +97,19 @@ namespace neat {
             m_outputIDs.push_back(i);
         }
 
+        // When initializing the network, all connections have the
+        // same innovation numbers. It's only when later evolving
+        // the connectivity it the number pulled from a global ref
+        int innovationNumber = 0;
+
         // Fully connect from inputs to outputs (i.e. feed-forward)
         for (auto i = 0; i < m_inputCount; ++i) {
             for (auto j = m_inputCount; j < m_inputCount + m_outputCount; ++j) {
                 m_nodes[j].addIncomingConnectionFrom(m_nodes[i], 
                                                      m_weightInitBound, 
-                                                     m_muts.weightChangeProb);
+                                                     m_muts.weightChangeProb,
+                                                     innovationNumber);
+               ++innovationNumber;
             }
         }
     }
@@ -157,12 +167,14 @@ namespace neat {
             // Add new connection from nodePre to new node
             m_nodes[id].addIncomingConnectionFrom(nodePre, 
                                                   m_weightInitBound, 
-                                                  m_muts.weightChangeProb);
+                                                  m_muts.weightChangeProb,
+                                                  GLOBAL_INNOVATION_NUMBER++);
 
             // ..and from new node to node post
             nodePost.addIncomingConnectionFrom(m_nodes[id], 
                                                m_weightInitBound, 
-                                               m_muts.weightChangeProb);
+                                               m_muts.weightChangeProb,
+                                               GLOBAL_INNOVATION_NUMBER++);
         }
     }
 
@@ -183,7 +195,8 @@ namespace neat {
                         if (((double) rand() / (RAND_MAX)) < m_muts.connectionAdditionProb) {
                             it->addIncomingConnectionFrom(m_nodes[i], 
                                                           m_weightInitBound,
-                                                          m_muts.weightChangeProb);
+                                                          m_muts.weightChangeProb,
+                                                          GLOBAL_INNOVATION_NUMBER++);
                         }
                     }
                 }
