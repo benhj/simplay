@@ -56,6 +56,9 @@ namespace neat {
         // Tracks innovatations; eases crossover process 
         InnovationMap m_innovationMap;
 
+        // Keeps track of new structural innovations
+        static int GLOBAL_INNOVATION_NUMBER;
+
         /// Fully connect all inputs to all outputs, or,
         /// based on innovation map when map non-empty
         void initNet();

@@ -2,7 +2,6 @@
 
 #include "neat/Network.hpp"
 #include "neat/NodeType.hpp"
-#include "neat/GlobalInnovationNumber.hpp"
 #include <cstdlib>
 #include <utility>
 #include <iostream>
@@ -31,6 +30,9 @@ namespace {
 }
 
 namespace neat {
+
+    int Network::GLOBAL_INNOVATION_NUMBER = 5;
+
     Network::Network(int const inputCount, 
                      int const outputCount,
                      int const maxSize,
