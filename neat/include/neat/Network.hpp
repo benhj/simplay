@@ -6,8 +6,16 @@
 #include "neat/MutationParameters.hpp"
 #include "neat/Node.hpp"
 #include <vector>
+#include <map>
 
 namespace neat {
+
+    struct InnovationInfo {
+        int innovationNumber;
+        int preNode;
+        int postNode;
+        bool enabled;
+    };
 
     class Network
     {
@@ -38,6 +46,9 @@ namespace neat {
         double m_weightInitBound;
         std::vector<Node> m_nodes;
         std::vector<int> m_outputIDs;
+
+        // Tracks innovatations; eases crossover process
+        std::map<int, InnovationInfo> m_innovationMap;
 
         /// Fully connect all inputs to all outputs
         void initNet();

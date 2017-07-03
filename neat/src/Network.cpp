@@ -4,6 +4,7 @@
 #include "neat/NodeType.hpp"
 #include "neat/GlobalInnovationNumber.hpp"
 #include <cstdlib>
+#include <utility>
 
 namespace {
     void restoreConnectivity(std::vector<neat::Node> const & oldNodes,
@@ -39,6 +40,7 @@ namespace neat {
       , m_maxSize(maxSize)
       , m_muts(muts)
       , m_weightInitBound(weightInitBound)
+      , m_innovationMap()
     {
         m_nodes.reserve(maxSize);
         m_outputIDs.reserve(outputCount);
@@ -53,6 +55,7 @@ namespace neat {
       , m_weightInitBound(other.m_weightInitBound)
       , m_nodes(other.m_nodes)
       , m_outputIDs(other.m_outputIDs)
+      , m_innovationMap(other.m_innovationMap)
     {
         // now restore connectivity
         restoreConnectivity(other.m_nodes, 
@@ -73,6 +76,7 @@ namespace neat {
         m_muts = other.m_muts;
         m_weightInitBound = other.m_weightInitBound;
         m_nodes = other.m_nodes;
+        m_innovationMap = other.m_innovationMap;
         // now restore connectivity
         restoreConnectivity(other.m_nodes, 
                             m_nodes, 
@@ -109,7 +113,9 @@ namespace neat {
                                                      m_weightInitBound, 
                                                      m_muts.weightChangeProb,
                                                      innovationNumber);
-               ++innovationNumber;
+                m_innovationMap.emplace(innovationNumber,
+                                        InnovationInfo{innovationNumber, i, j, true});
+                ++innovationNumber;
             }
         }
     }
@@ -168,13 +174,29 @@ namespace neat {
             m_nodes[id].addIncomingConnectionFrom(nodePre, 
                                                   m_weightInitBound, 
                                                   m_muts.weightChangeProb,
-                                                  GLOBAL_INNOVATION_NUMBER++);
+                                                  GLOBAL_INNOVATION_NUMBER);
+
+            m_innovationMap.emplace(GLOBAL_INNOVATION_NUMBER,
+                                    InnovationInfo{GLOBAL_INNOVATION_NUMBER, 
+                                                   nodePre.getIndex(), 
+                                                   static_cast<int>(id), 
+                                                   true});
+
+            ++GLOBAL_INNOVATION_NUMBER;
 
             // ..and from new node to node post
             nodePost.addIncomingConnectionFrom(m_nodes[id], 
                                                m_weightInitBound, 
                                                m_muts.weightChangeProb,
-                                               GLOBAL_INNOVATION_NUMBER++);
+                                               GLOBAL_INNOVATION_NUMBER);
+
+            m_innovationMap.emplace(GLOBAL_INNOVATION_NUMBER,
+                                    InnovationInfo{GLOBAL_INNOVATION_NUMBER, 
+                                                   static_cast<int>(id),
+                                                   nodePost.getIndex(), 
+                                                   true});
+
+            ++GLOBAL_INNOVATION_NUMBER;
         }
     }
 
