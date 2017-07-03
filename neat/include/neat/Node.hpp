@@ -38,7 +38,8 @@ namespace neat {
                                        double const weight);
 
         /// For removing a connection
-        void removeIncomingConnectionFrom(int const i);
+        /// Returns the original innovation number
+        int removeIncomingConnectionFrom(int const i);
 
         /// Updates the type of node with probability
         void perturbNodeFunction();

@@ -14,17 +14,20 @@ namespace neat {
         int innovationNumber;
         int preNode;
         int postNode;
+        double weight;
         bool enabled;
     };
 
     class Network
     {
       public:
+        using InnovationMap = std::map<int, InnovationInfo>;
         Network(int const inputCount, 
                 int const outputCount,
                 int const maxSize,
                 MutationParameters const & mutationParams,
-                double const weightInitBound);
+                double const weightInitBound,
+                InnovationMap const & innovMap = InnovationMap());
 
         Network(Network const & other);
         Network & operator=(Network const & other);
@@ -35,6 +38,9 @@ namespace neat {
         /// Mutates the network -- modifies weights, adds connections
         /// add nodes in place of connections, modifies the node type etc.
         void mutate();
+
+        /// Performs a cross-over with another network
+        Network crossWith(Network const & other) const;
 
       private:
         int m_inputCount;
@@ -47,10 +53,11 @@ namespace neat {
         std::vector<Node> m_nodes;
         std::vector<int> m_outputIDs;
 
-        // Tracks innovatations; eases crossover process
-        std::map<int, InnovationInfo> m_innovationMap;
+        // Tracks innovatations; eases crossover process 
+        InnovationMap m_innovationMap;
 
-        /// Fully connect all inputs to all outputs
+        /// Fully connect all inputs to all outputs, or,
+        /// based on innovation map when map non-empty
         void initNet();
 
         /// Loops over all connections going into output and

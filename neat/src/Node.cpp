@@ -135,7 +135,7 @@ namespace neat {
 
     }
 
-    void Node::removeIncomingConnectionFrom(int const i)
+    int Node::removeIncomingConnectionFrom(int const i)
     {
         auto it = std::find_if(std::begin(m_incomingConnections),
                                std::end(m_incomingConnections),
@@ -143,9 +143,13 @@ namespace neat {
                                    return con.getNodeRefA().getIndex() == i;
                                });
 
+        int innovation = -1;
+
         if (it != std::end(m_incomingConnections)) {
+            innovation = it->getInnovationNumber();
             m_incomingConnections.erase(it);
         }
+        return innovation;
     }
 
     int Node::getIndex() const

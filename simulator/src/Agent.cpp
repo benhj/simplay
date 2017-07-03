@@ -8,7 +8,7 @@ namespace {
     int const NEAT_INPUTS = 4;
     int const NEAT_OUTPUTS = 1;
     int const MAX_NEAT_NODES = 40;
-    double const NEAT_WEIGHT_BOUND = 6.0;
+    double const NEAT_WEIGHT_BOUND = 8.0;
     neat::MutationParameters NEAT_MUTS{0.1, 0.1, 0.1, 0.1};
 }
 

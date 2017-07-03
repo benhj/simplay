@@ -5,6 +5,7 @@
 #include "neat/GlobalInnovationNumber.hpp"
 #include <cstdlib>
 #include <utility>
+#include <iostream>
 
 namespace {
     void restoreConnectivity(std::vector<neat::Node> const & oldNodes,
@@ -34,13 +35,14 @@ namespace neat {
                      int const outputCount,
                      int const maxSize,
                      MutationParameters const & muts,
-                     double const weightInitBound)
+                     double const weightInitBound,
+                     InnovationMap const & innovMap)
       : m_inputCount(inputCount)
       , m_outputCount(outputCount)
       , m_maxSize(maxSize)
       , m_muts(muts)
       , m_weightInitBound(weightInitBound)
-      , m_innovationMap()
+      , m_innovationMap(innovMap)
     {
         m_nodes.reserve(maxSize);
         m_outputIDs.reserve(outputCount);
@@ -101,21 +103,76 @@ namespace neat {
             m_outputIDs.push_back(i);
         }
 
-        // When initializing the network, all connections have the
-        // same innovation numbers. It's only when later evolving
-        // the connectivity it the number pulled from a global ref
-        int innovationNumber = 0;
+        // Also SEED with a single hidden node
+        m_nodes.emplace_back(m_inputCount + m_outputCount, 
+                             NodeType::Hidden, 
+                             m_muts.nodeFunctionChangeProb);
 
-        // Fully connect from inputs to outputs (i.e. feed-forward)
-        for (auto i = 0; i < m_inputCount; ++i) {
-            for (auto j = m_inputCount; j < m_inputCount + m_outputCount; ++j) {
-                m_nodes[j].addIncomingConnectionFrom(m_nodes[i], 
-                                                     m_weightInitBound, 
-                                                     m_muts.weightChangeProb,
-                                                     innovationNumber);
+        if(m_innovationMap.empty()) {
+            // When initializing the network, all connections have the
+            // same innovation numbers. It's only when later evolving
+            // the connectivity it the number pulled from a global ref
+            int innovationNumber = 0;
+
+            // Fully connect from inputs to outputs (i.e. feed-forward)
+            for (auto i = 0; i < m_inputCount; ++i) {
+                for (auto j = m_inputCount; j < m_inputCount + m_outputCount; ++j) {
+                    m_nodes[j].addIncomingConnectionFrom(m_nodes[i], 
+                                                         m_weightInitBound, 
+                                                         m_muts.weightChangeProb,
+                                                         innovationNumber);
+                    auto const weight = m_nodes[j].getConnectionWeightFrom(i);
+                    m_innovationMap.emplace(innovationNumber,
+                                            InnovationInfo{innovationNumber, i, j, weight, true});
+                    ++innovationNumber;
+                }
+            }
+
+            // Fully connect from inputs to hidden
+            for (auto i = 0; i < m_inputCount; ++i) {
+                auto const hiddenID = m_inputCount + m_outputCount;
+                m_nodes[hiddenID].addIncomingConnectionFrom(m_nodes[i], 
+                                                            m_weightInitBound, 
+                                                            m_muts.weightChangeProb,
+                                                            innovationNumber);
+
+                auto const weight = m_nodes[hiddenID].getConnectionWeightFrom(i);
+
                 m_innovationMap.emplace(innovationNumber,
-                                        InnovationInfo{innovationNumber, i, j, true});
+                                        InnovationInfo{innovationNumber, i, hiddenID, weight, true});
                 ++innovationNumber;
+            }
+
+            // Fully connect from hidden to output
+            auto const hiddenID = m_inputCount + m_outputCount;
+            auto const outputID = hiddenID - 1;
+            m_nodes[outputID].addIncomingConnectionFrom(m_nodes[hiddenID], 
+                                                        m_weightInitBound, 
+                                                        m_muts.weightChangeProb,
+                                                        innovationNumber);
+            auto const weight = m_nodes[outputID].getConnectionWeightFrom(hiddenID);
+            m_innovationMap.emplace(innovationNumber,
+                                    InnovationInfo{innovationNumber, hiddenID, outputID, weight, true});
+            ++innovationNumber;
+
+        } else {
+
+            std::cout<<"Shouldn't be here"<<std::endl;
+
+            // Network is to be assembled from a pre-computed innovation map
+            for(auto const & it : m_innovationMap) {
+                auto & innovInfo = it.second;
+                if(innovInfo.enabled) {
+                    auto & preNode = innovInfo.preNode;
+                    auto & postNode = innovInfo.postNode;
+                    auto & weight = innovInfo.weight;
+                    auto & innovationNumber = innovInfo.innovationNumber;
+                    m_nodes[postNode].addIncomingConnectionFrom(m_nodes[preNode], 
+                                                                m_weightInitBound,
+                                                                m_muts.weightChangeProb,
+                                                                innovationNumber,
+                                                                weight);
+                }
             }
         }
     }
@@ -168,7 +225,12 @@ namespace neat {
             
             // Remove old connection from nodePre to nodePost
             auto nodePreIndex = nodePre.getIndex();
-            nodePost.removeIncomingConnectionFrom(nodePreIndex);
+            auto innovation = nodePost.removeIncomingConnectionFrom(nodePreIndex);
+
+            // Disable the original innovation
+            if(innovation > -1) {
+                m_innovationMap[innovation].enabled = false;
+            }
 
             // Add new connection from nodePre to new node
             m_nodes[id].addIncomingConnectionFrom(nodePre, 
@@ -176,10 +238,13 @@ namespace neat {
                                                   m_muts.weightChangeProb,
                                                   GLOBAL_INNOVATION_NUMBER);
 
+            auto weight = m_nodes[id].getConnectionWeightFrom(nodePre.getIndex());
+
             m_innovationMap.emplace(GLOBAL_INNOVATION_NUMBER,
                                     InnovationInfo{GLOBAL_INNOVATION_NUMBER, 
                                                    nodePre.getIndex(), 
-                                                   static_cast<int>(id), 
+                                                   static_cast<int>(id),
+                                                   weight, 
                                                    true});
 
             ++GLOBAL_INNOVATION_NUMBER;
@@ -190,10 +255,13 @@ namespace neat {
                                                m_muts.weightChangeProb,
                                                GLOBAL_INNOVATION_NUMBER);
 
+            weight = m_nodes[nodePost.getIndex()].getConnectionWeightFrom(id);
+
             m_innovationMap.emplace(GLOBAL_INNOVATION_NUMBER,
                                     InnovationInfo{GLOBAL_INNOVATION_NUMBER, 
                                                    static_cast<int>(id),
-                                                   nodePost.getIndex(), 
+                                                   nodePost.getIndex(),
+                                                   weight, 
                                                    true});
 
             ++GLOBAL_INNOVATION_NUMBER;
@@ -218,7 +286,15 @@ namespace neat {
                             it->addIncomingConnectionFrom(m_nodes[i], 
                                                           m_weightInitBound,
                                                           m_muts.weightChangeProb,
-                                                          GLOBAL_INNOVATION_NUMBER++);
+                                                          GLOBAL_INNOVATION_NUMBER);
+                            auto const weight = it->getConnectionWeightFrom(i);
+                            m_innovationMap.emplace(GLOBAL_INNOVATION_NUMBER,
+                                                    InnovationInfo{GLOBAL_INNOVATION_NUMBER, 
+                                                                   i,
+                                                                   it->getIndex(),
+                                                                   weight,
+                                                                   true});
+                            ++GLOBAL_INNOVATION_NUMBER;
                         }
                     }
                 }
@@ -232,5 +308,26 @@ namespace neat {
         perturbWeights(m_weightInitBound / 4.0);
         addConnectionToHiddenNode();
         addNewNodes();
+    }
+
+    Network Network::crossWith(Network const & other) const
+    {
+        InnovationMap crossedMap = m_innovationMap;
+
+        // Iterate through other map, inserting all genes
+        // that are not in crossed map
+        for(auto const & innovation : other.m_innovationMap) {
+            auto innovationID = innovation.first;
+            if (crossedMap.find(innovationID) == std::end(crossedMap)) {
+                auto theInnovation = innovation.second;
+                crossedMap.emplace(innovationID, std::move(theInnovation));
+            }
+        }
+        return Network(m_inputCount,
+                       m_outputCount,
+                       m_maxSize,
+                       m_muts,
+                       m_weightInitBound,
+                       crossedMap);
     }
 }

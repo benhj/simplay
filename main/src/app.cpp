@@ -79,6 +79,8 @@ int main(int argc, char **argv)
     // Start the main simulation loop
     sim.start();
 
+    //while(true){}
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {
 

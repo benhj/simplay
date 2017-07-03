@@ -98,7 +98,7 @@ namespace simulator {
         m_eliteIndex = fitnesses[0].first;
         std::cout<<m_eliteIndex<<"\t"<<m_agents[m_eliteIndex].distanceMoved()<<std::endl;
 
-        // pick the top m_popSize/10 and regen rest of population out of those
+        // pick the top m_popSize/N and regen rest of population out of those
         i = 0;
         int pick = 0;
         for (auto & agent : m_agents) {
