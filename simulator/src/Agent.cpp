@@ -9,7 +9,7 @@ namespace {
     int const NEAT_OUTPUTS = 1;
     int const MAX_NEAT_NODES = 40;
     double const NEAT_WEIGHT_BOUND = 8.0;
-    neat::MutationParameters NEAT_MUTS{0.1, 0.1, 0.1, 0.1};
+    neat::MutationParameters NEAT_MUTS{0, 0.2, 0.1, 0};
 }
 
 namespace simulator {
@@ -54,6 +54,12 @@ namespace simulator {
         m_controller->set();
     }
 
+    void Agent::inheritNeat(neat::Network const & net)
+    {
+        m_neat = net;
+        m_controller->set();
+    }
+
     void Agent::modifyController()
     {
         m_neat.mutate();
@@ -78,5 +84,10 @@ namespace simulator {
     double Agent::distanceMoved() const
     {
         return m_distanceMoved;
+    }
+
+    neat::Network Agent::getNeatNet() const
+    {
+        return m_neat;
     }
 }

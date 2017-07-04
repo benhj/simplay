@@ -80,6 +80,9 @@ namespace neat {
         /// to a newly added hidden node
         void addConnectionToHiddenNode();
 
+        /// Mutates node function type
+        void perturbNodeFunctions();
+
     };
 
 }

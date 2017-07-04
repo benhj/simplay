@@ -1,6 +1,7 @@
 // Copyright (c) 2017 Ben Jones
 
 #include "graphics/Graphics.hpp"
+#include "graphics/SetScene.hpp"
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <GLFW/glfw3.h>
@@ -23,9 +24,16 @@ namespace {
 }
 
 namespace graphics {
-    Graphics::Graphics(GLEnvironment & glEnviro)
-      : m_glEnviro(glEnviro)
+    Graphics::Graphics(int & windowWidth,
+                       int & windowHeight,
+                       GLEnvironment & glEnviro)
+      : m_windowWidth(windowWidth)
+      , m_windowHeight(windowHeight)
+      , m_glEnviro(glEnviro)
       , m_viewDistance(0.4)
+      , m_testButton(windowWidth, 
+                     windowHeight,
+                     20, windowHeight-20)
     {
         init();
     }
@@ -34,16 +42,22 @@ namespace graphics {
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_glEnviro.draw();
+
+        // Draw GUI elements here
+        drawGUIElements();
     }
 
     void Graphics::reshape(int const w, int const h)
     {
+        m_windowWidth = w;
+        m_windowHeight = h;
         m_glEnviro.updateWidthHeight(w, h);
     }
 
     void Graphics::passiveMouseFunc(double const x, double const y)
     {
         m_glEnviro.checkForAnimatHighlight(x, y);
+        m_testButton.mouseIsOver(x, y);
     }
 
     void Graphics::keyboardHandler(int const key, 
@@ -114,5 +128,29 @@ namespace graphics {
             m_glEnviro.selectAnimat();
         }
     }
+
+    void Graphics::drawGUIElements()
+    {
+        drawGUIElementsSetup();
+        m_testButton.draw();
+        drawGUIElementsTearDown();
+
+    }
+
+    void Graphics::drawGUIElementsSetup()
+    {
+        detail::setScene(m_windowWidth, m_windowHeight, 1, 0);
+        glPushMatrix();
+        glLoadIdentity();
+    }
+
+    void Graphics::drawGUIElementsTearDown()
+    {
+        detail::setScene(m_windowWidth, 
+                         m_windowHeight, 
+                         m_glEnviro.getViewDistance(), 
+                         m_glEnviro.getWorldOrientation());
+    }
+
 }
 

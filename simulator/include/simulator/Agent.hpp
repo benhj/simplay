@@ -27,6 +27,7 @@ namespace simulator {
 
         /// Inherits genome from another agent
         void inheritNeat(Agent const & other);
+        void inheritNeat(neat::Network const & net);
 
         /// Set the current central starting
         void recordStartPosition();
@@ -37,6 +38,8 @@ namespace simulator {
         double distanceMoved() const;
 
         void resetController();
+
+        neat::Network getNeatNet() const;
 
       private:
 

@@ -159,8 +159,6 @@ namespace neat {
 
         } else {
 
-            std::cout<<"Shouldn't be here"<<std::endl;
-
             // Network is to be assembled from a pre-computed innovation map
             for(auto const & it : m_innovationMap) {
                 auto & innovInfo = it.second;
@@ -169,6 +167,7 @@ namespace neat {
                     auto & postNode = innovInfo.postNode;
                     auto & weight = innovInfo.weight;
                     auto & innovationNumber = innovInfo.innovationNumber;
+
                     m_nodes[postNode].addIncomingConnectionFrom(m_nodes[preNode], 
                                                                 m_weightInitBound,
                                                                 m_muts.weightChangeProb,
@@ -305,10 +304,18 @@ namespace neat {
 
     }
 
+    void Network::perturbNodeFunctions()
+    {
+        for (auto & node : m_nodes) {
+            node.perturbNodeFunction();
+        }
+    }
+
     void Network::mutate()
     {
         perturbWeights(m_weightInitBound / 4.0);
         addConnectionToHiddenNode();
+        perturbNodeFunctions();
         addNewNodes();
     }
 

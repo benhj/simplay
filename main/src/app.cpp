@@ -69,12 +69,13 @@ int main(int argc, char **argv)
     glfwSetKeyCallback(window, keyboardHandler);
     glfwSetMouseButtonCallback(window, clickHandler);
 
-    // GUI agnostics GL calls
-    graphix.reset(new graphics::Graphics(glEnvironment));
-
     // Size correction for small monitor
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
-    reshape(window, windowWidth, windowHeight);
+
+    // GUI agnostics GL calls
+    graphix.reset(new graphics::Graphics(windowWidth, 
+                                         windowHeight, 
+                                         glEnvironment));
 
     // Start the main simulation loop
     sim.start();

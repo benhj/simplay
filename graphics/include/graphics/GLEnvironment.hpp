@@ -1,4 +1,4 @@
-// Copyright (c) 2017 Ben Jones
+/// Copyright (c) 2017 Ben Jones
 
 #pragma once
 
@@ -6,6 +6,7 @@
 #include "GLAnimat.hpp"
 #include "GLCompass.hpp"
 #include "GLAxis.hpp"
+#include "GLButton.hpp"
 #include "SetScene.hpp"
 #include "WorldToScreen.hpp"
 #include "ThreadRunner.hpp"
@@ -66,6 +67,16 @@ namespace graphics {
                                     m_viewDistance,
                                     m_worldOrientation).draw();
             }
+        }
+
+        std::atomic<double> & getWorldOrientation()
+        {
+            return m_worldOrientation;
+        }
+
+        std::atomic<double> & getViewDistance()
+        {
+            return m_viewDistance;
         }
 
         void compassOn()
@@ -181,6 +192,7 @@ namespace graphics {
         std::atomic<double> m_centerY;
         double m_oldFlyXDiv;
         double m_oldFlyYDiv;
+        double m_oldZoomIt;
         model::AnimatWorld & m_animatWorld;
         std::vector<graphics::GLAnimat> m_glAnimats;
         Color m_backGoundColour { 209, 220, 235};
@@ -196,9 +208,9 @@ namespace graphics {
             m_oldFlyXDiv = 0;
             m_oldFlyYDiv = 0;
             m_viewDistance = 0.4;
+            m_oldZoomIt = (m_viewDistance - 0.15) / 10.0;
             std::function<void()> func([=]() {
                 auto zoomVal = m_viewDistance.load();
-                auto zoomIt = 0.25 / 10.0;
                 for(int i = 0; i < 10; ++i) {
                     auto valX = m_centerX.load();
                     if (valX < fx - centerDivX) {
@@ -219,7 +231,7 @@ namespace graphics {
                         m_oldFlyYDiv -= centerDivY;
                     }
                     m_centerY.store(valY);
-                    zoomVal -= zoomIt;
+                    zoomVal -= m_oldZoomIt;
                     m_viewDistance.store(zoomVal);
 
                     usleep(10000);
@@ -235,7 +247,6 @@ namespace graphics {
             m_oldFlyXDiv /= 10;
             std::function<void()> func([=]() {
                 auto zoomVal = m_viewDistance.load();
-                auto zoomIt = 0.25 / 10.0;
                 for(int i = 0; i < 10; ++i) {
                     auto valX = m_centerX.load();
                     valX -= m_oldFlyXDiv;
@@ -244,7 +255,7 @@ namespace graphics {
                     auto valY = m_centerY.load();
                     valY -= m_oldFlyYDiv;
                     m_centerY.store(valY);
-                    zoomVal += zoomIt;
+                    zoomVal += m_oldZoomIt;
                     m_viewDistance.store(zoomVal);
                     usleep(10000);
                 }

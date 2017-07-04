@@ -17,6 +17,32 @@ namespace {
                                   });
         return (found != end);
     }
+
+    inline int randomInt(int const popSize)
+    {
+        return (rand() % static_cast<int>(popSize));
+    }
+
+    // Experimental; crossover function not working
+    neat::Network offspringNet(std::vector<simulator::Agent> const & agents) 
+    {
+        auto & candA = agents[randomInt(agents.size())];
+        auto & candB = agents[randomInt(agents.size())];
+        auto & candC = agents[randomInt(agents.size())];
+        auto & candD = agents[randomInt(agents.size())];
+        auto dmA = candA.distanceMoved();
+        auto dmB = candB.distanceMoved();
+        auto dmC = candC.distanceMoved();
+        auto dmD = candD.distanceMoved();
+
+        auto & parentA = (dmA > dmB) ? candA : candB;
+        auto & parentB = (dmC > dmD) ? candC : candD;
+
+        auto neatA = parentA.getNeatNet();
+        auto neatB = parentB.getNeatNet();
+
+        return neatA.crossWith(neatB);
+    }
 }
 
 namespace simulator {
@@ -99,7 +125,19 @@ namespace simulator {
         i = 0;
         int pick = 0;
         for (auto & agent : m_agents) {
-
+            /*
+            if (i == 0) {
+                // always preserve elite member
+                agent.inheritNeat(m_agents[m_eliteIndex]);
+            } else {
+                auto offspring = offspringNet(m_agents);
+                agent.inheritNeat(offspring);
+                agent.modifyController();
+            }
+            agent.resetController();
+            ++i;
+*/
+            
             // inherit neat genome from fit agent, but only if
             // the inheritee isn't elite
             if (!iIsIndexedInTopN(i, m_popSize / 10, fitnesses)) {
@@ -120,6 +158,7 @@ namespace simulator {
             // put controller back in basal state
             agent.resetController();
             ++i;
+            
         }
     }
 }
