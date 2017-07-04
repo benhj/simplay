@@ -4,6 +4,8 @@
 #include "GLButton.hpp"
 #include "ThreadRunner.hpp"
 #include <atomic>
+#include <memory>
+#include <vector>
 
 namespace graphics {
     class Graphics
@@ -24,6 +26,9 @@ namespace graphics {
         void clickHandler(int const button, 
                           int const action, 
                           int const mods);
+
+        void addGUIButton(std::shared_ptr<GLButton> button);
+
       private:
 
         /// Dimensions of window
@@ -40,7 +45,8 @@ namespace graphics {
         std::atomic<double> m_viewDistance;
 
         /// Testing out some GUI ideas
-        GLButton m_testButton;
+        std::vector<std::shared_ptr<GLButton>> m_buttons;
+
         void handleKeyDown(int const key);
         void handleKeyUp(int const key);
         void handleKeyContinuous(int const key);

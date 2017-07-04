@@ -33,11 +33,7 @@ namespace graphics {
       , m_glEnviro(glEnviro)
       , m_threadRunner(threadRunner)
       , m_viewDistance(0.4)
-      , m_testButton(windowWidth, 
-                     windowHeight,
-                     20,              // x location 
-                     windowHeight-20, // y location
-                     threadRunner)
+      , m_buttons()
     {
         init();
     }
@@ -61,7 +57,9 @@ namespace graphics {
     void Graphics::passiveMouseFunc(double const x, double const y)
     {
         m_glEnviro.checkForAnimatHighlight(x, y);
-        m_testButton.mouseIsOver(x, y);
+        for (auto & b : m_buttons) {
+            b->mouseIsOver(x, y);
+        }
     }
 
     void Graphics::keyboardHandler(int const key, 
@@ -130,13 +128,18 @@ namespace graphics {
     {
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
             m_glEnviro.selectAnimat();
+            for(auto & b : m_buttons) {
+                b->handleClick();
+            }
         }
     }
 
     void Graphics::drawGUIElements()
     {
         drawGUIElementsSetup();
-        m_testButton.draw();
+        for(auto & b : m_buttons) {
+            b->draw();
+        }
         drawGUIElementsTearDown();
 
     }
@@ -154,6 +157,11 @@ namespace graphics {
                          m_windowHeight, 
                          m_glEnviro.getViewDistance(), 
                          m_glEnviro.getWorldOrientation());
+    }
+
+    void Graphics::addGUIButton(std::shared_ptr<GLButton> button)
+    {
+        m_buttons.emplace_back(std::move(button));
     }
 
 }

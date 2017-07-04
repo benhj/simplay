@@ -7,6 +7,7 @@
 
 #include "graphics/GLEnvironment.hpp"
 #include "graphics/Graphics.hpp"
+#include "graphics/GLButton.hpp"
 #include "graphics/ThreadRunner.hpp"
 
 #include <GLUT/glut.h>
@@ -83,10 +84,24 @@ int main(int argc, char **argv)
                                          glEnvironment,
                                          threadRunner));
 
+    // Add some GUI Elements
+    auto button = std::make_shared<graphics::GLButton>(windowWidth, 
+                                                       windowHeight,
+                                                       20, (windowHeight - 20),
+                                                       threadRunner);
+
+    button->installHandler([&](bool const state) {
+        if (state) {
+            sim.pause();
+        } else {
+            sim.resume();
+        }
+    });
+
+    graphix->addGUIButton(std::move(button));
+
     // Start the main simulation loop
     sim.start();
-
-    //while(true){}
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {

@@ -9,6 +9,7 @@ namespace simulator {
     Simulation::Simulation(int const popSize)
     : m_animatWorld(popSize)
     , m_population(popSize, m_animatWorld)
+    , m_paused(false)
     {
         m_animatWorld.randomizePositions(10, 10);
     }
@@ -24,6 +25,16 @@ namespace simulator {
         m_simThread = std::thread(&Simulation::loop, this);
     }
 
+    void Simulation::pause()
+    {
+        m_paused = true;
+    }
+
+    void Simulation::resume()
+    {
+        m_paused = false;
+    }
+
     void Simulation::doLoop(long const tick, 
                             int const everyN, 
                             bool const withMutations)
@@ -36,9 +47,15 @@ namespace simulator {
     {
         long tick = 0;
         while(true) {
-            doLoop(tick, 500);
-            //usleep(500);
-            ++tick;
+
+            // TODO: change from a spin-lock-esque
+            // pattern to a proper condition var.
+            // I'm being lazy. Need a holiday.
+            if(!m_paused) {
+                doLoop(tick, 500);
+                //usleep(500);
+                ++tick;
+            }
         }
     }
 }

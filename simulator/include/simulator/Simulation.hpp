@@ -7,6 +7,7 @@
 #include "model/AnimatWorld.hpp"
 #include <thread>
 #include <vector>
+#include <atomic>
 
 namespace simulator {
     class Simulation
@@ -16,6 +17,9 @@ namespace simulator {
 
         /// Initializes and starts the main simulation thread
         void start();
+
+        void pause();
+        void resume();
 
         /// Returns a reference to the simulated world
         model::AnimatWorld & animatWorld();
@@ -28,6 +32,9 @@ namespace simulator {
 
         /// Tracks the population of agents
         Population m_population;
+
+        /// Enables the pausing of the simulation
+        std::atomic<bool> m_paused;
 
         /// The simulation loop that runs in thread
         void loop();

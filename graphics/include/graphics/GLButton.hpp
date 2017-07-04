@@ -3,12 +3,11 @@
 #pragma once
 
 #include "Color.hpp"
-#include "SetScene.hpp"
 #include "ThreadRunner.hpp"
 #include <OpenGL/gl.h>
 #include <atomic>
 #include <cmath>
-#include <future>
+#include <functional>
 #include <unistd.h>
 
 namespace {
@@ -41,6 +40,8 @@ namespace graphics {
           , m_threadRunner(threadRunner)
           , m_entered(false)
           , m_opacity(0)
+          , m_handler()
+          , m_state(false)
         {
         }
         GLButton() = delete;
@@ -48,8 +49,6 @@ namespace graphics {
         void draw()
         {
             glTranslatef(m_derivedX, m_derivedY, 0);
-
-            // Draw outer compass circle
             detail::setColor(m_buttonColor, m_opacity /* opacity */);
             glBegin(GL_TRIANGLES);
                 glVertex2f(0, 50);
@@ -61,10 +60,10 @@ namespace graphics {
             glEnd();
         }
 
-        /// fade in the button when near to it
+        /// fade in the button when hovering over
         void fadeIn()
         {
-            auto const inc = 1.0 / 30;
+            auto const inc = (1.0 / 30);
             for(int i = 0; i < 30; ++i) {
                 auto val = m_opacity.load();
                 val += inc;
@@ -73,10 +72,22 @@ namespace graphics {
             }
         }
 
-        /// Indicates if mouse pointer is hovering over button 
+        /// fade out the button on pointer exit
+        void fadeOut()
+        {
+            auto const inc = (1.0 / 30);
+            for(int i = 0; i < 30; ++i) {
+                auto val = m_opacity.load();
+                val -= inc;
+                m_opacity.store(val);
+                usleep(10000);
+            }
+        }
+
+        /// When pointer over button, a 'fade-in'
+        /// is triggered, or a 'fade-out' on exit.
         bool mouseIsOver(int const x, int const y)
         {    
-            // If mouse is over, fadeIn
             if (x >= m_xLocation && 
                 x <= m_xLocation + 80 &&
                 y <= m_yLocation &&
@@ -84,7 +95,24 @@ namespace graphics {
                 if(!m_entered.exchange(true)) {
                     m_threadRunner.add([this]{fadeIn();});
                 }
+            } else {
+                if(m_entered.exchange(false)) {
+                    m_threadRunner.add([this]{fadeOut();});
+                }
             }
+        }
+
+        void handleClick() 
+        {
+            if(m_entered && m_handler) {
+                m_state = !m_state;
+                m_handler(m_state);
+            }
+        }
+
+        void installHandler(std::function<void(bool const)> const & handler)
+        {
+            m_handler = handler;
         }
 
       private:
@@ -94,10 +122,24 @@ namespace graphics {
         int m_yLocation;
         int m_derivedX;
         int m_derivedY;
+
+        /// Threads the fade-in or fade-out process
         detail::ThreadRunner & m_threadRunner;
+
+        /// Mouse hovering over button, true
         std::atomic<bool> m_entered;
+
+        /// True when mouse over, false otherwise
+        std::atomic<bool> m_state;
+
+        /// For fade-level of button
         std::atomic<double> m_opacity;
-        Color m_buttonColor { 150, 150, 150 };
+
+        /// Callback to trigger on click
+        std::function<void(bool const)> m_handler;
+
+        // Default colour
+        Color m_buttonColor { 150, 200, 150 };
     };
 
 
