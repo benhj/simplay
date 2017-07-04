@@ -39,7 +39,7 @@ namespace graphics {
           , m_derivedY(deriveY(windowHeight, yLocation))
           , m_threadRunner(threadRunner)
           , m_entered(false)
-          , m_opacity(0)
+          , m_opacity(0.1)
           , m_handler()
           , m_state(false)
         {
@@ -72,7 +72,7 @@ namespace graphics {
         /// fade in the button when hovering over
         void fadeIn()
         {
-            auto const inc = (1.0 / 30);
+            auto const inc = (0.9 / 30);
             for(int i = 0; i < 30; ++i) {
                 auto val = m_opacity.load();
                 val += inc;
@@ -84,7 +84,7 @@ namespace graphics {
         /// fade out the button on pointer exit
         void fadeOut()
         {
-            auto const inc = (1.0 / 30);
+            auto const inc = (0.9 / 30);
             for(int i = 0; i < 30; ++i) {
                 auto val = m_opacity.load();
                 val -= inc;

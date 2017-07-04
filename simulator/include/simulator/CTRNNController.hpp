@@ -56,7 +56,7 @@ namespace simulator {
         }
         double getRightMotorOutput(int const i) const override
         {
-            return m_ctrnn.getNeuronActivation(i + 8);
+            return m_ctrnn.getNeuronActivation(i + m_blockCount);
         }
         void update() override
         {
