@@ -29,6 +29,7 @@ namespace graphics {
                              0,
                              m_worldOrientation);
             detail::setColor(m_axisColor);
+            glLineWidth(1.0);
             glBegin(GL_LINES);
             glVertex3f(0, -(m_windowHeight/2), 0);
             glVertex3f(0, (m_windowHeight/2), 0);

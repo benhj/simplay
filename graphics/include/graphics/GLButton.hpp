@@ -58,6 +58,15 @@ namespace graphics {
                 glVertex2f(0, 0);
                 glVertex2f(80, 0);
             glEnd();
+
+            glLineWidth(3.0);
+            detail::setColor({50, 50, 50}, m_opacity /* opacity */);
+            glBegin(GL_LINE_LOOP);
+                glVertex2f(0, 50);
+                glVertex2f(0, 0);
+                glVertex2f(80, 0);
+                glVertex2f(80, 50);
+            glEnd();
         }
 
         /// fade in the button when hovering over
