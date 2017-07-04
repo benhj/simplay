@@ -49,6 +49,8 @@ namespace graphics {
 
         void draw()
         {
+            m_derivedX = deriveX(m_windowWidth, m_xLocation);
+            m_derivedY = deriveY(m_windowHeight, m_yLocation);
             glTranslatef(m_derivedX, m_derivedY, 0);
             detail::setColor(m_buttonColor, m_opacity /* opacity */);
             glBegin(GL_TRIANGLES);
@@ -133,6 +135,11 @@ namespace graphics {
         void setOverlay(std::function<void(bool const)> const & overlay)
         {
             m_overLay = overlay;
+        }
+
+        void setColor(Color const & color) 
+        {
+            m_buttonColor = color;
         }
 
       private:
