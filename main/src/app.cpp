@@ -8,6 +8,7 @@
 #include "graphics/GLEnvironment.hpp"
 #include "graphics/Graphics.hpp"
 #include "graphics/GLButton.hpp"
+#include "graphics/PauseOverlay.hpp"
 #include "graphics/ThreadRunner.hpp"
 
 #include <GLUT/glut.h>
@@ -97,6 +98,8 @@ int main(int argc, char **argv)
             sim.resume();
         }
     });
+
+    button->setOverlay(graphics::pauseOverlay());
 
     graphix->addGUIButton(std::move(button));
 

@@ -41,6 +41,7 @@ namespace graphics {
           , m_entered(false)
           , m_opacity(0.1)
           , m_handler()
+          , m_overLay()
           , m_state(false)
         {
         }
@@ -59,8 +60,13 @@ namespace graphics {
                 glVertex2f(80, 0);
             glEnd();
 
+            if(m_overLay) {
+                detail::setColor({150, 150, 150}, m_opacity /* opacity */);
+                m_overLay(m_state);
+            }
+
             glLineWidth(3.0);
-            detail::setColor({50, 50, 50}, m_opacity /* opacity */);
+            detail::setColor({150, 150, 150}, m_opacity /* opacity */);
             glBegin(GL_LINE_LOOP);
                 glVertex2f(0, 50);
                 glVertex2f(0, 0);
@@ -124,6 +130,11 @@ namespace graphics {
             m_handler = handler;
         }
 
+        void setOverlay(std::function<void(bool const)> const & overlay)
+        {
+            m_overLay = overlay;
+        }
+
       private:
         int & m_windowWidth;
         int & m_windowHeight;
@@ -147,8 +158,11 @@ namespace graphics {
         /// Callback to trigger on click
         std::function<void(bool const)> m_handler;
 
+        /// For drawing a simple overlay
+        std::function<void(bool const)> m_overLay;
+
         // Default colour
-        Color m_buttonColor { 150, 200, 150 };
+        Color m_buttonColor { 175, 225, 175 };
     };
 
 
