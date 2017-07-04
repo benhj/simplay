@@ -7,6 +7,7 @@
 
 #include "graphics/GLEnvironment.hpp"
 #include "graphics/Graphics.hpp"
+#include "graphics/ThreadRunner.hpp"
 
 #include <GLUT/glut.h>
 #include <GLFW/glfw3.h>
@@ -21,12 +22,16 @@ int windowWidth = 800;
 int windowHeight = 800;
 int popSize = 20;
 
+// For running operations asynchronously
+graphics::detail::ThreadRunner threadRunner;
+
 simulator::Simulation sim(popSize);
 
 model::AnimatWorld & animatWorld = sim.animatWorld();
 graphics::GLEnvironment glEnvironment(windowWidth, 
                                       windowHeight, 
-                                      animatWorld);
+                                      animatWorld,
+                                      threadRunner);
 
 std::unique_ptr<graphics::Graphics> graphix;
 
@@ -75,7 +80,8 @@ int main(int argc, char **argv)
     // GUI agnostics GL calls
     graphix.reset(new graphics::Graphics(windowWidth, 
                                          windowHeight, 
-                                         glEnvironment));
+                                         glEnvironment,
+                                         threadRunner));
 
     // Start the main simulation loop
     sim.start();

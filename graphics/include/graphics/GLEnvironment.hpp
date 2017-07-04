@@ -25,16 +25,18 @@ namespace graphics {
       public:
         GLEnvironment(int & windowWidth,
                       int & windowHeight,
-                      model::AnimatWorld & animatWorld)
+                      model::AnimatWorld & animatWorld,
+                      detail::ThreadRunner & threadRunner)
         : m_windowWidth(windowWidth)
         , m_windowHeight(windowHeight)
+        , m_animatWorld(animatWorld)
+        , m_threadRunner(threadRunner)
         , m_viewDistance(0.4)
         , m_worldOrientation(0)
         , m_centerX(0)
         , m_centerY(0)
         , m_oldFlyXDiv(0)
         , m_oldFlyYDiv(0)
-        , m_animatWorld(animatWorld)
         , m_selected(-1)
         {
             auto const popSize = m_animatWorld.getPopSize();
@@ -183,6 +185,8 @@ namespace graphics {
       private:
         int & m_windowWidth;
         int & m_windowHeight;
+        model::AnimatWorld & m_animatWorld;
+        detail::ThreadRunner & m_threadRunner;
 
         /// Index of the currently selected animat
         std::atomic<int> m_selected;
@@ -193,12 +197,10 @@ namespace graphics {
         double m_oldFlyXDiv;
         double m_oldFlyYDiv;
         double m_oldZoomIt;
-        model::AnimatWorld & m_animatWorld;
         std::vector<graphics::GLAnimat> m_glAnimats;
         Color m_backGoundColour { 209, 220, 235};
         std::atomic<bool> m_displayAxis{true};
         std::atomic<bool> m_displayCompass{false};
-        detail::ThreadRunner m_threadRunner;
 
         void processFlyIn(double const centerDivX, 
                           double const centerDivY,

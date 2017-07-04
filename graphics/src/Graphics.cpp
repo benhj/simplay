@@ -26,14 +26,18 @@ namespace {
 namespace graphics {
     Graphics::Graphics(int & windowWidth,
                        int & windowHeight,
-                       GLEnvironment & glEnviro)
+                       GLEnvironment & glEnviro,
+                       detail::ThreadRunner & threadRunner)
       : m_windowWidth(windowWidth)
       , m_windowHeight(windowHeight)
       , m_glEnviro(glEnviro)
+      , m_threadRunner(threadRunner)
       , m_viewDistance(0.4)
       , m_testButton(windowWidth, 
                      windowHeight,
-                     20, windowHeight-20)
+                     20,              // x location 
+                     windowHeight-20, // y location
+                     threadRunner)
     {
         init();
     }

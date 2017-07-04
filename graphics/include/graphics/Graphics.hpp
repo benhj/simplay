@@ -2,6 +2,7 @@
 
 #include "GLEnvironment.hpp"
 #include "GLButton.hpp"
+#include "ThreadRunner.hpp"
 #include <atomic>
 
 namespace graphics {
@@ -10,7 +11,8 @@ namespace graphics {
       public:
         explicit Graphics(int & windowWidth, 
                           int & windowHeight, 
-                          GLEnvironment & glEnviro);
+                          GLEnvironment & glEnviro,
+                          detail::ThreadRunner & threadRunner);
         Graphics() = delete;
         void display();
         void reshape(int const w, int const h);
@@ -30,6 +32,9 @@ namespace graphics {
 
         /// Represents the drawing of the animat environment
         GLEnvironment & m_glEnviro;
+
+        /// To run stuff async
+        detail::ThreadRunner & m_threadRunner;
 
         /// Zoom parameter
         std::atomic<double> m_viewDistance;
