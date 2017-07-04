@@ -5,10 +5,12 @@
 #include "Color.hpp"
 #include "ThreadRunner.hpp"
 #include <OpenGL/gl.h>
+#include <GLFW/glfw3.h>
 #include <atomic>
 #include <cmath>
 #include <functional>
 #include <unistd.h>
+
 
 namespace {
     inline int deriveX(int const windowWidth, int const xLocation)
@@ -17,7 +19,7 @@ namespace {
     }
     inline int deriveY(int const windowHeight, int const yLocation)
     {
-        return -(windowHeight / 2) + (windowHeight - yLocation);
+        return -(windowHeight / 2) + yLocation;
     }
 }
 
@@ -26,17 +28,13 @@ namespace graphics {
     class GLButton
     {
       public:
-        GLButton(int & windowWidth,
-                 int & windowHeight,
+        GLButton(GLFWwindow * window,
                  int xLocation,
                  int yLocation,
                  detail::ThreadRunner & threadRunner)
-          : m_windowWidth(windowWidth)
-          , m_windowHeight(windowHeight)
+          : m_window(window) 
           , m_xLocation(xLocation)
           , m_yLocation(yLocation)
-          , m_derivedX(deriveX(windowWidth, xLocation))
-          , m_derivedY(deriveY(windowHeight, yLocation))
           , m_threadRunner(threadRunner)
           , m_entered(false)
           , m_opacity(0.1)
@@ -49,7 +47,9 @@ namespace graphics {
 
         void draw()
         {
-            m_derivedX = deriveX(m_windowWidth, m_xLocation);
+            int windowWidth;
+            glfwGetWindowSize(m_window, &windowWidth, &m_windowHeight);
+            m_derivedX = deriveX(windowWidth, m_xLocation);
             m_derivedY = deriveY(m_windowHeight, m_yLocation);
             glTranslatef(m_derivedX, m_derivedY, 0);
             detail::setColor(m_buttonColor, m_opacity /* opacity */);
@@ -107,8 +107,8 @@ namespace graphics {
         {    
             if (x >= m_xLocation && 
                 x <= m_xLocation + 80 &&
-                y <= m_yLocation &&
-                y >= m_yLocation - 50) {
+                y <= (m_windowHeight - m_yLocation) &&
+                y >= (m_windowHeight - m_yLocation) - 50) {
                 if(!m_entered.exchange(true)) {
                     m_threadRunner.add([this]{fadeIn();});
                 }
@@ -143,12 +143,12 @@ namespace graphics {
         }
 
       private:
-        int & m_windowWidth;
-        int & m_windowHeight;
+        GLFWwindow* m_window;
         int m_xLocation;
         int m_yLocation;
         int m_derivedX;
         int m_derivedY;
+        int m_windowHeight;
 
         /// Threads the fade-in or fade-out process
         detail::ThreadRunner & m_threadRunner;

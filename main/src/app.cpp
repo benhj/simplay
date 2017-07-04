@@ -86,9 +86,8 @@ int main(int argc, char **argv)
                                          threadRunner));
 
     // Add some GUI Elements
-    auto button = std::make_shared<graphics::GLButton>(windowWidth, 
-                                                       windowHeight,
-                                                       20, (windowHeight - 20),
+    auto button = std::make_shared<graphics::GLButton>(window,
+                                                       20, 20,
                                                        threadRunner);
 
     button->installHandler([&](bool const state) {
