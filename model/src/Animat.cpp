@@ -81,7 +81,7 @@ namespace model {
         else if (dirLeft.m_vec[0]<=0&&dirLeft.m_vec[1]>=0)baseAngle = -baseAngle-(PI/4);
         else if (dirLeft.m_vec[0]>=0&&dirLeft.m_vec[1]<=0)baseAngle = baseAngle-(PI/4);
         else if (dirLeft.m_vec[0]>=0&&dirLeft.m_vec[1]>=0)baseAngle = baseAngle-(PI/4);
-        auto ant = 4.0;
+        auto ant = 1.0;
         auto cosBit = cos(baseAngle);
         auto sinBit = sin(baseAngle);
         auto xLeft = leftPM.m_vec[0] + (sinBit * ant);
@@ -297,7 +297,7 @@ namespace model {
                 auto const & outerVec = outer.first;
                 auto const & innerVec = inner.first;
                 auto const seperation = outerVec.distance(innerVec);
-                if (seperation < 1.0) {
+                if (seperation < 2.0) {
                     return true;
                 }
 

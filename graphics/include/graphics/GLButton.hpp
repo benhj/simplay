@@ -31,11 +31,15 @@ namespace graphics {
         GLButton(GLFWwindow * window,
                  int xLocation,
                  int yLocation,
+                 int width,
+                 int height,
                  detail::ThreadRunner & threadRunner)
           : m_window(window) 
           , m_xLocation(xLocation)
           , m_yLocation(yLocation)
           , m_threadRunner(threadRunner)
+          , m_width(width)
+          , m_height(height)
           , m_entered(false)
           , m_opacity(0.1)
           , m_handler()
@@ -54,12 +58,12 @@ namespace graphics {
             glTranslatef(m_derivedX, m_derivedY, 0);
             detail::setColor(m_buttonColor, m_opacity /* opacity */);
             glBegin(GL_TRIANGLES);
-                glVertex2f(0, 50);
+                glVertex2f(0, m_height);
                 glVertex2f(0, 0);
-                glVertex2f(80, 50);
-                glVertex2f(80, 50);
+                glVertex2f(m_width, m_height);
+                glVertex2f(m_width, m_height);
                 glVertex2f(0, 0);
-                glVertex2f(80, 0);
+                glVertex2f(m_width, 0);
             glEnd();
 
             if(m_overLay) {
@@ -70,10 +74,10 @@ namespace graphics {
             glLineWidth(3.0);
             detail::setColor({150, 150, 150}, m_opacity /* opacity */);
             glBegin(GL_LINE_LOOP);
-                glVertex2f(0, 50);
+                glVertex2f(0, m_height);
                 glVertex2f(0, 0);
-                glVertex2f(80, 0);
-                glVertex2f(80, 50);
+                glVertex2f(m_width, 0);
+                glVertex2f(m_width, m_height);
             glEnd();
         }
 
@@ -106,9 +110,9 @@ namespace graphics {
         bool mouseIsOver(int const x, int const y)
         {    
             if (x >= m_xLocation && 
-                x <= m_xLocation + 80 &&
+                x <= m_xLocation + m_width &&
                 y <= (m_windowHeight - m_yLocation) &&
-                y >= (m_windowHeight - m_yLocation) - 50) {
+                y >= (m_windowHeight - m_yLocation) - m_height) {
                 if(!m_entered.exchange(true)) {
                     m_threadRunner.add([this]{fadeIn();});
                 }
@@ -152,6 +156,10 @@ namespace graphics {
 
         /// Threads the fade-in or fade-out process
         detail::ThreadRunner & m_threadRunner;
+
+        /// Button width and height
+        int m_width;
+        int m_height;
 
         /// Mouse hovering over button, true
         std::atomic<bool> m_entered;

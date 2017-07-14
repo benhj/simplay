@@ -11,7 +11,6 @@
 #include "graphics/PauseOverlay.hpp"
 #include "graphics/ThreadRunner.hpp"
 
-#include <GLUT/glut.h>
 #include <GLFW/glfw3.h>
 
 #include <iostream>
@@ -88,6 +87,7 @@ int main(int argc, char **argv)
     // Add some GUI Elements
     auto button = std::make_shared<graphics::GLButton>(window,
                                                        20, 20,
+                                                       80, 50,
                                                        threadRunner);
 
     button->installHandler([&](bool const state) {

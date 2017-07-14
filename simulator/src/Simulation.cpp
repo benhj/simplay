@@ -3,6 +3,7 @@
 #include "simulator/Simulation.hpp"
 #include <unistd.h>
 #include <algorithm>
+#include <thread>
 
 namespace simulator {
 
