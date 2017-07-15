@@ -30,6 +30,14 @@ namespace ctrnn {
         return m_neurons[n].getMembranePotential();
     }
 
+    double Network::getNeuronSigmoid(int const n) const
+    {
+        if (n >= m_neurons.size()) {
+            throw std::runtime_error("Network: out of bounds");
+        }
+        return m_neurons[n].sigmoid();
+    }
+
     double Network::getNeuronActivation(int const n) const
     {
         if (n >= m_neurons.size()) {
@@ -68,6 +76,15 @@ namespace ctrnn {
             throw std::runtime_error("Network: out of bounds");
         }
         m_connections[j][i].w = w;
+    }
+
+    void 
+    Network::setTimeConstantForNeuron(int const n, double const tau)
+    {
+        if (n >= m_neurons.size()) {
+            throw std::runtime_error("Network: out of bounds");
+        }
+        m_neurons[n].setTimeConstant(tau);
     }
 
     void

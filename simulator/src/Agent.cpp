@@ -6,10 +6,10 @@
 
 namespace {
     int const NEAT_INPUTS = 4;
-    int const NEAT_OUTPUTS = 1;
+    int const NEAT_OUTPUTS = 2;
     int const MAX_NEAT_NODES = 40;
     double const NEAT_WEIGHT_BOUND = 8.0;
-    neat::MutationParameters NEAT_MUTS{0, 0.2, 0.1, 0};
+    neat::MutationParameters NEAT_MUTS{0.2, 0.2, 0.3, 0.5};
 }
 
 namespace simulator {
@@ -33,8 +33,8 @@ namespace simulator {
         auto blockCount = m_animat.getBlockCount();
         for(int integ = 0; integ < 10; ++integ) {
             for (auto i = 0 ; i < blockCount; ++i) {
-                auto outputLeft = m_controller->getLeftMotorOutput(i) * 15;
-                auto outputRight = m_controller->getRightMotorOutput(i) * 15;
+                auto outputLeft = m_controller->getLeftMotorOutput(i) * 20;
+                auto outputRight = m_controller->getRightMotorOutput(i) * 20;
                 m_animat.applyBlockContraction(i, 0, outputLeft);
                 m_animat.applyBlockContraction(i, 1, outputRight);
             }

@@ -21,7 +21,7 @@
 
 int windowWidth = 800;
 int windowHeight = 800;
-int popSize = 20;
+int popSize = 50;
 
 // For running operations asynchronously
 graphics::detail::ThreadRunner threadRunner;
@@ -59,6 +59,8 @@ int main(int argc, char **argv)
     if (!glfwInit()) {
         return -1;
     }
+
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     window = glfwCreateWindow(windowWidth, windowHeight, "Animat test!", NULL, NULL);
     if (!window) {

@@ -31,7 +31,7 @@ namespace model {
         }
 
         // construct blocks
-        auto constant = 30;
+        auto constant = 20;
         for (int block = 0; block < m_layers.size() - 1; ++block) {
             auto & layerA = m_layers[block];
             auto & layerB = m_layers[block + 1];
@@ -286,8 +286,6 @@ namespace model {
 
     bool Animat::checkForInnerCollisions() const
     {
-        bool overlappingBit = false;
-
         for(auto const & outer : m_boundingCircles) {
             for(auto const & inner : m_boundingCircles) {
                 if(&inner == &outer) {
@@ -297,7 +295,7 @@ namespace model {
                 auto const & outerVec = outer.first;
                 auto const & innerVec = inner.first;
                 auto const seperation = outerVec.distance(innerVec);
-                if (seperation < 2.0) {
+                if (seperation < 1.0) {
                     return true;
                 }
 

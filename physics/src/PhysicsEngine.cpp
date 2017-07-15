@@ -57,6 +57,15 @@ namespace physics {
         m_springs[index].compress(forceMagnitude);
     }
 
+    void PhysicsEngine::updateSpringConstant(int const index, 
+                                             double const springConstant)
+    {
+        if (index >= m_springs.size()) {
+            throw std::runtime_error("compressSpring: index out of bounds");
+        }
+        m_springs[index].setSpringConstant(springConstant);
+    }
+
     void PhysicsEngine::relaxSpring(int const index)
     {
         if (index >= m_springs.size()) {

@@ -18,8 +18,9 @@ namespace {
         glEnable(GL_LINE_SMOOTH);
         glEnable(GL_POINT_SMOOTH);
         glEnable(GL_POLYGON_SMOOTH);
+        glEnable(GL_MULTISAMPLE);  
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-        glShadeModel(GL_SMOOTH);
+        // glShadeModel(GL_SMOOTH);
     }
 }
 

@@ -33,6 +33,8 @@ namespace ctrnn {
 
         double getNeuronActivation(int const n) const;
 
+        double getNeuronSigmoid(int const n) const;
+
         /// Create a fully connected network. Connectivity
         /// will be determined by weight
         void createNetwork();
@@ -40,6 +42,7 @@ namespace ctrnn {
         void connect(int const i, int const j, double const w);
 
         void setWeight(int const i, int const j, double const w);
+        void setTimeConstantForNeuron(int const n, double const tau);
 
         /// Sets the input current for a given neuron
         void setExternalInput(int const n, double const a);

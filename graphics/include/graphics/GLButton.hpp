@@ -67,7 +67,7 @@ namespace graphics {
             glEnd();
 
             if(m_overLay) {
-                detail::setColor({150, 150, 150}, m_opacity /* opacity */);
+                detail::setColor({250, 250, 250}, m_opacity /* opacity */);
                 m_overLay(m_state);
             }
 
@@ -177,7 +177,7 @@ namespace graphics {
         std::function<void(bool const)> m_overLay;
 
         // Default colour
-        Color m_buttonColor { 175, 225, 175 };
+        Color m_buttonColor { 175, 175, 225 };
     };
 
 

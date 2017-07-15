@@ -96,8 +96,6 @@ namespace neat {
         for (auto i = 0; i < m_inputCount; ++i) {
             m_nodes.emplace_back(i, NodeType::Input, 
                                  m_muts.nodeFunctionChangeProb);
-            // Also set bias to each input to 1
-            m_nodes[i].setExternalInput(1.0);
         }
         for (auto i = m_inputCount; i < m_inputCount + m_outputCount; ++i) {
             m_nodes.emplace_back(i, NodeType::Output, 
@@ -105,10 +103,10 @@ namespace neat {
             m_outputIDs.push_back(i);
         }
 
-        // Also SEED with a single hidden node
-        m_nodes.emplace_back(m_inputCount + m_outputCount, 
-                             NodeType::Hidden, 
-                             m_muts.nodeFunctionChangeProb);
+        // // Also SEED with a single hidden node
+        // m_nodes.emplace_back(m_inputCount + m_outputCount, 
+        //                      NodeType::Hidden, 
+        //                      m_muts.nodeFunctionChangeProb);
 
         if(m_innovationMap.empty()) {
             // When initializing the network, all connections have the
@@ -130,32 +128,32 @@ namespace neat {
                 }
             }
 
-            // Fully connect from inputs to hidden
-            for (auto i = 0; i < m_inputCount; ++i) {
-                auto const hiddenID = m_inputCount + m_outputCount;
-                m_nodes[hiddenID].addIncomingConnectionFrom(m_nodes[i], 
-                                                            m_weightInitBound, 
-                                                            m_muts.weightChangeProb,
-                                                            innovationNumber);
+            // // Fully connect from inputs to hidden
+            // for (auto i = 0; i < m_inputCount; ++i) {
+            //     auto const hiddenID = m_inputCount + m_outputCount;
+            //     m_nodes[hiddenID].addIncomingConnectionFrom(m_nodes[i], 
+            //                                                 m_weightInitBound, 
+            //                                                 m_muts.weightChangeProb,
+            //                                                 innovationNumber);
 
-                auto const weight = m_nodes[hiddenID].getConnectionWeightFrom(i);
+            //     auto const weight = m_nodes[hiddenID].getConnectionWeightFrom(i);
 
-                m_innovationMap.emplace(innovationNumber,
-                                        InnovationInfo{innovationNumber, i, hiddenID, weight, true});
-                ++innovationNumber;
-            }
+            //     m_innovationMap.emplace(innovationNumber,
+            //                             InnovationInfo{innovationNumber, i, hiddenID, weight, true});
+            //     ++innovationNumber;
+            // }
 
-            // Fully connect from hidden to output
-            auto const hiddenID = m_inputCount + m_outputCount;
-            auto const outputID = hiddenID - 1;
-            m_nodes[outputID].addIncomingConnectionFrom(m_nodes[hiddenID], 
-                                                        m_weightInitBound, 
-                                                        m_muts.weightChangeProb,
-                                                        innovationNumber);
-            auto const weight = m_nodes[outputID].getConnectionWeightFrom(hiddenID);
-            m_innovationMap.emplace(innovationNumber,
-                                    InnovationInfo{innovationNumber, hiddenID, outputID, weight, true});
-            ++innovationNumber;
+            // // Fully connect from hidden to output
+            // auto const hiddenID = m_inputCount + m_outputCount;
+            // auto const outputID = hiddenID - 1;
+            // m_nodes[outputID].addIncomingConnectionFrom(m_nodes[hiddenID], 
+            //                                             m_weightInitBound, 
+            //                                             m_muts.weightChangeProb,
+            //                                             innovationNumber);
+            // auto const weight = m_nodes[outputID].getConnectionWeightFrom(hiddenID);
+            // m_innovationMap.emplace(innovationNumber,
+            //                         InnovationInfo{innovationNumber, hiddenID, outputID, weight, true});
+            // ++innovationNumber;
 
         } else {
 

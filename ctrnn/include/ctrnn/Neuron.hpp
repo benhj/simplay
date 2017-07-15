@@ -23,6 +23,10 @@ namespace ctrnn {
         double oldActivation() const;
         double getMembranePotential() const;
 
+        double sigmoid() const;
+
+        void setTimeConstant(double const tau);
+
       private:
         void updateU(double const inner);
 

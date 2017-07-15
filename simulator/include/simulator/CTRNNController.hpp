@@ -8,6 +8,7 @@
 #include "neat/Node.hpp"
 #include "neat/Connection.hpp"
 #include <cstdlib>
+#include <cmath>
 
 namespace simulator {
     class CTRNNController : public Controller
@@ -30,33 +31,44 @@ namespace simulator {
 
             int const nodeCount = m_blockCount * 4;
 
+            // Set weights
             for(int i = 0 ; i < nodeCount; ++i) {
+                auto ix = neuralSubstrate.getX(i);
+                auto iy = neuralSubstrate.getY(i);
                 for(int j = 0; j < nodeCount; ++j) {
                     if (i != j && i >= nodeCount / 2) {
-                        auto ix = neuralSubstrate.getX(i);
-                        auto iy = neuralSubstrate.getY(i);
                         auto jx = neuralSubstrate.getX(j);
                         auto jy = neuralSubstrate.getY(j);
                         m_neatNet.setInput(0, ix);
                         m_neatNet.setInput(1, iy);
                         m_neatNet.setInput(2, jx);
                         m_neatNet.setInput(3, jy);
-                        m_ctrnn.connect(i, j, m_neatNet.getOutput(0));
+                        m_ctrnn.connect(i, j, m_neatNet.getOutput(0) * 10.0);
                     }
                 }
+
+                // Set time constants
+                m_neatNet.setInput(0, ix);
+                m_neatNet.setInput(1, iy);
+                m_neatNet.setInput(2, 0);
+                m_neatNet.setInput(3, 0);
+                auto tau = fabs(m_neatNet.getOutput(1) * 10.0);
+                tau += 10.0;
+                m_ctrnn.setTimeConstantForNeuron(i, tau);
+
             }
-            m_ctrnn.setExternalInput(nodeCount / 2, 1.0);
-            m_ctrnn.setExternalInput(nodeCount - m_blockCount, 1.0);
+            m_ctrnn.setExternalInput(nodeCount / 2, 10.0);
+            m_ctrnn.setExternalInput(nodeCount - m_blockCount, 10.0);
             m_ctrnn.update();
         }
 
         double getLeftMotorOutput(int const i) const override
         {
-            return m_ctrnn.getNeuronActivation(i);
+            return m_ctrnn.getNeuronSigmoid(i);
         }
         double getRightMotorOutput(int const i) const override
         {
-            return m_ctrnn.getNeuronActivation(i + m_blockCount);
+            return m_ctrnn.getNeuronSigmoid(i + m_blockCount);
         }
         void update() override
         {

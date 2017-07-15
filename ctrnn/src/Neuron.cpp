@@ -69,9 +69,19 @@ namespace ctrnn {
         return m_oldActivation;
     }
 
+    double Neuron::sigmoid() const
+    {
+        return 1.0/(1.0+exp(-m_membranePotential));
+    }
+
     void Neuron::setExternalInput(double const externalInput)
     {
         m_externalInput = externalInput;
+    }
+
+    void Neuron::setTimeConstant(double const tau)
+    {
+        m_tau = tau;
     }
 
     double Neuron::getMembranePotential() const { return m_membranePotential; }
