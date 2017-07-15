@@ -21,7 +21,7 @@
 
 int windowWidth = 800;
 int windowHeight = 800;
-int popSize = 50;
+int popSize = 10;
 
 // For running operations asynchronously
 graphics::detail::ThreadRunner threadRunner;

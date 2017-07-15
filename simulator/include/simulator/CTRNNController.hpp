@@ -56,10 +56,9 @@ namespace simulator {
                 tau *= 20.0;
                 tau += 20.0;
                 m_ctrnn.setTimeConstantForNeuron(i, tau);
-
             }
-            m_ctrnn.setExternalInput(nodeCount / 2, 10.0);
-            m_ctrnn.setExternalInput(nodeCount - m_blockCount, 10.0);
+            m_ctrnn.setExternalInput(nodeCount / 2, 50.0);
+            m_ctrnn.setExternalInput(nodeCount - m_blockCount, 50.0);
             m_ctrnn.update();
         }
 

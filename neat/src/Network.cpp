@@ -6,7 +6,14 @@
 #include <utility>
 #include <iostream>
 
+#include <random>
+
 namespace {
+
+    std::random_device rd;
+    std::mt19937 rng(rd());
+    std::uniform_int_distribution<int> uni(0,2); // guaranteed unbiased
+
     void restoreConnectivity(std::vector<neat::Node> const & oldNodes,
                              std::vector<neat::Node> & newNodes,
                              double const weightInitBound,
@@ -312,9 +319,16 @@ namespace neat {
     void Network::mutate()
     {
         perturbWeights(m_weightInitBound / 4.0);
-        addConnectionToHiddenNode();
-        perturbNodeFunctions();
-        addNewNodes();
+
+        auto random_integer = uni(rng);
+
+        if(random_integer == 0) {
+            addConnectionToHiddenNode();
+        } else if(random_integer == 1) {
+            perturbNodeFunctions();
+        } else {
+            addNewNodes();
+        }
     }
 
     Network Network::crossWith(Network const & other) const
