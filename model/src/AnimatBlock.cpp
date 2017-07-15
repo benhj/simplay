@@ -20,7 +20,7 @@ namespace model {
         auto const layerTwoLeftVertIndex = m_layerTwo.getIndexLeft();
         auto const layerTwoRightVertIndex = m_layerTwo.getIndexRight();
 
-        auto constantB = 200;
+        auto constantB = 300;
         auto dampener = 0.4;
 
         // create springs between point masses ('X')
@@ -54,7 +54,7 @@ namespace model {
     void AnimatBlock::contractLeftSide(physics::PhysicsEngine & physicsEngine,
                                        double const forceMagnitude)
     {
-        physicsEngine.updateSpringConstant(m_leftSpringIndex, 30.0 - forceMagnitude);
+        //physicsEngine.updateSpringConstant(m_leftSpringIndex, 30.0 - forceMagnitude);
         //physicsEngine.updateSpringConstant(m_rightSpringIndex, 20.0 + forceMagnitude);
         physicsEngine.compressSpring(m_leftSpringIndex, forceMagnitude);
     }
@@ -63,7 +63,7 @@ namespace model {
                                        double const forceMagnitude)
     {
         //physicsEngine.updateSpringConstant(m_leftSpringIndex, 30.0 + forceMagnitude);
-        physicsEngine.updateSpringConstant(m_rightSpringIndex, 30.0 - forceMagnitude);
+        //physicsEngine.updateSpringConstant(m_rightSpringIndex, 30.0 - forceMagnitude);
         physicsEngine.compressSpring(m_rightSpringIndex, forceMagnitude);
     }
 

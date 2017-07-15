@@ -31,7 +31,7 @@ namespace model {
         }
 
         // construct blocks
-        auto constant = 20;
+        auto constant = 30;
         for (int block = 0; block < m_layers.size() - 1; ++block) {
             auto & layerA = m_layers[block];
             auto & layerB = m_layers[block + 1];

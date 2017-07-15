@@ -52,8 +52,9 @@ namespace simulator {
                 m_neatNet.setInput(1, iy);
                 m_neatNet.setInput(2, 0);
                 m_neatNet.setInput(3, 0);
-                auto tau = fabs(m_neatNet.getOutput(1) * 10.0);
-                tau += 10.0;
+                auto tau = fabs(m_neatNet.getOutput(1));
+                tau *= 20.0;
+                tau += 20.0;
                 m_ctrnn.setTimeConstantForNeuron(i, tau);
 
             }
