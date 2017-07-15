@@ -63,7 +63,7 @@ namespace model {
                                        double const forceMagnitude)
     {
         //physicsEngine.updateSpringConstant(m_leftSpringIndex, 30.0 + forceMagnitude);
-        physicsEngine.updateSpringConstant(m_rightSpringIndex, 20.0 - forceMagnitude);
+        physicsEngine.updateSpringConstant(m_rightSpringIndex, 30.0 - forceMagnitude);
         physicsEngine.compressSpring(m_rightSpringIndex, forceMagnitude);
     }
 
