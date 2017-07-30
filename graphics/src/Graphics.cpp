@@ -20,7 +20,7 @@ namespace {
         glEnable(GL_POLYGON_SMOOTH);
         glEnable(GL_MULTISAMPLE);  
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-        // glShadeModel(GL_SMOOTH);
+        //glShadeModel(GL_SMOOTH);
     }
 }
 
@@ -35,6 +35,7 @@ namespace graphics {
       , m_threadRunner(threadRunner)
       , m_viewDistance(0.4)
       , m_buttons()
+      , m_sliders()
     {
         init();
     }
@@ -59,6 +60,9 @@ namespace graphics {
     {
         m_glEnviro.checkForAnimatHighlight(x, y);
         for (auto & b : m_buttons) {
+            b->mouseIsOver(x, y);
+        }
+        for (auto & b : m_sliders) {
             b->mouseIsOver(x, y);
         }
     }
@@ -141,6 +145,9 @@ namespace graphics {
         for(auto & b : m_buttons) {
             b->draw();
         }
+        for(auto & b : m_sliders) {
+            b->draw();
+        }
         drawGUIElementsTearDown();
 
     }
@@ -163,6 +170,11 @@ namespace graphics {
     void Graphics::addGUIButton(std::shared_ptr<GLButton> button)
     {
         m_buttons.emplace_back(std::move(button));
+    }
+
+    void Graphics::addGUISlider(std::shared_ptr<GLVerticalSlider> slider)
+    {
+        m_sliders.emplace_back(std::move(slider));
     }
 
 }

@@ -55,6 +55,8 @@ namespace graphics {
             glfwGetWindowSize(m_window, &windowWidth, &m_windowHeight);
             m_derivedX = deriveX(windowWidth, m_xLocation);
             m_derivedY = deriveY(m_windowHeight, m_yLocation);
+            glPushMatrix();
+            glLoadIdentity();
             glTranslatef(m_derivedX, m_derivedY, 0);
             detail::setColor(m_buttonColor, m_opacity /* opacity */);
             glBegin(GL_TRIANGLES);
@@ -79,6 +81,7 @@ namespace graphics {
                 glVertex2f(m_width, 0);
                 glVertex2f(m_width, m_height);
             glEnd();
+            glPopMatrix();
         }
 
         /// fade in the button when hovering over
@@ -177,7 +180,7 @@ namespace graphics {
         std::function<void(bool const)> m_overLay;
 
         // Default colour
-        Color m_buttonColor { 175, 175, 225 };
+        Color m_buttonColor { 155, 155, 155 };
     };
 
 

@@ -2,6 +2,7 @@
 
 #include "GLEnvironment.hpp"
 #include "GLButton.hpp"
+#include "GLVerticalSlider.hpp"
 #include "ThreadRunner.hpp"
 #include <atomic>
 #include <memory>
@@ -28,6 +29,7 @@ namespace graphics {
                           int const mods);
 
         void addGUIButton(std::shared_ptr<GLButton> button);
+        void addGUISlider(std::shared_ptr<GLVerticalSlider> slider);
 
       private:
 
@@ -46,6 +48,7 @@ namespace graphics {
 
         /// Testing out some GUI ideas
         std::vector<std::shared_ptr<GLButton>> m_buttons;
+        std::vector<std::shared_ptr<GLVerticalSlider>> m_sliders;
 
         void handleKeyDown(int const key);
         void handleKeyUp(int const key);

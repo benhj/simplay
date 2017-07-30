@@ -8,6 +8,7 @@
 #include "graphics/GLEnvironment.hpp"
 #include "graphics/Graphics.hpp"
 #include "graphics/GLButton.hpp"
+#include "graphics/GLVerticalSlider.hpp"
 #include "graphics/PauseOverlay.hpp"
 #include "graphics/ThreadRunner.hpp"
 
@@ -102,7 +103,13 @@ int main(int argc, char **argv)
 
     button->setOverlay(graphics::pauseOverlay());
 
+    auto slider = std::make_shared<graphics::GLVerticalSlider>(window,
+                                                               25, // offset from right
+                                                               15, // bar width
+                                                               threadRunner);
+
     graphix->addGUIButton(std::move(button));
+    graphix->addGUISlider(std::move(slider));
 
     // Start the main simulation loop
     sim.start();
