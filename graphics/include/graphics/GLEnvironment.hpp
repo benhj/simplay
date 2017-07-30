@@ -147,11 +147,6 @@ namespace graphics {
                              m_centerY);
         }
 
-        void setZoomHandler(std::function<void(double const value)> const & handler)
-        {
-            m_zoomHandler = handler;
-        }
-
         // WARNING -- the following function is hacky as fuck!!
         void flyIn()
         {
@@ -207,9 +202,6 @@ namespace graphics {
         std::atomic<bool> m_displayAxis{true};
         std::atomic<bool> m_displayCompass{false};
 
-        /// Callback to the slider to update its value when zooming
-        std::function<void(double const value)> m_zoomHandler;
-
         void processFlyIn(double const centerDivX, 
                           double const centerDivY,
                           double const fx,
@@ -243,7 +235,6 @@ namespace graphics {
                     m_centerY.store(valY);
                     zoomVal -= m_oldZoomIt;
                     m_viewDistance.store(zoomVal);
-                    //m_zoomHandler(zoomVal);
 
                     usleep(10000);
                 }

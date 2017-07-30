@@ -131,16 +131,6 @@ namespace graphics {
             m_handler = handler;
         }
 
-        void setValue(double const value)
-        {
-            std::cout<<value<<std::endl;
-            std::cout<<m_length<<std::endl;
-            auto newPosition = value * static_cast<double>(m_length);
-            std::cout<<newPosition<<std::endl;
-            m_sliderPosition = newPosition - m_windowHeight + m_windowOffset;
-            std::cout<<m_sliderPosition<<std::endl;
-        }
-
       private:
         GLFWwindow* m_window;
         int m_derivedX;

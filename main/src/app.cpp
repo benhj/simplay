@@ -115,12 +115,6 @@ int main(int argc, char **argv)
         }
     });
 
-    // To make sure that slider position is updated when
-    // space bar zoom-in or out.
-    // glEnvironment.setZoomHandler([&](double const value) {
-    //     slider->setValue(value);
-    // });
-
     graphix->addGUIElement(std::move(button));
     graphix->addGUIElement(std::move(slider));
 
