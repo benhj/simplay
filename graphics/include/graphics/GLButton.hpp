@@ -41,7 +41,7 @@ namespace graphics {
           , m_width(width)
           , m_height(height)
           , m_entered(false)
-          , m_opacity(0.1)
+          , m_opacity(0.3)
           , m_handler()
           , m_overLay()
           , m_state(false)
@@ -74,7 +74,7 @@ namespace graphics {
             }
 
             glLineWidth(3.0);
-            detail::setColor({150, 150, 150}, m_opacity /* opacity */);
+            detail::setColor({10, 10, 150}, 0.3 /* opacity */);
             glBegin(GL_LINE_LOOP);
                 glVertex2f(0, m_height);
                 glVertex2f(0, 0);
