@@ -137,6 +137,9 @@ namespace graphics {
                 b->handleClick();
             }
         }
+        for(auto & b : m_sliders) {
+            b->handleClick(action);
+        }
     }
 
     void Graphics::drawGUIElements()
