@@ -107,9 +107,22 @@ int main(int argc, char **argv)
                                                                25, // offset from right
                                                                15, // bar width
                                                                threadRunner);
+    slider->installHandler([&](double const value) {
 
-    graphix->addGUIButton(std::move(button));
-    graphix->addGUISlider(std::move(slider));
+        auto comp = 1.0 - (value + 0.1);
+        if(comp > 0 && comp < 1.0) {
+            glEnvironment.setViewDistance(comp);
+        }
+    });
+
+    // To make sure that slider position is updated when
+    // space bar zoom-in or out.
+    // glEnvironment.setZoomHandler([&](double const value) {
+    //     slider->setValue(value);
+    // });
+
+    graphix->addGUIElement(std::move(button));
+    graphix->addGUIElement(std::move(slider));
 
     // Start the main simulation loop
     sim.start();

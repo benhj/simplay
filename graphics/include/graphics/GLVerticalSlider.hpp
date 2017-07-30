@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "GLGUIElement.hpp"
 #include "Color.hpp"
 #include "ThreadRunner.hpp"
 #include <OpenGL/gl.h>
@@ -10,18 +11,6 @@
 #include <cmath>
 #include <functional>
 #include <unistd.h>
-
-
-// namespace {
-//     inline int deriveX(int const windowWidth, int const xLocation)
-//     {
-//         return -(windowWidth / 2) + xLocation;
-//     }
-//     inline int deriveY(int const windowHeight, int const yLocation)
-//     {
-//         return -(windowHeight / 2) + yLocation;
-//     }
-// }
 
 namespace graphics {
 
@@ -51,7 +40,7 @@ namespace graphics {
         }
     }
 
-    class GLVerticalSlider
+    class GLVerticalSlider : public GLGUIElement
     {
       public:
         GLVerticalSlider(GLFWwindow * window,
@@ -70,9 +59,12 @@ namespace graphics {
         }
         GLVerticalSlider() = delete;
 
-        void draw()
+        void draw() override
         {
-            glfwGetWindowSize(m_window, &m_windowWidth, &m_windowHeight);
+            int winwidth, winheight;
+            glfwGetWindowSize(m_window, &winwidth, &winheight);
+            m_windowWidth = winwidth;
+            m_windowHeight = winheight;
             m_derivedX = (m_windowWidth / 2) - m_windowOffset;
             m_derivedY = -(m_windowHeight / 2) + m_windowOffset;
             m_length = m_windowHeight - (m_windowOffset * 2);
@@ -106,7 +98,7 @@ namespace graphics {
 
         /// When pointer over element, a 'fade-in'
         /// is triggered, or a 'fade-out' on exit.
-        bool mouseIsOver(int const x, int const y)
+        bool mouseIsOver(int const x, int const y) override
         {    
             if (x >= m_windowWidth - m_windowOffset &&
                 x < m_windowWidth - m_windowOffset + m_width &&
@@ -117,11 +109,15 @@ namespace graphics {
                 m_entered = false;
             }
             if(m_state) {
-                m_sliderPosition = y;
+                if(y < m_windowHeight - m_windowOffset &&
+                   y >= m_windowOffset) {
+                    m_sliderPosition = y;
+                    m_handler(m_currentVal);
+                }
             }
         }
 
-        void handleClick(int const action) 
+        void handleClick(int const action) override
         {
             if(action == GLFW_PRESS && m_entered) {
                 m_state = true;
@@ -130,30 +126,30 @@ namespace graphics {
             }
         }
 
-        // void installHandler(std::function<void(bool const)> const & handler)
-        // {
-        //     m_handler = handler;
-        // }
+        void installHandler(std::function<void(double const value)> const & handler)
+        {
+            m_handler = handler;
+        }
 
-        // void setOverlay(std::function<void(bool const)> const & overlay)
-        // {
-        //     m_overLay = overlay;
-        // }
-
-        // void setColor(Color const & color) 
-        // {
-        //     m_buttonColor = color;
-        // }
+        void setValue(double const value)
+        {
+            std::cout<<value<<std::endl;
+            std::cout<<m_length<<std::endl;
+            auto newPosition = value * static_cast<double>(m_length);
+            std::cout<<newPosition<<std::endl;
+            m_sliderPosition = newPosition - m_windowHeight + m_windowOffset;
+            std::cout<<m_sliderPosition<<std::endl;
+        }
 
       private:
         GLFWwindow* m_window;
         int m_derivedX;
         int m_derivedY;
-        int m_windowWidth;
-        int m_windowHeight;
+        std::atomic<int> m_windowWidth;
+        std::atomic<int> m_windowHeight;
         int m_windowOffset;
         int m_width;
-        int m_length;
+        std::atomic<int> m_length;
 
         /// Position 0 is center of slider.
         /// Up in -ve, down is +ve
@@ -177,11 +173,14 @@ namespace graphics {
         /// 'Value' of the slider (up is +ve)
         double m_currentVal;
 
+        /// Callback to trigger some change based on slider position
+        std::function<void(double const value)> m_handler;
+
         /// Draw slider knob at some position on slider
         void drawSliderKnob()
         {
             auto position = - m_sliderPosition 
-                            + m_windowHeight 
+                            + m_windowHeight
                             - m_windowOffset;
 
             m_currentVal = static_cast<double>(position) / 

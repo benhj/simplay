@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "GLGUIElement.hpp"
 #include "Color.hpp"
 #include "ThreadRunner.hpp"
 #include <OpenGL/gl.h>
@@ -25,7 +26,7 @@ namespace {
 
 namespace graphics {
 
-    class GLButton
+    class GLButton : public GLGUIElement
     {
       public:
         GLButton(GLFWwindow * window,
@@ -49,7 +50,7 @@ namespace graphics {
         }
         GLButton() = delete;
 
-        void draw()
+        void draw() override
         {
             int windowWidth;
             glfwGetWindowSize(m_window, &windowWidth, &m_windowHeight);
@@ -110,7 +111,7 @@ namespace graphics {
 
         /// When pointer over button, a 'fade-in'
         /// is triggered, or a 'fade-out' on exit.
-        bool mouseIsOver(int const x, int const y)
+        bool mouseIsOver(int const x, int const y) override
         {    
             if (x >= m_xLocation && 
                 x <= m_xLocation + m_width &&
@@ -126,9 +127,9 @@ namespace graphics {
             }
         }
 
-        void handleClick() 
+        void handleClick(int const action) override
         {
-            if(m_entered && m_handler) {
+            if(action == GLFW_PRESS && m_entered && m_handler) {
                 m_state = !m_state;
                 m_handler(m_state);
             }

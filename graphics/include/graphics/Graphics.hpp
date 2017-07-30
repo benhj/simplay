@@ -1,8 +1,7 @@
 #pragma once
 
 #include "GLEnvironment.hpp"
-#include "GLButton.hpp"
-#include "GLVerticalSlider.hpp"
+#include "GLGUIElement.hpp"
 #include "ThreadRunner.hpp"
 #include <atomic>
 #include <memory>
@@ -28,8 +27,7 @@ namespace graphics {
                           int const action, 
                           int const mods);
 
-        void addGUIButton(std::shared_ptr<GLButton> button);
-        void addGUISlider(std::shared_ptr<GLVerticalSlider> slider);
+        void addGUIElement(std::shared_ptr<GLGUIElement> element);
 
       private:
 
@@ -47,8 +45,7 @@ namespace graphics {
         std::atomic<double> m_viewDistance;
 
         /// Testing out some GUI ideas
-        std::vector<std::shared_ptr<GLButton>> m_buttons;
-        std::vector<std::shared_ptr<GLVerticalSlider>> m_sliders;
+        std::vector<std::shared_ptr<GLGUIElement>> m_guiElements;
 
         void handleKeyDown(int const key);
         void handleKeyUp(int const key);

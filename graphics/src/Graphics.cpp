@@ -34,8 +34,7 @@ namespace graphics {
       , m_glEnviro(glEnviro)
       , m_threadRunner(threadRunner)
       , m_viewDistance(0.4)
-      , m_buttons()
-      , m_sliders()
+      , m_guiElements()
     {
         init();
     }
@@ -59,10 +58,7 @@ namespace graphics {
     void Graphics::passiveMouseFunc(double const x, double const y)
     {
         m_glEnviro.checkForAnimatHighlight(x, y);
-        for (auto & b : m_buttons) {
-            b->mouseIsOver(x, y);
-        }
-        for (auto & b : m_sliders) {
+        for (auto & b : m_guiElements) {
             b->mouseIsOver(x, y);
         }
     }
@@ -131,13 +127,11 @@ namespace graphics {
                                 int const action, 
                                 int const mods)
     {
-        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        if (action == GLFW_PRESS) {
             m_glEnviro.selectAnimat();
-            for(auto & b : m_buttons) {
-                b->handleClick();
-            }
+
         }
-        for(auto & b : m_sliders) {
+        for(auto & b : m_guiElements) {
             b->handleClick(action);
         }
     }
@@ -145,10 +139,7 @@ namespace graphics {
     void Graphics::drawGUIElements()
     {
         drawGUIElementsSetup();
-        for(auto & b : m_buttons) {
-            b->draw();
-        }
-        for(auto & b : m_sliders) {
+        for(auto & b : m_guiElements) {
             b->draw();
         }
         drawGUIElementsTearDown();
@@ -170,14 +161,9 @@ namespace graphics {
                          m_glEnviro.getWorldOrientation());
     }
 
-    void Graphics::addGUIButton(std::shared_ptr<GLButton> button)
+    void Graphics::addGUIElement(std::shared_ptr<GLGUIElement> element)
     {
-        m_buttons.emplace_back(std::move(button));
-    }
-
-    void Graphics::addGUISlider(std::shared_ptr<GLVerticalSlider> slider)
-    {
-        m_sliders.emplace_back(std::move(slider));
+        m_guiElements.emplace_back(std::move(element));
     }
 
 }
