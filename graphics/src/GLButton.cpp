@@ -113,7 +113,6 @@ namespace graphics {
                 m_threadRunner.add([this]{fadeOut();});
             }
         }
-
     }
 
     void GLButton::handleClick(int const action)

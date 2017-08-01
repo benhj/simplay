@@ -32,15 +32,17 @@ namespace graphics {
       , m_opacity(0.3)
       , m_angle(startAngle)
       , m_state(false)
+      , m_oldX(-1)
+      , m_oldY(-1)
     {
     }
 
     void GLCircularDial::draw()
     {
-        int windowWidth, windowHeight;
-        glfwGetWindowSize(m_window, &windowWidth, &windowHeight);
+        int windowWidth;
+        glfwGetWindowSize(m_window, &windowWidth, &m_windowHeight);
         m_derivedX = deriveX(windowWidth, m_xLocation);
-        m_derivedY = deriveY(windowHeight, m_yLocation);
+        m_derivedY = deriveY(m_windowHeight, m_yLocation);
         glPushMatrix();
         glLoadIdentity();
         glTranslatef(m_derivedX, m_derivedY, 0);
@@ -78,78 +80,80 @@ namespace graphics {
             glVertex2f(0, 3.0);
             glVertex2f(0, m_radius + 4.0);
         glEnd();
-
-
-        // glBegin(GL_TRIANGLES);
-        //     glVertex2f(0, m_height);
-        //     glVertex2f(0, 0);
-        //     glVertex2f(m_width, m_height);
-        //     glVertex2f(m_width, m_height);
-        //     glVertex2f(0, 0);
-        //     glVertex2f(m_width, 0);
-        // glEnd();
-
-        // if(m_overLay) {
-        //     detail::setColor({250, 250, 250}, m_opacity /* opacity */);
-        //     m_overLay(m_state);
-        // }
-
-        
-        // glBegin(GL_LINE_LOOP);
-        //     glVertex2f(0, m_height);
-        //     glVertex2f(0, 0);
-        //     glVertex2f(m_width, 0);
-        //     glVertex2f(m_width, m_height);
-        // glEnd();
         glPopMatrix();
     }
 
-    // /// fade in the button when hovering over
-    // void fadeIn()
-    // {
-    //     auto const inc = (0.9 / 30);
-    //     for(int i = 0; i < 30; ++i) {
-    //         auto val = m_opacity.load();
-    //         val += inc;
-    //         m_opacity.store(val);
-    //         usleep(10000);
-    //     }
-    // }
+    /// fade in the button when hovering over
+    void GLCircularDial::fadeIn()
+    {
+        auto const inc = (0.9 / 30);
+        for(int i = 0; i < 30; ++i) {
+            auto val = m_opacity.load();
+            val += inc;
+            m_opacity.store(val);
+            usleep(10000);
+        }
+    }
 
-    // /// fade out the button on pointer exit
-    // void fadeOut()
-    // {
-    //     auto const inc = (0.9 / 30);
-    //     for(int i = 0; i < 30; ++i) {
-    //         auto val = m_opacity.load();
-    //         val -= inc;
-    //         m_opacity.store(val);
-    //         usleep(10000);
-    //     }
-    // }
+    /// fade out the button on pointer exit
+    void GLCircularDial::fadeOut()
+    {
+        auto const inc = (0.9 / 30);
+        for(int i = 0; i < 30; ++i) {
+            auto val = m_opacity.load();
+            val -= inc;
+            m_opacity.store(val);
+            usleep(10000);
+        }
+    }
 
     void GLCircularDial::mouseIsOver(int const x, int const y)
     {    
-        // if (x >= m_xLocation && 
-        //     x <= m_xLocation + m_width &&
-        //     y <= (m_windowHeight - m_yLocation) &&
-        //     y >= (m_windowHeight - m_yLocation) - m_height) {
-        //     if(!m_entered.exchange(true)) {
-        //         m_threadRunner.add([this]{fadeIn();});
-        //     }
-        // } else {
-        //     if(m_entered.exchange(false)) {
-        //         m_threadRunner.add([this]{fadeOut();});
-        //     }
-        // }
+        // initialize old x and y
+        if(m_oldX == -1) {
+            m_oldX = x;
+        }
+        if(m_oldY == -1) {
+            m_oldY = y;
+        }
+
+        if (x >= m_xLocation - m_radius && 
+            x <= m_xLocation + m_radius &&
+            y <= (m_windowHeight - m_yLocation) + m_radius &&
+            y >= (m_windowHeight - m_yLocation) - (m_radius)) {
+            m_entered = true;
+        } else {
+            m_entered = false;
+        }
+        if(m_state) {
+            if(y <= (m_windowHeight - m_yLocation) + m_radius &&
+               y >= (m_windowHeight - m_yLocation) - (m_radius)) {
+                if(x - m_oldX > 0) {
+                    if (y >= (m_windowHeight - m_yLocation)) {
+                        ++m_angle;
+                    } else {
+                        --m_angle;
+                    }
+                } else {
+                    if (y >= (m_windowHeight - m_yLocation)) {
+                        --m_angle;
+                    } else {
+                        ++m_angle;
+                    }
+                }
+            }
+        }
+        m_oldX = x;
+        m_oldY = y;
     }
 
     void GLCircularDial::handleClick(int const action)
     {
-        // if(action == GLFW_PRESS && m_entered && m_handler) {
-        //     m_state = !m_state;
-        //     m_handler(m_state);
-        // }
+        if(action == GLFW_PRESS && m_entered) {
+            m_state = true;
+        } else {
+            m_state = false;
+        }
     }
 
     // void GLCircularDial::installHandler(std::function<void(bool const)> const & handler)

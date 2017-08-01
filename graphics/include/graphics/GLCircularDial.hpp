@@ -25,30 +25,6 @@ namespace graphics {
 
         void draw() override;
 
-        // /// fade in the button when hovering over
-        // void fadeIn()
-        // {
-        //     auto const inc = (0.9 / 30);
-        //     for(int i = 0; i < 30; ++i) {
-        //         auto val = m_opacity.load();
-        //         val += inc;
-        //         m_opacity.store(val);
-        //         usleep(10000);
-        //     }
-        // }
-
-        // /// fade out the button on pointer exit
-        // void fadeOut()
-        // {
-        //     auto const inc = (0.9 / 30);
-        //     for(int i = 0; i < 30; ++i) {
-        //         auto val = m_opacity.load();
-        //         val -= inc;
-        //         m_opacity.store(val);
-        //         usleep(10000);
-        //     }
-        // }
-
         /// When pointer over button, a 'fade-in'
         /// is triggered, or a 'fade-out' on exit.
         void mouseIsOver(int const x, int const y) override;
@@ -65,7 +41,7 @@ namespace graphics {
         int m_yLocation;
         int m_derivedX;
         int m_derivedY;
-        //int m_windowHeight;
+        int m_windowHeight;
 
         /// Threads the fade-in or fade-out process
         detail::ThreadRunner & m_threadRunner;
@@ -75,6 +51,10 @@ namespace graphics {
 
         /// Angle of dial
         int m_angle;
+
+        /// Change in x and y
+        int m_oldX;
+        int m_oldY;
 
         /// Mouse hovering over button, true
         std::atomic<bool> m_entered;
@@ -90,6 +70,12 @@ namespace graphics {
 
         // Default colour
         Color m_buttonColor { 155, 155, 155 };
+
+        /// fade in the button when hovering over
+        void fadeIn();
+
+        /// fade out the button on pointer exit
+        void fadeOut();
     };
 
 
