@@ -9,6 +9,7 @@
 #include "graphics/Graphics.hpp"
 #include "graphics/GLButton.hpp"
 #include "graphics/GLVerticalSlider.hpp"
+//#include "graphics/GLCircularDial.hpp"
 #include "graphics/PauseOverlay.hpp"
 #include "graphics/ThreadRunner.hpp"
 
