@@ -55,16 +55,29 @@ namespace graphics {
             }
         glEnd();
 
+        // Inner fill
+        detail::setColor({130, 130, 150}, 0.3 /* opacity */);
+        glBegin(GL_POLYGON);
+            for (double angle = 0; angle < 3.1415926f * 2; angle += 0.25) {
+                glVertex2f(::sin(angle) * (m_radius - 1.0), ::cos(angle) * (m_radius - 1.0));
+            }
+        glEnd();
+
         // Inner circular element
-        glLineWidth(1.0);
         detail::setColor({10, 10, 150}, 0.3 /* opacity */);
-        glBegin(GL_LINE_LOOP);
+        glBegin(GL_POLYGON);
             for (double angle = 0; angle < 3.1415926f * 2; angle += 0.25) {
                 glVertex2f(::sin(angle) * (m_radius / 5.0), ::cos(angle) * (m_radius / 5.0));
             }
         glEnd();
 
-        // glBegin(GL_LINE)
+        // Dial pointer Pointer
+        glLineWidth(3.0);
+        detail::setColor({50, 50, 100}, 0.3 /* opacity */);
+        glBegin(GL_LINES);
+            glVertex2f(0, 3.0);
+            glVertex2f(0, m_radius + 4.0);
+        glEnd();
 
 
         // glBegin(GL_TRIANGLES);

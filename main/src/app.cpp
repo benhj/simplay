@@ -9,7 +9,7 @@
 #include "graphics/Graphics.hpp"
 #include "graphics/GLButton.hpp"
 #include "graphics/GLVerticalSlider.hpp"
-//#include "graphics/GLCircularDial.hpp"
+#include "graphics/GLCircularDial.hpp"
 #include "graphics/PauseOverlay.hpp"
 #include "graphics/ThreadRunner.hpp"
 
@@ -116,8 +116,14 @@ int main(int argc, char **argv)
         }
     });
 
+    auto dial = std::make_shared<graphics::GLCircularDial>(window, 160, 45,
+                                                           25.0, /* radius */
+                                                           -135, /* start angle */
+                                                           threadRunner);
+
     graphix->addGUIElement(std::move(button));
     graphix->addGUIElement(std::move(slider));
+    graphix->addGUIElement(std::move(dial));
 
     // Start the main simulation loop
     sim.start();
