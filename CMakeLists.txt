@@ -34,7 +34,7 @@ add_executable(stest main/src/app.cpp)
 target_link_libraries(stest model_lib ctrnn_lib physics_lib simulator_lib neat_lib graphics_lib ${OPENGL_LIBRARIES} glfw)
 
 # compile options. Lots of redundancy here. Can prob clean up.
-set(COMP_FLAGS -std=c++14 -O3 -ffast-math -funroll-loops -Wno-ctor-dtor-privacy -fno-pic)
+set(COMP_FLAGS -std=c++14 -O3 -ffast-math -funroll-loops -Wno-ctor-dtor-privacy -fno-pic -Wno-deprecated)
 target_compile_options(physics_lib PUBLIC ${COMP_FLAGS})
 target_compile_options(ctrnn_lib PUBLIC ${COMP_FLAGS})
 target_compile_options(model_lib PUBLIC ${COMP_FLAGS})
