@@ -126,22 +126,41 @@ namespace graphics {
             m_entered = false;
         }
         if(m_state) {
-            if(y <= (m_windowHeight - m_yLocation) + m_radius &&
-               y >= (m_windowHeight - m_yLocation) - (m_radius)) {
-                if(x - m_oldX > 0) {
-                    if (y >= (m_windowHeight - m_yLocation)) {
-                        ++m_angle;
-                    } else {
-                        --m_angle;
-                    }
-                } else {
-                    if (y >= (m_windowHeight - m_yLocation)) {
-                        --m_angle;
-                    } else {
-                        ++m_angle;
-                    }
-                }
-            }
+
+            auto distx = std::sqrt((m_xLocation - x) * (m_xLocation - x));
+            auto disty = std::sqrt((m_windowHeight - m_yLocation - y) * (m_windowHeight - m_yLocation - y));
+            auto angle = std::atan2(disty, distx) * 57.2985;
+            std::cout<<angle<<std::endl;
+
+            // if(x - m_oldX > 0) {
+            //     if (y >= (m_windowHeight - m_yLocation)) {
+            //         m_angle += 2;
+            //     } else {
+            //         m_angle -= 2;
+            //     }
+            // } else {
+            //     if (y >= (m_windowHeight - m_yLocation)) {
+            //         m_angle -= 2;
+            //     } else {
+            //         m_angle += 2;
+            //     }
+            // }
+                // if(y - m_oldY > 0) {
+                //     if (x >= m_xLocation &&
+                //         x < m_xLocation + (m_radius * 2)) {
+                //         m_angle -= 2;
+                //     } else {
+                //         m_angle += 2;
+                //     }
+                // } else {
+                //     if (x >= m_xLocation &&
+                //         x < m_xLocation + (m_radius * 2)) {
+                //         m_angle += 2;
+                //     } else {
+                //         m_angle -= 2;
+                //     }
+                // }
+            
         }
         m_oldX = x;
         m_oldY = y;
