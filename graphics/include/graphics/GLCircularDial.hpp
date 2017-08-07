@@ -15,11 +15,13 @@ namespace graphics {
     class GLCircularDial : public GLGUIElement
     {
       public:
+        /// Note, in the following, startLevel is 0 to 100
+        /// with 100 translating to 360 degrees
         GLCircularDial(GLFWwindow * window,
                        int xLocation,
                        int yLocation,
                        double radius,
-                       int const startAngle,
+                       int const startLevel,
                        detail::ThreadRunner & threadRunner);
         GLCircularDial() = delete;
 

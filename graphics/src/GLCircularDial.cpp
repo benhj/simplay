@@ -13,6 +13,10 @@ namespace {
     {
         return -(windowHeight / 2) + yLocation;
     }
+    inline int deriveAngleFromPercentage(int const percentage) 
+    {
+        return static_cast<int>((100 - percentage) * 3.6) + (180);
+    }
 }
 
 namespace graphics {
@@ -21,7 +25,7 @@ namespace graphics {
                    int xLocation,
                    int yLocation,
                    double radius,
-                   int const startAngle,
+                   int const startLevel,
                    detail::ThreadRunner & threadRunner)
       : m_window(window) 
       , m_xLocation(xLocation)
@@ -30,7 +34,7 @@ namespace graphics {
       , m_radius(radius)
       , m_entered(false)
       , m_opacity(0.3)
-      , m_angle(startAngle)
+      , m_angle(deriveAngleFromPercentage(startLevel))
       , m_state(false)
     {
     }
