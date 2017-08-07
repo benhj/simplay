@@ -50,11 +50,7 @@ namespace graphics {
         double m_radius;
 
         /// Angle of dial
-        int m_angle;
-
-        /// Change in x and y
-        int m_oldX;
-        int m_oldY;
+        std::atomic<int> m_angle;
 
         /// Mouse hovering over button, true
         std::atomic<bool> m_entered;

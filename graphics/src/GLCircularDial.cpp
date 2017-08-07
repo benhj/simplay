@@ -32,8 +32,6 @@ namespace graphics {
       , m_opacity(0.3)
       , m_angle(startAngle)
       , m_state(false)
-      , m_oldX(-1)
-      , m_oldY(-1)
     {
     }
 
@@ -109,14 +107,6 @@ namespace graphics {
 
     void GLCircularDial::mouseIsOver(int const x, int const y)
     {    
-        // initialize old x and y
-        if(m_oldX == -1) {
-            m_oldX = x;
-        }
-        if(m_oldY == -1) {
-            m_oldY = y;
-        }
-
         if (x >= m_xLocation - m_radius && 
             x <= m_xLocation + m_radius &&
             y <= (m_windowHeight - m_yLocation) + m_radius &&
@@ -126,44 +116,27 @@ namespace graphics {
             m_entered = false;
         }
         if(m_state) {
-
             auto distx = std::sqrt((m_xLocation - x) * (m_xLocation - x));
             auto disty = std::sqrt((m_windowHeight - m_yLocation - y) * (m_windowHeight - m_yLocation - y));
-            auto angle = std::atan2(disty, distx) * 57.2985;
-            std::cout<<angle<<std::endl;
-
-            // if(x - m_oldX > 0) {
-            //     if (y >= (m_windowHeight - m_yLocation)) {
-            //         m_angle += 2;
-            //     } else {
-            //         m_angle -= 2;
-            //     }
-            // } else {
-            //     if (y >= (m_windowHeight - m_yLocation)) {
-            //         m_angle -= 2;
-            //     } else {
-            //         m_angle += 2;
-            //     }
-            // }
-                // if(y - m_oldY > 0) {
-                //     if (x >= m_xLocation &&
-                //         x < m_xLocation + (m_radius * 2)) {
-                //         m_angle -= 2;
-                //     } else {
-                //         m_angle += 2;
-                //     }
-                // } else {
-                //     if (x >= m_xLocation &&
-                //         x < m_xLocation + (m_radius * 2)) {
-                //         m_angle += 2;
-                //     } else {
-                //         m_angle -= 2;
-                //     }
-                // }
-            
+            auto angle = std::atan2(disty, distx) * 57.2985; // radians to angle
+            if(x <= m_xLocation) {
+                if (y <= (m_windowHeight - m_yLocation)) {
+                    //std::cout<<"A"<<std::endl;
+                    m_angle = 90.0 - angle;
+                } else {
+                    //std::cout<<"B"<<std::endl;
+                    m_angle = 90.0 + angle;
+                }
+            } else if(x > m_xLocation) {
+                if (y <= (m_windowHeight - m_yLocation)) {
+                    //std::cout<<"C"<<std::endl;
+                    m_angle = 360 - (90.0 - angle);
+                } else {
+                    //std::cout<<"D"<<std::endl;
+                    m_angle = 270 - (angle);
+                }
+            }
         }
-        m_oldX = x;
-        m_oldY = y;
     }
 
     void GLCircularDial::handleClick(int const action)
