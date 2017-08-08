@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 
     auto dial = std::make_shared<graphics::GLCircularDial>(window, 160, 45,
                                                            25.0, /* radius */
-                                                           90, /* start level */
+                                                           100, /* start level */
                                                            threadRunner);
 
     graphix->addGUIElement(std::move(button));

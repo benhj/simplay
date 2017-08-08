@@ -13,9 +13,19 @@ namespace {
     {
         return -(windowHeight / 2) + yLocation;
     }
-    inline int deriveAngleFromPercentage(int const percentage) 
+    inline int deriveAngleFromPercentage(double percentage) 
     {
+        // Scale so that zero and 100 aren't at precisely south
+        percentage *= 0.8;
+        percentage += 10.0;
         return static_cast<int>((100 - percentage) * 3.6) + (180);
+    }
+    inline int derivePercentageFromAngle(double angle)
+    {
+        auto percentage = (((angle - 180.0) / 3.6) - 100);
+        percentage += 10;
+        percentage /= 0.8;
+        return -static_cast<int>(percentage);
     }
 }
 
@@ -35,6 +45,7 @@ namespace graphics {
       , m_entered(false)
       , m_opacity(0.3)
       , m_angle(deriveAngleFromPercentage(startLevel))
+      , m_level(startLevel)
       , m_state(false)
     {
     }
@@ -124,20 +135,27 @@ namespace graphics {
             auto disty = std::sqrt((m_windowHeight - m_yLocation - y) * (m_windowHeight - m_yLocation - y));
             auto angle = std::atan2(disty, distx) * 57.2985; // radians to angle
             if(x <= m_xLocation) {
+                int newAngle;
                 if (y <= (m_windowHeight - m_yLocation)) {
-                    //std::cout<<"A"<<std::endl;
-                    m_angle = 90.0 - angle;
+                    newAngle = 90.0 - angle;
                 } else {
-                    //std::cout<<"B"<<std::endl;
-                    m_angle = 90.0 + angle;
+                    newAngle = 90.0 + angle;
+                }
+                // Hacky as fuck, jeez...
+                m_level = 50.0 - (175 - derivePercentageFromAngle(newAngle));
+                if (m_level >= 0) {
+                    m_angle = newAngle;
                 }
             } else if(x > m_xLocation) {
+                int newAngle;
                 if (y <= (m_windowHeight - m_yLocation)) {
-                    //std::cout<<"C"<<std::endl;
-                    m_angle = 360 - (90.0 - angle);
+                    newAngle = 360 - (90.0 - angle);
                 } else {
-                    //std::cout<<"D"<<std::endl;
-                    m_angle = 270 - (angle);
+                    newAngle = 270 - (angle);
+                }
+                m_level = derivePercentageFromAngle(newAngle);
+                if (m_level <= 100) {
+                    m_angle = newAngle;
                 }
             }
         }
@@ -160,5 +178,10 @@ namespace graphics {
     void GLCircularDial::setColor(Color const & color) 
     {
         m_buttonColor = color;
+    }
+
+    int GLCircularDial::getCurrentLevel() const
+    {
+        return m_level;
     }
 }

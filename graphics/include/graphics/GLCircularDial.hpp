@@ -37,6 +37,8 @@ namespace graphics {
 
         void setColor(Color const & color);
 
+        int getCurrentLevel() const;
+
       private:
         GLFWwindow* m_window;
         int m_xLocation;
@@ -53,6 +55,9 @@ namespace graphics {
 
         /// Angle of dial
         std::atomic<int> m_angle;
+
+        /// Current percentage of dial
+        std::atomic<int> m_level;
 
         /// Mouse hovering over button, true
         std::atomic<bool> m_entered;
