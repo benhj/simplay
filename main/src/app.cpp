@@ -116,10 +116,21 @@ int main(int argc, char **argv)
         }
     });
 
+    // Add a dial to control the speed of the simulation
+    // with a starting level set to maximum speed. Note,
+    // simulation speed is proportional to processor speed.
     auto dial = std::make_shared<graphics::GLCircularDial>(window, 160, 45,
                                                            25.0, /* radius */
                                                            100, /* start level */
                                                            threadRunner);
+    dial->installHandler([&](int const value) {
+        if(value >= 0 && value <= 100) {
+            auto actual = 100 - value;
+            double ratio = static_cast<double>(actual) / 100.0;
+            auto const toSet = static_cast<int>(ratio * 50000.0);
+            sim.setSleepDuration(toSet);
+        }
+    });
 
     graphix->addGUIElement(std::move(button));
     graphix->addGUIElement(std::move(slider));

@@ -11,6 +11,7 @@ namespace simulator {
     : m_animatWorld(popSize)
     , m_population(popSize, m_animatWorld)
     , m_paused(false)
+    , m_sleepDuration{0}
     {
         m_animatWorld.randomizePositions(10, 10);
     }
@@ -36,6 +37,11 @@ namespace simulator {
         m_paused = false;
     }
 
+    void Simulation::setSleepDuration(int const duration)
+    {
+        m_sleepDuration = duration;
+    }
+
     void Simulation::doLoop(long const tick, 
                             int const everyN, 
                             bool const withMutations)
@@ -54,7 +60,7 @@ namespace simulator {
             // I'm being lazy. Need a holiday.
             if(!m_paused) {
                 doLoop(tick, 500);
-                //usleep(500);
+                usleep(m_sleepDuration);
                 ++tick;
             }
         }

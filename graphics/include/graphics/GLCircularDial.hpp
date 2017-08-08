@@ -33,7 +33,7 @@ namespace graphics {
 
         void handleClick(int const action) override;
 
-        //void installHandler(std::function<void(bool const)> const & handler);
+        void installHandler(std::function<void(int const)> const & handler);
 
         void setColor(Color const & color);
 
@@ -68,8 +68,8 @@ namespace graphics {
         /// For fade-level of button
         std::atomic<double> m_opacity;
 
-        /// Callback to trigger on click
-        //std::function<void(bool const)> m_handler;
+        /// Callback to call on m_level change
+        std::function<void(int const value)> m_handler;
 
         // Default colour
         Color m_buttonColor { 155, 155, 155 };

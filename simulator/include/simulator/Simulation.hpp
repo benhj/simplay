@@ -21,6 +21,8 @@ namespace simulator {
         void pause();
         void resume();
 
+        void setSleepDuration(int const duration);
+
         /// Returns a reference to the simulated world
         model::AnimatWorld & animatWorld();
       private:
@@ -35,6 +37,9 @@ namespace simulator {
 
         /// Enables the pausing of the simulation
         std::atomic<bool> m_paused;
+
+        /// For controlling the speed of the simulation in us
+        std::atomic<int> m_sleepDuration;
 
         /// The simulation loop that runs in thread
         void loop();

@@ -47,6 +47,7 @@ namespace graphics {
       , m_angle(deriveAngleFromPercentage(startLevel))
       , m_level(startLevel)
       , m_state(false)
+      , m_handler()
     {
     }
 
@@ -158,6 +159,11 @@ namespace graphics {
                     m_angle = newAngle;
                 }
             }
+
+            if(m_handler) {
+                m_handler(m_level);
+            }
+
         }
     }
 
@@ -170,10 +176,10 @@ namespace graphics {
         }
     }
 
-    // void GLCircularDial::installHandler(std::function<void(bool const)> const & handler)
-    // {
-    //     m_handler = handler;
-    // }
+    void GLCircularDial::installHandler(std::function<void(int const)> const & handler)
+    {
+        m_handler = handler;
+    }
 
     void GLCircularDial::setColor(Color const & color) 
     {
