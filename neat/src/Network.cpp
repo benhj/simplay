@@ -38,7 +38,7 @@ namespace {
 
 namespace neat {
 
-    int Network::GLOBAL_INNOVATION_NUMBER = 5;
+    int Network::GLOBAL_INNOVATION_NUMBER = 6;
 
     Network::Network(int const inputCount, 
                      int const outputCount,
@@ -110,15 +110,10 @@ namespace neat {
             m_outputIDs.push_back(i);
         }
 
-        // // Also SEED with a single hidden node
-        // m_nodes.emplace_back(m_inputCount + m_outputCount, 
-        //                      NodeType::Hidden, 
-        //                      m_muts.nodeFunctionChangeProb);
-
         if(m_innovationMap.empty()) {
             // When initializing the network, all connections have the
             // same innovation numbers. It's only when later evolving
-            // the connectivity it the number pulled from a global ref
+            // the connectivity is the number pulled from a global ref
             int innovationNumber = 0;
 
             // Fully connect from inputs to outputs (i.e. feed-forward)
@@ -134,33 +129,6 @@ namespace neat {
                     ++innovationNumber;
                 }
             }
-
-            // // Fully connect from inputs to hidden
-            // for (auto i = 0; i < m_inputCount; ++i) {
-            //     auto const hiddenID = m_inputCount + m_outputCount;
-            //     m_nodes[hiddenID].addIncomingConnectionFrom(m_nodes[i], 
-            //                                                 m_weightInitBound, 
-            //                                                 m_muts.weightChangeProb,
-            //                                                 innovationNumber);
-
-            //     auto const weight = m_nodes[hiddenID].getConnectionWeightFrom(i);
-
-            //     m_innovationMap.emplace(innovationNumber,
-            //                             InnovationInfo{innovationNumber, i, hiddenID, weight, true});
-            //     ++innovationNumber;
-            // }
-
-            // // Fully connect from hidden to output
-            // auto const hiddenID = m_inputCount + m_outputCount;
-            // auto const outputID = hiddenID - 1;
-            // m_nodes[outputID].addIncomingConnectionFrom(m_nodes[hiddenID], 
-            //                                             m_weightInitBound, 
-            //                                             m_muts.weightChangeProb,
-            //                                             innovationNumber);
-            // auto const weight = m_nodes[outputID].getConnectionWeightFrom(hiddenID);
-            // m_innovationMap.emplace(innovationNumber,
-            //                         InnovationInfo{innovationNumber, hiddenID, outputID, weight, true});
-            // ++innovationNumber;
 
         } else {
 
@@ -242,32 +210,34 @@ namespace neat {
             m_nodes[id].addIncomingConnectionFrom(nodePre, 
                                                   m_weightInitBound, 
                                                   m_muts.weightChangeProb,
-                                                  GLOBAL_INNOVATION_NUMBER);
+                                                  GLOBAL_INNOVATION_NUMBER,
+                                                  1.0);
 
-            auto weight = m_nodes[id].getConnectionWeightFrom(nodePre.getIndex());
-
+            // Make the new weight to hidden 1.0 (as specified by
+            // NEAT paper).
             m_innovationMap.emplace(GLOBAL_INNOVATION_NUMBER,
                                     InnovationInfo{GLOBAL_INNOVATION_NUMBER, 
                                                    nodePre.getIndex(), 
                                                    static_cast<int>(id),
-                                                   weight, 
+                                                   1.0 /* weight */, 
                                                    true});
 
             ++GLOBAL_INNOVATION_NUMBER;
 
-            // ..and from new node to node post
+            // ..and from new node to node post (make new weight
+            // from hidden the same as the original weight, again, as
+            // specified by NEAT paper).
             nodePost.addIncomingConnectionFrom(m_nodes[id], 
                                                m_weightInitBound, 
                                                m_muts.weightChangeProb,
-                                               GLOBAL_INNOVATION_NUMBER);
-
-            weight = m_nodes[nodePost.getIndex()].getConnectionWeightFrom(id);
+                                               GLOBAL_INNOVATION_NUMBER,
+                                               con.weight());
 
             m_innovationMap.emplace(GLOBAL_INNOVATION_NUMBER,
                                     InnovationInfo{GLOBAL_INNOVATION_NUMBER, 
                                                    static_cast<int>(id),
                                                    nodePost.getIndex(),
-                                                   weight, 
+                                                   con.weight(), 
                                                    true});
 
             ++GLOBAL_INNOVATION_NUMBER;
@@ -281,9 +251,9 @@ namespace neat {
         }
     }
 
-    void Network::addConnectionToHiddenNode()
+    void Network::addConnectionToHiddenOrOutputNode()
     {
-        auto it = std::begin(m_nodes) + m_inputCount + m_outputCount;
+        auto it = std::begin(m_nodes) + m_inputCount;
         if (it != std::end(m_nodes)) {
             for(; it != std::end(m_nodes); ++it) {
                 for (int i = 0; i < m_inputCount; ++i) {
@@ -321,9 +291,8 @@ namespace neat {
         perturbWeights(m_weightInitBound / 4.0);
 
         auto random_integer = uni(rng);
-
         if(random_integer == 0) {
-            addConnectionToHiddenNode();
+            addConnectionToHiddenOrOutputNode();
         } else if(random_integer == 1) {
             perturbNodeFunctions();
         } else {

@@ -77,8 +77,8 @@ namespace neat {
         void perturbWeights(double const byAmount);
 
         /// Adds a new connection from an unconnected input node 
-        /// to a newly added hidden node
-        void addConnectionToHiddenNode();
+        /// to a newly added hidden node, or an existing output node
+        void addConnectionToHiddenOrOutputNode();
 
         /// Mutates node function type
         void perturbNodeFunctions();

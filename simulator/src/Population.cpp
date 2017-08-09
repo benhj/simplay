@@ -121,23 +121,12 @@ namespace simulator {
         m_eliteIndex = fitnesses[0].first;
         std::cout<<m_eliteIndex<<"\t"<<m_agents[m_eliteIndex].distanceMoved()<<std::endl;
 
+
         // pick the top m_popSize/N and regen rest of population out of those
         i = 0;
         int pick = 0;
         for (auto & agent : m_agents) {
-            /*
-            if (i == 0) {
-                // always preserve elite member
-                agent.inheritNeat(m_agents[m_eliteIndex]);
-            } else {
-                auto offspring = offspringNet(m_agents);
-                agent.inheritNeat(offspring);
-                agent.modifyController();
-            }
-            agent.resetController();
-            ++i;
-*/
-            
+    
             // inherit neat genome from fit agent, but only if
             // the inheritee isn't elite
             if (!iIsIndexedInTopN(i, m_popSize / 10, fitnesses)) {
@@ -152,8 +141,7 @@ namespace simulator {
 
                 if(pick == m_popSize / 10) {
                     pick = 0;
-                }
-
+                }   
             }
             // put controller back in basal state
             agent.resetController();
