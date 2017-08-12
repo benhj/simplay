@@ -95,9 +95,8 @@ namespace neat {
                             m_muts.weightChangeProb);
         return *this;
     }
-        
-
-    void Network::initNet()
+    
+    void Network::assembleInitialInputAndOutputNodes()
     {
         // Input and output node creation. 
         for (auto i = 0; i < m_inputCount; ++i) {
@@ -109,45 +108,61 @@ namespace neat {
                                  m_muts.nodeFunctionChangeProb);
             m_outputIDs.push_back(i);
         }
+    }
+
+    void Network::assembleInitialInputToOutputConnectivity()
+    {
+        // When initializing the network, all connections have the
+        // same innovation numbers. It's only when later evolving
+        // the connectivity is the number pulled from a global ref
+        int innovationNumber = 0;
+
+        // Fully connect from inputs to outputs (i.e. feed-forward)
+        for (auto i = 0; i < m_inputCount; ++i) {
+            for (auto j = m_inputCount; j < m_inputCount + m_outputCount; ++j) {
+                m_nodes[j].addIncomingConnectionFrom(m_nodes[i], 
+                                                     m_weightInitBound, 
+                                                     m_muts.weightChangeProb,
+                                                     innovationNumber);
+                auto const weight = m_nodes[j].getConnectionWeightFrom(i);
+                m_innovationMap.emplace(innovationNumber,
+                                        InnovationInfo{innovationNumber, i, j, weight, true});
+                ++innovationNumber;
+            }
+        }
+    }
+
+    void Network::assembleFromInnovationMap()
+    {
+        // Network is to be assembled from a pre-computed innovation map
+        for(auto const & it : m_innovationMap) {
+            auto & innovInfo = it.second;
+            if(innovInfo.enabled) {
+                auto & preNode = innovInfo.preNode;
+                auto & postNode = innovInfo.postNode;
+                auto & weight = innovInfo.weight;
+                auto & innovationNumber = innovInfo.innovationNumber;
+
+                m_nodes[postNode].addIncomingConnectionFrom(m_nodes[preNode], 
+                                                            m_weightInitBound,
+                                                            m_muts.weightChangeProb,
+                                                            innovationNumber,
+                                                            weight);
+            }
+        }
+    }
+
+    void Network::initNet()
+    {
+        // Input and output node creation. 
+        assembleInitialInputAndOutputNodes();
 
         if(m_innovationMap.empty()) {
-            // When initializing the network, all connections have the
-            // same innovation numbers. It's only when later evolving
-            // the connectivity is the number pulled from a global ref
-            int innovationNumber = 0;
-
-            // Fully connect from inputs to outputs (i.e. feed-forward)
-            for (auto i = 0; i < m_inputCount; ++i) {
-                for (auto j = m_inputCount; j < m_inputCount + m_outputCount; ++j) {
-                    m_nodes[j].addIncomingConnectionFrom(m_nodes[i], 
-                                                         m_weightInitBound, 
-                                                         m_muts.weightChangeProb,
-                                                         innovationNumber);
-                    auto const weight = m_nodes[j].getConnectionWeightFrom(i);
-                    m_innovationMap.emplace(innovationNumber,
-                                            InnovationInfo{innovationNumber, i, j, weight, true});
-                    ++innovationNumber;
-                }
-            }
-
+            // Full initial connectivity
+            assembleInitialInputToOutputConnectivity();
         } else {
-
-            // Network is to be assembled from a pre-computed innovation map
-            for(auto const & it : m_innovationMap) {
-                auto & innovInfo = it.second;
-                if(innovInfo.enabled) {
-                    auto & preNode = innovInfo.preNode;
-                    auto & postNode = innovInfo.postNode;
-                    auto & weight = innovInfo.weight;
-                    auto & innovationNumber = innovInfo.innovationNumber;
-
-                    m_nodes[postNode].addIncomingConnectionFrom(m_nodes[preNode], 
-                                                                m_weightInitBound,
-                                                                m_muts.weightChangeProb,
-                                                                innovationNumber,
-                                                                weight);
-                }
-            }
+            // Innovation map was constructed during cross over
+            assembleFromInnovationMap();
         }
     }
 
@@ -203,7 +218,9 @@ namespace neat {
 
             // Disable the original innovation
             if(innovation > -1) {
-                m_innovationMap[innovation].enabled = false;
+                // m_innovationMap[innovation].enabled = false;
+                // Just erase instead?
+                m_innovationMap.erase(innovation);
             }
 
             // Add new connection from nodePre to new node
@@ -302,17 +319,34 @@ namespace neat {
 
     Network Network::crossWith(Network const & other) const
     {
-        InnovationMap crossedMap = m_innovationMap;
+        InnovationMap crossedMap;
 
-        // Iterate through other map, inserting all genes
-        // that are not in crossed map
-        for(auto const & innovation : other.m_innovationMap) {
-            auto innovationID = innovation.first;
-            if (crossedMap.find(innovationID) == std::end(crossedMap)) {
-                auto theInnovation = innovation.second;
-                crossedMap.emplace(innovationID, std::move(theInnovation));
+        // Iterate through map and find matching genes. A matching gene
+        // is chosen at random from either parent
+        for (auto const & innovation : m_innovationMap) {
+            // See if this innovation exists in the other map
+            auto found = other.m_innovationMap.find(innovation.second.innovationNumber);
+            if (found != std::end(m_innovationMap)) {
+                if (((double) rand() / (RAND_MAX)) < 0.5) {
+                    crossedMap.emplace(innovation.second.innovationNumber, innovation.second);
+                } else {
+                    crossedMap.emplace(innovation.second.innovationNumber, found->second);
+                }
             }
         }
+
+        // Genes that are excess or disjoint come from the fittest. The
+        // fittest is always the other network. This should have been
+        // taken into account when calling the crossWith function.
+        for (auto const & innovation : other.m_innovationMap) {
+            auto found = m_innovationMap.find(innovation.second.innovationNumber);
+
+            // If not found, means it is disjoint and should be added to crossed map
+            if(found == std::end(m_innovationMap)) {
+                crossedMap.emplace(innovation.second.innovationNumber, innovation.second);
+            }
+        }
+        
         return Network(m_inputCount,
                        m_outputCount,
                        m_maxSize,

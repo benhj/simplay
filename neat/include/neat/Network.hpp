@@ -39,7 +39,10 @@ namespace neat {
         /// add nodes in place of connections, modifies the node type etc.
         void mutate();
 
-        /// Performs a cross-over with another network
+        /// Performs a cross-over with another network. Note
+        /// the other network is *always* considered the fitter
+        /// of the two. This should be taken into account when
+        /// calling the given function.
         Network crossWith(Network const & other) const;
 
       private:
@@ -62,6 +65,18 @@ namespace neat {
         /// Fully connect all inputs to all outputs, or,
         /// based on innovation map when map non-empty
         void initNet();
+
+        /// When a new network is constructed, we need an
+        /// initial set of input and hidden nodes
+        void assembleInitialInputAndOutputNodes();
+
+        /// When initially constructed, there will be full
+        /// connectivity from input to output nodes
+        void assembleInitialInputToOutputConnectivity();
+
+        /// During cross-over, the new network is to be
+        /// constructed from a pre-computed innovation map
+        void assembleFromInnovationMap();
 
         /// Loops over all connections going into output and
         /// calls addNodeInPlaceOf if mutation probability satisfied
