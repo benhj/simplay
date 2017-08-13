@@ -143,7 +143,9 @@ namespace neat {
                 auto & weight = innovInfo.weight;
                 auto & innovationNumber = innovInfo.innovationNumber;
 
-                // Make sure have corect node count
+                // Make sure have corect node count. Note that any
+                // pre-existing hidden node is automatically mutated here
+                // to have a potentially different function.
                 if(preNode >= m_nodes.size()) {
                     for (auto i = m_nodes.size(); i <= preNode; ++i) {
                         m_nodes.emplace_back(i, NodeType::Hidden, 
