@@ -143,6 +143,20 @@ namespace neat {
                 auto & weight = innovInfo.weight;
                 auto & innovationNumber = innovInfo.innovationNumber;
 
+                // Make sure have corect node count
+                if(preNode >= m_nodes.size()) {
+                    for (auto i = m_nodes.size(); i <= preNode; ++i) {
+                        m_nodes.emplace_back(i, NodeType::Hidden, 
+                        m_muts.nodeFunctionChangeProb);
+                    }
+                }
+                if(postNode >= m_nodes.size()) {
+                    for (auto i = m_nodes.size(); i <= preNode; ++i) {
+                        m_nodes.emplace_back(i, NodeType::Hidden, 
+                        m_muts.nodeFunctionChangeProb);
+                    }
+                }
+
                 m_nodes[postNode].addIncomingConnectionFrom(m_nodes[preNode], 
                                                             m_weightInitBound,
                                                             m_muts.weightChangeProb,
