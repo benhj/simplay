@@ -1,6 +1,7 @@
 /// Copyright (c) 2017 Ben Jones
 
 #include "graphics/GLCircularDial.hpp"
+#include "graphics/RetinaScalar.hpp"
 #include <cmath>
 #include <unistd.h>
 
@@ -63,7 +64,7 @@ namespace graphics {
         glRotatef(m_angle, 0.0, 0.0, 1.0);
 
         // Outer dial circle
-        glLineWidth(3.0);
+        lineWidth(3.0);
         detail::setColor({10, 10, 150}, 0.3 /* opacity */);
         glBegin(GL_LINE_LOOP);
             for (double angle = 0; angle < 3.1415926f * 2; angle += 0.25) {
@@ -88,7 +89,7 @@ namespace graphics {
         glEnd();
 
         // Dial pointer Pointer
-        glLineWidth(3.0);
+        lineWidth(3.0);
         detail::setColor({50, 50, 100}, 0.3 /* opacity */);
         glBegin(GL_LINES);
             glVertex2f(0, 3.0);

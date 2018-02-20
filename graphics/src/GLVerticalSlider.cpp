@@ -1,6 +1,7 @@
-/// Copyright (c) 2017 Ben Jones
+/// Copyright (c) 2017-2018 Ben Jones
 
 #include "graphics/GLVerticalSlider.hpp"
+#include "graphics/RetinaScalar.hpp"
 #include <cmath>
 #include <unistd.h>
 
@@ -69,7 +70,7 @@ namespace graphics {
             glVertex2f(m_width, 0);
         glEnd();
 
-        glLineWidth(3.0);
+        lineWidth(3.0);
         detail::setColor({10, 10, 150}, m_opacity);
         glBegin(GL_LINE_LOOP);
             glVertex2f(0, m_length);

@@ -1,7 +1,8 @@
-// Copyright (c) 2017 Ben Jones
+// Copyright (c) 2017-2018 Ben Jones
 
 #pragma once
 
+#include "RetinaScalar.hpp"
 #include <OpenGL/gl.h>
 
 namespace graphics { namespace detail {
@@ -12,7 +13,7 @@ namespace graphics { namespace detail {
                          double const centerX = 0,
                          double const centerY = 0)
     {
-        glViewport(0, 0, windowWidth, windowHeight);
+        glViewport(0, 0, windowWidth * retinaScalar(), windowHeight * retinaScalar());
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glOrtho((-windowWidth/2)*viewDistance + centerX, 

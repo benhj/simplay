@@ -1,11 +1,13 @@
-// Copyright (c) 2017 Ben Jones
+// Copyright (c) 2017-2018 Ben Jones
 
 #pragma once
 
 #include "WorldToScreen.hpp"
+#include "graphics/RetinaScalar.hpp"
 #include "physics/PhysicsEngine.hpp"
 #include "model/Animat.hpp"
 #include "Color.hpp"
+#include "RetinaScalar.hpp"
 #include <OpenGL/gl.h>
 #include <cmath>
 #include <atomic>
@@ -116,7 +118,7 @@ namespace graphics {
 
         void drawBody()
         {
-            glLineWidth(2.0);
+            lineWidth(2.0);
             auto & physicsEngine = m_animat.getPhysicsEngine();
             for(int b = 0; b < m_animat.getBlockCount(); ++b) {
                 auto block = m_animat.getBlock(b);
@@ -147,12 +149,12 @@ namespace graphics {
                 glEnd();
             }
             detail::setColor(m_basicColor);
-            glLineWidth(1.0);
+            lineWidth(1.0);
         }
 
         void drawAntennae()
         {
-            glLineWidth(2.0);
+            lineWidth(2.0);
             auto & physicsEngine = m_animat.getPhysicsEngine();
             auto blocks = m_animat.getBlockCount();
             // Draw antennae
@@ -177,7 +179,7 @@ namespace graphics {
             detail::setColor(m_basicColor);
             detail::drawCircle(leftAnt.m_vec[0], leftAnt.m_vec[1], 0.2, 10);
             detail::drawCircle(rightAnt.m_vec[0], rightAnt.m_vec[1], 0.2, 10);
-            glLineWidth(1.0);
+            lineWidth(1.0);
         }
 
         void drawBoundingCircles()
@@ -195,14 +197,14 @@ namespace graphics {
         {
             detail::setColor(m_bigCircleColor);
             if(*m_selected) {
-                glLineWidth(2.0);
+                lineWidth(2.0);
             }
             auto boundingPair = m_animat.getCentralPoint();
             detail::drawCircle(boundingPair.first.m_vec[0], 
                                boundingPair.first.m_vec[1],
                                boundingPair.second, 20);
             detail::setColor(m_basicColor);
-            glLineWidth(1.0);
+            lineWidth(1.0);
         }   
     };
 }

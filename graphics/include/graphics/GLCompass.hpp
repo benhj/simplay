@@ -1,8 +1,9 @@
-/// Copyright (c) 2017 Ben Jones
+/// Copyright (c) 2017-2018 Ben Jones
 
 #pragma once
 
 #include "Color.hpp"
+#include "RetinaScalar.hpp"
 #include "SetScene.hpp"
 #include <OpenGL/gl.h>
 #include <atomic>
@@ -36,13 +37,13 @@ namespace graphics {
 
             // Draw outer compass circle
             detail::setColor(m_compassOutline, 0.5 /* opacity */);
-            glLineWidth(3.0);
+            lineWidth(3.0);
             glBegin(GL_LINE_LOOP);
                 for (double angle = 0; angle < 3.1415926f * 2; angle += 0.25) {
                     glVertex2f(::sin(angle) * rad, ::cos(angle) * rad);
                 }
             glEnd();
-            glLineWidth(1.0);
+            lineWidth(1.0);
 
             // Draw blue 'north' part of pointer
             detail::setColor(m_pointerUp);

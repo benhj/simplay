@@ -12,6 +12,7 @@
 #include "graphics/GLCircularDial.hpp"
 #include "graphics/PauseOverlay.hpp"
 #include "graphics/ThreadRunner.hpp"
+#include "graphics/RetinaScalar.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -73,12 +74,6 @@ int main(int argc, char **argv)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
-    // Callbacks
-    glfwSetWindowSizeCallback(window, reshape);
-    glfwSetCursorPosCallback(window, passiveMouseFunc);
-    glfwSetKeyCallback(window, keyboardHandler);
-    glfwSetMouseButtonCallback(window, clickHandler);
-
     // Size correction for small monitor
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
@@ -87,6 +82,16 @@ int main(int argc, char **argv)
                                          windowHeight, 
                                          glEnvironment,
                                          threadRunner));
+
+    // Call retinaScalar once with window do derive correct size
+    (void)graphics::retinaScalar(window);
+
+    // Callbacks
+    glfwSetWindowSizeCallback(window, reshape);
+    glfwSetFramebufferSizeCallback(window, reshape);
+    glfwSetCursorPosCallback(window, passiveMouseFunc);
+    glfwSetKeyCallback(window, keyboardHandler);
+    glfwSetMouseButtonCallback(window, clickHandler);
 
     // Add some GUI Elements
     auto button = std::make_shared<graphics::GLButton>(window,

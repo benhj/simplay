@@ -1,6 +1,7 @@
-/// Copyright (c) 2017 Ben Jones
+/// Copyright (c) 2017-2018 Ben Jones
 
 #include "graphics/GLButton.hpp"
+#include "graphics/RetinaScalar.hpp"
 #include <cmath>
 #include <unistd.h>
 
@@ -62,7 +63,7 @@ namespace graphics {
             m_overLay(m_state);
         }
 
-        glLineWidth(3.0);
+        lineWidth(3.0);
         detail::setColor({10, 10, 150}, 0.3 /* opacity */);
         glBegin(GL_LINE_LOOP);
             glVertex2f(0, m_height);
