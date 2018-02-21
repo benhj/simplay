@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "RetinaScalar.hpp"
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 

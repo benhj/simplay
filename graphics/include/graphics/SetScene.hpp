@@ -13,7 +13,9 @@ namespace graphics { namespace detail {
                          double const centerX = 0,
                          double const centerY = 0)
     {
-        glViewport(0, 0, windowWidth * retinaScalar(), windowHeight * retinaScalar());
+        auto const theWidth = windowWidth * retinaScalar();
+        auto const theHeight = windowHeight * retinaScalar();
+        glViewport(0, 0, theWidth, theHeight);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glOrtho((-windowWidth/2)*viewDistance + centerX, 

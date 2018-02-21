@@ -142,7 +142,7 @@ int main(int argc, char **argv)
     graphix->addGUIElement(std::move(dial));
 
     // Start the main simulation loop
-    sim.start();
+    // sim.start();
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {

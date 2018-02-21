@@ -77,6 +77,8 @@ namespace graphics {
             // offset mouse coords
             y -= centerY;
             x -= centerX;
+            x *= retinaScalar();
+            y *= retinaScalar();
             auto centralPoint = m_animat.getCentralPoint();
             auto & pos = centralPoint.first;
             auto cx = pos.m_vec[0];
@@ -87,6 +89,7 @@ namespace graphics {
             auto diffY = centerY - (sy - y);
             auto diffXSq = std::sqrt(diffX * diffX) * viewDistance;
             auto diffYSq = std::sqrt(diffY * diffY) * viewDistance;
+
             if (diffXSq < 5 && diffYSq < 5) {
                 *m_highlighted = true;
             } else {

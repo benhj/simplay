@@ -163,13 +163,17 @@ namespace graphics {
                     auto cx = pos.m_vec[0];
                     auto cy = pos.m_vec[1];
                     double sx, sy;
+
                     detail::worldToScreen(cx, -cy, sx, sy);
-
-                    auto fx = (sx * m_viewDistance) - (m_windowWidth / 2) * m_viewDistance + m_centerX;
-                    auto fy = (sy * m_viewDistance) - (m_windowHeight / 2) * m_viewDistance + m_centerY;
-
+                    auto width = m_windowHeight * retinaScalar();
+                    auto height = m_windowHeight * retinaScalar();
+                    auto fx = (sx * m_viewDistance) - ((width / 2) * m_viewDistance) + m_centerX;
+                    auto fy = (sy * m_viewDistance) - ((height / 2) * m_viewDistance) + m_centerY;
                     auto distx = std::sqrt((fx - m_centerX) * (fx - m_centerX));
                     auto disty = std::sqrt((fy - m_centerY) * (fy - m_centerY));
+
+                    distx /= retinaScalar();
+                    disty /= retinaScalar();
 
                     auto centerDivX = distx / 10.0;
                     auto centerDivY = disty / 10.0;
@@ -215,6 +219,7 @@ namespace graphics {
                 auto zoomVal = m_viewDistance.load();
                 for(int i = 0; i < 10; ++i) {
                     auto valX = m_centerX.load();
+
                     if (valX < fx - centerDivX) {
                         valX += centerDivX;
                         m_oldFlyXDiv += centerDivX;
