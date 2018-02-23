@@ -37,13 +37,13 @@ namespace graphics {
 
             // Draw outer compass circle
             detail::setColor(m_compassOutline, 0.5 /* opacity */);
-            lineWidth(3.0);
+            detail::lineWidth(3.0);
             glBegin(GL_LINE_LOOP);
                 for (double angle = 0; angle < 3.1415926f * 2; angle += 0.25) {
                     glVertex2f(::sin(angle) * rad, ::cos(angle) * rad);
                 }
             glEnd();
-            lineWidth(1.0);
+            detail::lineWidth(1.0);
 
             // Draw blue 'north' part of pointer
             detail::setColor(m_pointerUp);

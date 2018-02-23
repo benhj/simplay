@@ -3,6 +3,7 @@ project (playground)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 3.2 REQUIRED)
+find_package(Freetype REQUIRED)
 
 # put all source code in one place for convenience
 file(GLOB_RECURSE physics physics/src/*.cpp physics/include/physics/*.hpp)
@@ -22,6 +23,7 @@ include_directories(neat/include)
 include_directories(graphics/include)
 include_directories(/usr/local/include/)
 include_directories( ${OPENGL_INCLUDE_DIRS} )
+include_directories( ${FREETYPE_INCLUDE_DIRS} )
 
 # break above sub-folders into individual libraries
 add_library(physics_lib ${physics})
@@ -31,7 +33,7 @@ add_library(simulator_lib ${simulator})
 add_library(neat_lib ${neat})
 add_library(graphics_lib ${graphics})
 add_executable(stest main/src/app.cpp)
-target_link_libraries(stest model_lib ctrnn_lib physics_lib simulator_lib neat_lib graphics_lib ${OPENGL_LIBRARIES} glfw)
+target_link_libraries(stest model_lib ctrnn_lib physics_lib simulator_lib neat_lib graphics_lib ${OPENGL_LIBRARIES} glfw ${FREETYPE_LIBRARIES})
 
 # compile options. Lots of redundancy here. Can prob clean up.
 set(COMP_FLAGS -std=c++14 -O3 -ffast-math -funroll-loops -Wno-ctor-dtor-privacy -fno-pic -Wno-deprecated)

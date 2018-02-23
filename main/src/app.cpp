@@ -13,6 +13,7 @@
 #include "graphics/PauseOverlay.hpp"
 #include "graphics/ThreadRunner.hpp"
 #include "graphics/RetinaScalar.hpp"
+#include "graphics/TextRenderer.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -84,7 +85,7 @@ int main(int argc, char **argv)
                                          threadRunner));
 
     // Call retinaScalar once with window do derive correct size
-    (void)graphics::retinaScalar(window);
+    (void)graphics::detail::retinaScalar(window);
 
     // Callbacks
     glfwSetWindowSizeCallback(window, reshape);
@@ -141,6 +142,15 @@ int main(int argc, char **argv)
     graphix->addGUIElement(std::move(slider));
     graphix->addGUIElement(std::move(dial));
 
+    // NEHE's font system
+    graphics::detail::font_data our_font;
+    our_font.init("/Library/Fonts/Arial.ttf", 36);
+    float sx = windowWidth / 2.0;
+    float sy = windowHeight / 2.0;
+    sx *= graphics::detail::retinaScalar();
+    sy *= graphics::detail::retinaScalar();
+    std::cout << sx << std::endl;
+
     // Start the main simulation loop
     // sim.start();
 
@@ -148,9 +158,19 @@ int main(int argc, char **argv)
     while (!glfwWindowShouldClose(window)) {
 
         /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         display();
+
+        glPushMatrix();
+        glLoadIdentity();
+        // Blue texts
+        glColor3ub(0,0,0xff);
+ 
+        // Position the WGL Text On The Screen
+        //glRasterPos2f(-0.40f, 0.35f);
+        //graphics::detail::print(our_font, 10, 10, "Just a test!");
+        glPopMatrix();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -158,7 +178,7 @@ int main(int argc, char **argv)
         /* Poll for and process events */
         glfwPollEvents();
     }
-
+    our_font.clean();
     glfwTerminate();
     return 0;
 }

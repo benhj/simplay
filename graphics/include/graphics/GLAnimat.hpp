@@ -77,8 +77,8 @@ namespace graphics {
             // offset mouse coords
             y -= centerY;
             x -= centerX;
-            x *= retinaScalar();
-            y *= retinaScalar();
+            x *= detail::retinaScalar();
+            y *= detail::retinaScalar();
             auto centralPoint = m_animat.getCentralPoint();
             auto & pos = centralPoint.first;
             auto cx = pos.m_vec[0];
@@ -121,7 +121,7 @@ namespace graphics {
 
         void drawBody()
         {
-            lineWidth(2.0);
+            detail::lineWidth(2.0);
             auto & physicsEngine = m_animat.getPhysicsEngine();
             for(int b = 0; b < m_animat.getBlockCount(); ++b) {
                 auto block = m_animat.getBlock(b);
@@ -152,12 +152,12 @@ namespace graphics {
                 glEnd();
             }
             detail::setColor(m_basicColor);
-            lineWidth(1.0);
+            detail::lineWidth(1.0);
         }
 
         void drawAntennae()
         {
-            lineWidth(2.0);
+            detail::lineWidth(2.0);
             auto & physicsEngine = m_animat.getPhysicsEngine();
             auto blocks = m_animat.getBlockCount();
             // Draw antennae
@@ -182,7 +182,7 @@ namespace graphics {
             detail::setColor(m_basicColor);
             detail::drawCircle(leftAnt.m_vec[0], leftAnt.m_vec[1], 0.2, 10);
             detail::drawCircle(rightAnt.m_vec[0], rightAnt.m_vec[1], 0.2, 10);
-            lineWidth(1.0);
+            detail::lineWidth(1.0);
         }
 
         void drawBoundingCircles()
@@ -200,14 +200,14 @@ namespace graphics {
         {
             detail::setColor(m_bigCircleColor);
             if(*m_selected) {
-                lineWidth(2.0);
+                detail::lineWidth(2.0);
             }
             auto boundingPair = m_animat.getCentralPoint();
             detail::drawCircle(boundingPair.first.m_vec[0], 
                                boundingPair.first.m_vec[1],
                                boundingPair.second, 20);
             detail::setColor(m_basicColor);
-            lineWidth(1.0);
+            detail::lineWidth(1.0);
         }   
     };
 }

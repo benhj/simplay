@@ -165,15 +165,15 @@ namespace graphics {
                     double sx, sy;
 
                     detail::worldToScreen(cx, -cy, sx, sy);
-                    auto width = m_windowHeight * retinaScalar();
-                    auto height = m_windowHeight * retinaScalar();
+                    auto width = m_windowHeight * detail::retinaScalar();
+                    auto height = m_windowHeight * detail::retinaScalar();
                     auto fx = (sx * m_viewDistance) - ((width / 2) * m_viewDistance) + m_centerX;
                     auto fy = (sy * m_viewDistance) - ((height / 2) * m_viewDistance) + m_centerY;
                     auto distx = std::sqrt((fx - m_centerX) * (fx - m_centerX));
                     auto disty = std::sqrt((fy - m_centerY) * (fy - m_centerY));
 
-                    distx /= retinaScalar();
-                    disty /= retinaScalar();
+                    distx /= detail::retinaScalar();
+                    disty /= detail::retinaScalar();
 
                     auto centerDivX = distx / 10.0;
                     auto centerDivY = disty / 10.0;

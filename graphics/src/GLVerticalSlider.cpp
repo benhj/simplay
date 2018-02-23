@@ -70,7 +70,7 @@ namespace graphics {
             glVertex2f(m_width, 0);
         glEnd();
 
-        lineWidth(3.0);
+        detail::lineWidth(3.0);
         detail::setColor({10, 10, 150}, m_opacity);
         glBegin(GL_LINE_LOOP);
             glVertex2f(0, m_length);

@@ -64,7 +64,7 @@ namespace graphics {
         glRotatef(m_angle, 0.0, 0.0, 1.0);
 
         // Outer dial circle
-        lineWidth(3.0);
+        detail::lineWidth(3.0);
         detail::setColor({10, 10, 150}, 0.3 /* opacity */);
         glBegin(GL_LINE_LOOP);
             for (double angle = 0; angle < 3.1415926f * 2; angle += 0.25) {
@@ -89,7 +89,7 @@ namespace graphics {
         glEnd();
 
         // Dial pointer Pointer
-        lineWidth(3.0);
+        detail::lineWidth(3.0);
         detail::setColor({50, 50, 100}, 0.3 /* opacity */);
         glBegin(GL_LINES);
             glVertex2f(0, 3.0);

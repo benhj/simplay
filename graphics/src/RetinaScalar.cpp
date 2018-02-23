@@ -5,7 +5,7 @@ namespace {
     std::once_flag flag;
 }
 
-namespace graphics {
+namespace graphics {  namespace detail {
     float retinaScalar(GLFWwindow * window)
     {
         static float display_scale = 1.0f;
@@ -25,4 +25,5 @@ namespace graphics {
     {
         glLineWidth(orig * retinaScalar());
     }
+}
 }

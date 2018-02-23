@@ -63,7 +63,7 @@ namespace graphics {
             m_overLay(m_state);
         }
 
-        lineWidth(3.0);
+        detail::lineWidth(3.0);
         detail::setColor({10, 10, 150}, 0.3 /* opacity */);
         glBegin(GL_LINE_LOOP);
             glVertex2f(0, m_height);
