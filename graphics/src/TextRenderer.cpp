@@ -57,8 +57,8 @@ namespace graphics { namespace detail {
         // The Bitmap Data That We Will Need In Order To Create
         // Our Texture.
         int width = next_p2( bitmap.width );
-        int height = next_p2( bitmap.rows );
-         
+        int height = next_p2( bitmap.rows ) ;
+
         // Allocate Memory For The Texture Data.
         std::vector<GLubyte> expanded_data(2 * width * height, 0);
 
@@ -78,13 +78,13 @@ namespace graphics { namespace detail {
                 bitmap.buffer[i + bitmap.width * j];
             }
         }
-
-        for(int j = 0; j < height ; j++) {
-            for(int i = 0; i < width; i++) {
-                std::cout<<expanded_data[2 * (i + j * width) + 1]<<" ";
-            }
-            std::cout<<std::endl;
-        }
+        // std::cout<<"LETTER "<<ch<<std::endl;
+        // for(int j = 0; j < height ; j++) {
+        //     for(int i = 0; i < width; i++) {
+        //         std::cout<<expanded_data[2 * (i + j * width) + 1]<<" ";
+        //     }
+        //     std::cout<<std::endl;
+        // }
 
         // Now We Just Setup Some Texture Parameters.
         glBindTexture( GL_TEXTURE_2D, tex_base[ch]);
@@ -116,7 +116,7 @@ namespace graphics { namespace detail {
         // Now We Move Down A Little In The Case That The
         // Bitmap Extends Past The Bottom Of The Line
         // This Is Only True For Characters Like 'g' Or 'y'.
-        glTranslatef(0,bitmap_glyph->top-bitmap.rows,0);
+        glTranslatef(0,bitmap_glyph->top-(bitmap.rows/2),0);
      
         // Now We Need To Account For The Fact That Many Of
         // Our Textures Are Filled With Empty Padding Space.
@@ -144,7 +144,7 @@ namespace graphics { namespace detail {
      
         // Increment The Raster Position As If We Were A Bitmap Font.
         // (Only Needed If You Want To Calculate Text Length)
-        glBitmap(0,0,0,0,face->glyph->advance.x >> 6,0,NULL);
+        // glBitmap(0,0,0,0,face->glyph->advance.x >> 6,0,NULL);
      
         // Finish The Display List
         glEndList();
