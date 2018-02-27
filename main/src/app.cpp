@@ -144,7 +144,7 @@ int main(int argc, char **argv)
 
     // NEHE's font system
     graphics::detail::font_data our_font;
-    our_font.init("/Library/Fonts/Arial.ttf", 36);
+    our_font.init("/Library/Fonts/Arial.ttf", 15);
     float sx = windowWidth / 2.0;
     float sy = windowHeight / 2.0;
     sx *= graphics::detail::retinaScalar();
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
  
         // Position the WGL Text On The Screen
         //glRasterPos2f(-0.40f, 0.35f);
-        //graphics::detail::print(our_font, 10, 10, "Just a test!");
+        //graphics::detail::print(our_font, 10, 10, "abcde...i..1...l");
         glPopMatrix();
 
         /* Swap front and back buffers */

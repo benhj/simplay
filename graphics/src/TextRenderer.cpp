@@ -35,7 +35,7 @@ namespace graphics { namespace detail {
     void make_dlist ( FT_Face face, char ch, GLuint list_base, GLuint * tex_base ) {
      
         // The First Thing We Do Is Get FreeType To Render Our Character
-        // Into A Bitmap.  This Actually Requires A Couple Of FreeType Commands:
+        // Into A Bitmap. This Actually Requires A Couple Of FreeType Commands:
      
         // Load The Glyph For Our Character.
         if(FT_Load_Glyph( face, FT_Get_Char_Index( face, ch ), FT_LOAD_DEFAULT ))
@@ -60,37 +60,46 @@ namespace graphics { namespace detail {
         int height = next_p2( bitmap.rows );
          
         // Allocate Memory For The Texture Data.
-        GLubyte* expanded_data = new GLubyte[ 2 * width * height];
+        std::vector<GLubyte> expanded_data(2 * width * height, 0);
+
+        std::cout<<width<<std::endl;
          
         // Here We Fill In The Data For The Expanded Bitmap.
         // Notice That We Are Using A Two Channel Bitmap (One For
-        // Channel Luminosity And One For Alpha), But We Assign
-        // Both Luminosity And Alpha To The Value That We
-        // Find In The FreeType Bitmap.
+        // Channel Luminosity And One For Alpha).
         // We Use The ?: Operator To Say That Value Which We Use
         // Will Be 0 If We Are In The Padding Zone, And Whatever
         // Is The FreeType Bitmap Otherwise.
-        for(int j=0; j <height;j++) {
-            for(int i=0; i < width; i++){
-                expanded_data[2*(i+j*width)]= expanded_data[2*(i+j*width)+1] =
-                    (i>=bitmap.width || j>=bitmap.rows) ?
-                    0 : bitmap.buffer[i + bitmap.width*j];
+        for(int j = 0; j < height ; j++) {
+            for(int i = 0; i < width; i++) {
+                expanded_data[2 * (i + j * width)] = 255; // luminosity
+                expanded_data[2 * (i + j * width) + 1] =
+                (i >= bitmap.width || j >= bitmap.rows) ? 0 :
+                bitmap.buffer[i + bitmap.width * j];
             }
+        }
+
+        for(int j = 0; j < height ; j++) {
+            for(int i = 0; i < width; i++) {
+                std::cout<<expanded_data[2 * (i + j * width) + 1]<<" ";
+            }
+            std::cout<<std::endl;
         }
 
         // Now We Just Setup Some Texture Parameters.
         glBindTexture( GL_TEXTURE_2D, tex_base[ch]);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
          
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
         // Here We Actually Create The Texture Itself, Notice
         // That We Are Using GL_LUMINANCE_ALPHA To Indicate That
         // We Are Using 2 Channel Data.
         glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
-            GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data );
-         
-        // With The Texture Created, We Don't Need The Expanded Data Anymore.
-        delete [] expanded_data;
+            GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, &expanded_data.front() );
 
         // Now We Create The Display List
         glNewList(list_base+ch,GL_COMPILE);
@@ -116,8 +125,8 @@ namespace graphics { namespace detail {
         // The x And y Variables, Then When We Draw The
         // Quad, We Will Only Reference The Parts Of The Texture
         // That Contains The Character Itself.
-        float   x=(float)bitmap.width / (float)width,
-        y=(float)bitmap.rows / (float)height;
+        float x = (float)bitmap.width / (float)width,
+              y = (float)bitmap.rows / (float)height;
      
         // Here We Draw The Texturemapped Quads.
         // The Bitmap That We Got From FreeType Was Not
@@ -135,15 +144,16 @@ namespace graphics { namespace detail {
      
         // Increment The Raster Position As If We Were A Bitmap Font.
         // (Only Needed If You Want To Calculate Text Length)
-        // glBitmap(0,0,0,0,face->glyph->advance.x >> 6,0,NULL);
+        glBitmap(0,0,0,0,face->glyph->advance.x >> 6,0,NULL);
      
         // Finish The Display List
         glEndList();
     }
 
     void font_data::init(const char * fname, unsigned int h) {
+
         // Allocate Some Memory To Store The Texture Ids.
-        textures = new GLuint[128];
+        textures.resize(128);
      
         this->h=h;
      
@@ -161,7 +171,7 @@ namespace graphics { namespace detail {
         // As FT_New_Face Will Fail If The Font File Does Not Exist Or Is Somehow Broken.
         if (FT_New_Face( library, fname, 0, &face ))
             throw std::runtime_error("FT_New_Face failed (there is probably a problem with your font file)");
-     
+
         // For Some Twisted Reason, FreeType Measures Font Size
         // In Terms Of 1/64ths Of Pixels.  Thus, To Make A Font
         // h Pixels High, We Need To Request A Size Of h*64.
@@ -172,11 +182,12 @@ namespace graphics { namespace detail {
         // All The Textures And Display Lists Which We
         // Are About To Create. 
         list_base=glGenLists(128);
-        glGenTextures( 128, textures );
+        glGenTextures( 128, &textures.front() );
      
         // This Is Where We Actually Create Each Of The Fonts Display Lists.
-        for(unsigned char i=0;i<128;i++)
-            make_dlist(face,i,list_base,textures);
+        for(unsigned char i=0;i<128;i++) {
+            make_dlist(face, i, list_base, &textures.front());
+        }
      
         // We Don't Need The Face Information Now That The Display
         // Lists Have Been Created, So We Free The Assosiated Resources.
@@ -188,8 +199,7 @@ namespace graphics { namespace detail {
 
     void font_data::clean() {
         glDeleteLists(list_base,128);
-        glDeleteTextures(128,textures);
-        delete [] textures;
+        glDeleteTextures(128, &textures.front());
     }
 
     // A Fairly Straightforward Function That Pushes
@@ -217,7 +227,7 @@ namespace graphics { namespace detail {
 
     // Much Like NeHe's glPrint Function, But Modified To Work
     // With FreeType Fonts.
-    void print(const font_data &ft_font, float x, float y, const char *fmt, ...)  {
+    void print(const font_data &ft_font, float x, float y, std::string const & text)  {
              
         // We Want A Coordinate System Where Distance Is Measured In Window Pixels.
         pushScreenCoordinateMatrix();                                  
@@ -225,16 +235,6 @@ namespace graphics { namespace detail {
         GLuint font=ft_font.list_base;
         // We Make The Height A Little Bigger.  There Will Be Some Space Between Lines.
         float h=ft_font.h/.63f;                                                
-        char text[256];   // Holds Our String
-        va_list ap;       // Pointer To List Of Arguments
-     
-        if (fmt == NULL)  // If There's No Text
-            *text=0;      // Do Nothing
-        else {
-            va_start(ap, fmt);        // Parses The String For Variables
-            vsprintf(text, fmt, ap);  // And Converts Symbols To Actual Numbers
-            va_end(ap);               // Results Are Stored In Text
-        }
      
         // Split text into lines
         std::stringstream ss(text);
