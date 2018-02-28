@@ -2,7 +2,7 @@
 #include <OpenGL/gl.h>
 #include <string>
 #include <vector>
-namespace graphics { namespace detail {
+namespace glfreetype {
 
     // NEHE tutorial
 
@@ -27,5 +27,4 @@ namespace graphics { namespace detail {
     void print(font_data const & ft_font, float x, float y,  
                std::string const & text);
 
-}
 }

@@ -1,6 +1,4 @@
-#include "graphics/Color.hpp"
-#include "graphics/TextRenderer.hpp"
-#include "graphics/RetinaScalar.hpp"
+#include "glfreetype/TextRenderer.hpp"
 
 #include <ft2build.h>
 #include <freetype/freetype.h>
@@ -20,7 +18,7 @@
 // I can take absolutely no credit
 // http://nehe.gamedev.net/tutorial/freetype_fonts_in_opengl/24001/
 
-namespace graphics { namespace detail {
+namespace glfreetype {
     // This Function Gets The First Power Of 2 >= The
     // Int That We Pass It.
     inline int next_p2 (int a )
@@ -62,8 +60,6 @@ namespace graphics { namespace detail {
         // Allocate Memory For The Texture Data.
         std::vector<GLubyte> expanded_data(2 * width * height, 0);
 
-        std::cout<<width<<std::endl;
-         
         // Here We Fill In The Data For The Expanded Bitmap.
         // Notice That We Are Using A Two Channel Bitmap (One For
         // Channel Luminosity And One For Alpha).
@@ -78,13 +74,6 @@ namespace graphics { namespace detail {
                 bitmap.buffer[i + bitmap.width * j];
             }
         }
-        // std::cout<<"LETTER "<<ch<<std::endl;
-        // for(int j = 0; j < height ; j++) {
-        //     for(int i = 0; i < width; i++) {
-        //         std::cout<<expanded_data[2 * (i + j * width) + 1]<<" ";
-        //     }
-        //     std::cout<<std::endl;
-        // }
 
         // Now We Just Setup Some Texture Parameters.
         glBindTexture( GL_TEXTURE_2D, tex_base[ch]);
@@ -116,7 +105,7 @@ namespace graphics { namespace detail {
         // Now We Move Down A Little In The Case That The
         // Bitmap Extends Past The Bottom Of The Line
         // This Is Only True For Characters Like 'g' Or 'y'.
-        glTranslatef(0,bitmap_glyph->top-(bitmap.rows/2),0);
+        glTranslatef(0,bitmap_glyph->top-(bitmap.rows * 0.9),0);
      
         // Now We Need To Account For The Fact That Many Of
         // Our Textures Are Filled With Empty Padding Space.
@@ -286,5 +275,4 @@ namespace graphics { namespace detail {
      
         pop_projection_matrix();
     }
-}
 }

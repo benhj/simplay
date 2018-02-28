@@ -13,7 +13,7 @@
 #include "graphics/PauseOverlay.hpp"
 #include "graphics/ThreadRunner.hpp"
 #include "graphics/RetinaScalar.hpp"
-#include "graphics/TextRenderer.hpp"
+#include "glfreetype/TextRenderer.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -143,8 +143,8 @@ int main(int argc, char **argv)
     graphix->addGUIElement(std::move(dial));
 
     // NEHE's font system
-    graphics::detail::font_data our_font;
-    our_font.init("/Library/Fonts/Arial.ttf", 55);
+    glfreetype::font_data our_font;
+    our_font.init("/Library/Fonts/Arial.ttf", (55 * graphics::detail::retinaScalar()));
     float sx = windowWidth / 2.0;
     float sy = windowHeight / 2.0;
     sx *= graphics::detail::retinaScalar();
@@ -160,7 +160,7 @@ int main(int argc, char **argv)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        display();
+        //display();
 
         glPushMatrix();
         glLoadIdentity();
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
  
         // Position the WGL Text On The Screen
         //glRasterPos2f(-0.40f, 0.35f);
-        //graphics::detail::print(our_font, 10, 10, "abcdefghijklmnopqrstuvwxyz");
+        glfreetype::print(our_font, 10, 10, "abcdefghijklmnopqrstuvwxyz");
         glPopMatrix();
 
         /* Swap front and back buffers */
