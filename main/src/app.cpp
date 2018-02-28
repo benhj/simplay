@@ -160,7 +160,7 @@ int main(int argc, char **argv)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //display();
+        display();
 
         glPushMatrix();
         glLoadIdentity();
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
  
         // Position the WGL Text On The Screen
         //glRasterPos2f(-0.40f, 0.35f);
-        glfreetype::print(our_font, 10, 10, "abcdefghijklmnopqrstuvwxyz");
+        //glfreetype::print(our_font, 10, 10, "abcdefghijklmnopqrstuvwxyz");
         glPopMatrix();
 
         /* Swap front and back buffers */
