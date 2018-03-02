@@ -1,4 +1,4 @@
-/// Copyright (c) 2017 Ben Jones
+/// Copyright (c) 2017-present Ben Jones
 #pragma once
 
 #include "AnimatLayer.hpp"
@@ -18,9 +18,9 @@ namespace model {
     {
 
       public:
-        /// Initialize animat with default properties (10 segments
+        /// Initialize animat with an ID and default properties (10 segments
         /// a width of 2.0 and a height of 3.8611)
-        Animat(AnimatProperties const & props = {6, 2.0, 3.8611});
+        Animat(int const id, AnimatProperties const & props = {6, 2.0, 3.8611});
    
         void applyBlockContraction(int const block, 
                                    int const side, 
@@ -67,7 +67,11 @@ namespace model {
         /// To reset the animat structure after bad physics
         void resetAnimatStructure();
 
+        /// Retrieve the population ID of this animat
+        int getID() const;
+
       private:
+        int m_id;
         std::vector<AnimatLayer> m_layers;
         std::vector<AnimatBlock> m_blocks;
         physics::PhysicsEngine m_physicsEngine;

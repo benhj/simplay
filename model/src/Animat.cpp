@@ -9,8 +9,9 @@
 
 namespace model {
 
-    Animat::Animat(AnimatProperties const & props)
-      : m_physicsEngine((props.blocks+1) * 2 /* number of point masses */)
+    Animat::Animat(int const id, AnimatProperties const & props)
+      : m_id(id)
+      , m_physicsEngine((props.blocks+1) * 2 /* number of point masses */)
       , m_antennaeMutex(std::make_shared<std::mutex>())
       , m_centralPointMutex(std::make_shared<std::mutex>())
       , m_physicsBecameUnstable(false)
@@ -52,6 +53,11 @@ namespace model {
 
         // center point -- the center of the animat
         updateCentralPoint();
+    }
+
+    int Animat::getID() const
+    {
+        return m_id;
     }
 
     void Animat::constructAntennae()

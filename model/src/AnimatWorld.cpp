@@ -1,4 +1,4 @@
-/// Copyright (c) 2017 Ben Jones
+/// Copyright (c) 2017-present Ben Jones
 
 #include "model/AnimatWorld.hpp"
 #include "physics/Matrix.hpp"
@@ -13,7 +13,7 @@ namespace model {
         m_animats.reserve(populationSize);
 
         for (int p = 0; p < populationSize; ++p) {
-            m_animats.push_back(Animat());
+            m_animats.push_back(Animat(p));
         }
 
         // seed random generator for random pop placement

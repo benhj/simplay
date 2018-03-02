@@ -1,4 +1,4 @@
-/// Copyright (c) 2017 Ben Jones
+/// Copyright (c) 2017 - present Ben Jones
 
 #pragma once
 
@@ -7,11 +7,13 @@
 #include "GLCompass.hpp"
 #include "GLAxis.hpp"
 #include "GLButton.hpp"
+#include "RetinaScalar.hpp"
 #include "SetScene.hpp"
 #include "WorldToScreen.hpp"
 #include "ThreadRunner.hpp"
 
 #include "model/AnimatWorld.hpp"
+#include "glfreetype/TextRenderer.hpp"
 
 #include <OpenGL/gl.h>
 #include <vector>
@@ -38,12 +40,15 @@ namespace graphics {
         , m_oldFlyXDiv(0)
         , m_oldFlyYDiv(0)
         , m_selected(-1)
+        // , m_generationText()
         {
             auto const popSize = m_animatWorld.getPopSize();
             m_glAnimats.reserve(popSize);
             for (int p = 0; p < popSize; ++p) {
                 m_glAnimats.emplace_back(m_animatWorld.animat(p));
             }
+            // m_generationText.init("/Library/Fonts/Arial.ttf", 
+            //                       25 * detail::retinaScalar());
         }
 
         void draw()
@@ -69,6 +74,14 @@ namespace graphics {
                                     m_viewDistance,
                                     m_worldOrientation).draw();
             }
+            // glPushMatrix();
+            // glLoadIdentity();
+            // // Blue texts
+            // glColor3ub(0,0,0xff);
+            // auto realWidth = m_windowWidth * detail::retinaScalar();
+            // glfreetype::print(m_generationText, realWidth / 1.5, 
+            //                   10 * detail::retinaScalar(), "Generation: ");
+            // glPopMatrix();
         }
 
         std::atomic<double> & getWorldOrientation()
@@ -205,6 +218,10 @@ namespace graphics {
         Color m_backGoundColour { 209, 220, 235};
         std::atomic<bool> m_displayAxis{true};
         std::atomic<bool> m_displayCompass{false};
+
+        // Display current generation
+        // glfreetype::font_data m_generationText;
+
 
         void processFlyIn(double const centerDivX, 
                           double const centerDivY,

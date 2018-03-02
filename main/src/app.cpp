@@ -30,13 +30,7 @@ int popSize = 10;
 // For running operations asynchronously
 graphics::detail::ThreadRunner threadRunner;
 
-simulator::Simulation sim(popSize);
 
-model::AnimatWorld & animatWorld = sim.animatWorld();
-graphics::GLEnvironment glEnvironment(windowWidth, 
-                                      windowHeight, 
-                                      animatWorld,
-                                      threadRunner);
 
 std::unique_ptr<graphics::Graphics> graphix;
 
@@ -78,14 +72,24 @@ int main(int argc, char **argv)
     // Size correction for small monitor
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
+    // Call retinaScalar once with window do derive correct size
+    (void)graphics::detail::retinaScalar(window);
+
+    simulator::Simulation sim(popSize);
+
+    model::AnimatWorld & animatWorld = sim.animatWorld();
+    graphics::GLEnvironment glEnvironment(windowWidth, 
+                                          windowHeight, 
+                                          animatWorld,
+                                          threadRunner);
+
     // GUI agnostics GL calls
     graphix.reset(new graphics::Graphics(windowWidth, 
                                          windowHeight, 
                                          glEnvironment,
                                          threadRunner));
 
-    // Call retinaScalar once with window do derive correct size
-    (void)graphics::detail::retinaScalar(window);
+
 
     // Callbacks
     glfwSetWindowSizeCallback(window, reshape);
@@ -142,9 +146,6 @@ int main(int argc, char **argv)
     graphix->addGUIElement(std::move(slider));
     graphix->addGUIElement(std::move(dial));
 
-    // NEHE's font system
-    glfreetype::font_data our_font;
-    our_font.init("/Library/Fonts/Arial.ttf", (55 * graphics::detail::retinaScalar()));
     float sx = windowWidth / 2.0;
     float sy = windowHeight / 2.0;
     sx *= graphics::detail::retinaScalar();
@@ -154,6 +155,8 @@ int main(int argc, char **argv)
     // Start the main simulation loop
     // sim.start();
 
+
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {
 
@@ -162,23 +165,12 @@ int main(int argc, char **argv)
 
         display();
 
-        glPushMatrix();
-        glLoadIdentity();
-        // Blue texts
-        glColor3ub(0,0,0xff);
- 
-        // Position the WGL Text On The Screen
-        //glRasterPos2f(-0.40f, 0.35f);
-        //glfreetype::print(our_font, 10, 10, "abcdefghijklmnopqrstuvwxyz");
-        glPopMatrix();
-
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
         /* Poll for and process events */
         glfwPollEvents();
     }
-    our_font.clean();
     glfwTerminate();
     return 0;
 }

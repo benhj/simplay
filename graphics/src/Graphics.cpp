@@ -1,4 +1,4 @@
-// Copyright (c) 2017 Ben Jones
+// Copyright (c) 2017 - present Ben Jones
 
 #include "graphics/Graphics.hpp"
 #include "graphics/SetScene.hpp"
@@ -159,6 +159,7 @@ namespace graphics {
                          m_windowHeight, 
                          m_glEnviro.getViewDistance(), 
                          m_glEnviro.getWorldOrientation());
+        glPopMatrix();
     }
 
     void Graphics::addGUIElement(std::shared_ptr<GLGUIElement> element)
