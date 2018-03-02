@@ -46,7 +46,7 @@ namespace graphics {
       , m_threadRunner(threadRunner)
       , m_highlighted(std::make_shared<std::atomic<bool>>(false)) 
       , m_selected(std::make_shared<std::atomic<bool>>(false))
-      , m_opacity(std::make_shared<std::atomic<double>>(0))
+      , m_opacity(std::make_shared<std::atomic<double>>(1))
     {
         std::call_once(g_textInitGuard, 
                        [&](){ 
@@ -100,6 +100,8 @@ namespace graphics {
 
         if (diffXSq < 5 && diffYSq < 5) {
             *m_highlighted = true;
+            // m_threadRunner.add([this]{fadeIn();});
+            // m_threadRunner.add([this]{fadeOut();});
         } else {
             *m_highlighted = false;
         }
@@ -187,7 +189,6 @@ namespace graphics {
         }
     }
 
-    /// fade in the button when hovering over
     void GLAnimat::fadeIn()
     {
         auto const inc = (0.9 / 30);
@@ -199,13 +200,24 @@ namespace graphics {
         }
     }
 
+    void GLAnimat::fadeOut()
+    {
+        auto const inc = (0.9 / 30);
+        for(int i = 0; i < 30; ++i) {
+            auto val = m_opacity->load();
+            val -= inc;
+            m_opacity->store(val);
+            ::usleep(10000);
+        }
+    }
+
     void GLAnimat::showPopNumber(std::pair<physics::Vector3, double> 
                                  const & boundingPair)
     {
         // display population number above agent
         glPushMatrix();
         glLoadIdentity();
-        detail::setColor({70, 70, 70});
+        detail::setColor({70, 70, 70}, *m_opacity);
         auto cx = boundingPair.first.m_vec[0];
         auto cy = boundingPair.first.m_vec[1];
         cy += (boundingPair.second * 1.2);

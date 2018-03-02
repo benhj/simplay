@@ -60,5 +60,6 @@ namespace graphics {
 
         /// fade in text
         void fadeIn();
+        void fadeOut();
     };
 }
