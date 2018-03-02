@@ -46,8 +46,8 @@ namespace graphics {
     {
         std::call_once(g_textInitGuard, 
                        [&](){ 
-                           g_animatText.init("/Library/Fonts/Arial.ttf", 
-                           10 * detail::retinaScalar()); 
+                           g_animatText.init("../fonts/Action_Man.ttf", 
+                           12 * detail::retinaScalar()); 
                         });
     }
 
