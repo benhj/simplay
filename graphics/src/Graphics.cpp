@@ -9,9 +9,9 @@
 namespace {
     void init() // Called before main loop to set up the program
     {
-        glClearColor(209.0 / 255.0, 
-                    220.0 / 255.0, 
-                    235.0 / 255.0, 0.0);
+        glClearColor(230.0 / 255.0, 
+                    230.0 / 255.0, 
+                    250.0 / 255.0, 0.0);
         glEnable(GL_BLEND);
         glEnable(GL_DEPTH);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

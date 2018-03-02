@@ -189,15 +189,15 @@ namespace graphics {
         // display population number above agent
         glPushMatrix();
         glLoadIdentity();
-        detail::setColor({120, 120, 120});
+        detail::setColor({70, 70, 70});
         auto cx = boundingPair.first.m_vec[0];
         auto cy = boundingPair.first.m_vec[1];
         cy += (boundingPair.second * 1.2);
         double sx, sy;
         detail::worldToScreen(cx, cy, sx, sy);
         std::stringstream ss;
-        ss << m_animat.getID();
-        glfreetype::print(g_animatText, sx, sy, ss.str());
+        ss << "ID: " << m_animat.getID();
+        glfreetype::print(g_animatText, sx - 20, sy, ss.str());
         glPopMatrix();
     }
 

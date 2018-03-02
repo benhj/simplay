@@ -153,9 +153,7 @@ int main(int argc, char **argv)
     std::cout << sx << std::endl;
 
     // Start the main simulation loop
-    // sim.start();
-
-
+    sim.start();
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {
