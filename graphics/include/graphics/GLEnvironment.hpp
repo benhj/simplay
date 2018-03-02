@@ -45,7 +45,8 @@ namespace graphics {
             auto const popSize = m_animatWorld.getPopSize();
             m_glAnimats.reserve(popSize);
             for (int p = 0; p < popSize; ++p) {
-                m_glAnimats.emplace_back(m_animatWorld.animat(p));
+                m_glAnimats.emplace_back(m_animatWorld.animat(p),
+                                         m_threadRunner);
             }
             // m_generationText.init("/Library/Fonts/Arial.ttf", 
             //                       25 * detail::retinaScalar());
@@ -59,8 +60,8 @@ namespace graphics {
                                  m_viewDistance,
                                  m_worldOrientation).draw();
             }
-            detail::setScene(m_windowWidth, 
-                             m_windowHeight, 
+            detail::setScene(m_windowWidth,
+                             m_windowHeight,
                              m_viewDistance, 
                              m_worldOrientation,
                              m_centerX,

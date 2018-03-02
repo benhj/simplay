@@ -12,6 +12,7 @@
 #include <memory>
 #include <mutex>
 #include <sstream>
+#include <unistd.h>
 
 namespace {
     glfreetype::font_data g_animatText;
@@ -39,10 +40,13 @@ namespace graphics {
         }
     }
 
-    GLAnimat::GLAnimat(model::Animat & animat)
+    GLAnimat::GLAnimat(model::Animat & animat,
+                       detail::ThreadRunner & threadRunner)
       : m_animat(animat)
+      , m_threadRunner(threadRunner)
       , m_highlighted(std::make_shared<std::atomic<bool>>(false)) 
-      , m_selected(std::make_shared<std::atomic<bool>>(false)) 
+      , m_selected(std::make_shared<std::atomic<bool>>(false))
+      , m_opacity(std::make_shared<std::atomic<double>>(0))
     {
         std::call_once(g_textInitGuard, 
                        [&](){ 
@@ -180,6 +184,18 @@ namespace graphics {
             detail::drawCircle(centerPoint.m_vec[0], 
                                centerPoint.m_vec[1],
                                boundingPair.second, 20);
+        }
+    }
+
+    /// fade in the button when hovering over
+    void GLAnimat::fadeIn()
+    {
+        auto const inc = (0.9 / 30);
+        for(int i = 0; i < 30; ++i) {
+            auto val = m_opacity->load();
+            val += inc;
+            m_opacity->store(val);
+            ::usleep(10000);
         }
     }
 

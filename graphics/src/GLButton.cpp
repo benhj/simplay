@@ -82,7 +82,7 @@ namespace graphics {
             auto val = m_opacity.load();
             val += inc;
             m_opacity.store(val);
-            usleep(10000);
+            ::usleep(10000);
         }
     }
 
@@ -94,7 +94,7 @@ namespace graphics {
             auto val = m_opacity.load();
             val -= inc;
             m_opacity.store(val);
-            usleep(10000);
+            ::usleep(10000);
         }
     }
 
