@@ -74,8 +74,20 @@ namespace graphics {
                                    int const action, 
                                    int const mods) 
     {
+        // if(m_displayConsole.load()) {
+        //     m_console.keyHandler(key, scancode, action, mods);
+        //     return;
+        // }
         if (action == GLFW_PRESS) {
-            handleKeyDown(key);
+            // special handler for console window
+            if(key == 'C') {
+                auto orig = m_displayConsole.load();
+                m_displayConsole = !orig;
+            } 
+            // for all other key presses
+            else {
+                handleKeyDown(key);
+            }
         } else if(action == GLFW_RELEASE) {
             handleKeyUp(key);
         } else if(action == GLFW_REPEAT) {
