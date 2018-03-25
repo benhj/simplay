@@ -22,7 +22,8 @@ namespace glconsole {
                   int const x,
                   int const y,
                   int const fontSize,
-                  std::string const & fontPath)
+                  std::string const & fontPath,
+                  std::atomic<float> & opacity)
           : m_width(width)
           , m_height(height)
           , m_x(x)
@@ -32,6 +33,7 @@ namespace glconsole {
           , m_prompt(">> |")
           , m_commandBegin(4)
           , m_commandEnd(4)
+          , m_opacity(opacity)
         {
             m_font.init(fontPath.c_str(), fontSize);
 
@@ -43,7 +45,7 @@ namespace glconsole {
         {  
       
             // draw filled rectangle for background
-            glColor4f(0, 0, 0, 0.75);
+            glColor4f(0, 0, 0, m_opacity);
             glBegin(GL_TRIANGLES);
                 glVertex2f(m_x - m_width, m_y);
                 glVertex2f(m_x - m_width, m_height);
@@ -55,7 +57,7 @@ namespace glconsole {
             // Green text
             glPushMatrix();
             glLoadIdentity();
-            glColor3ub(0,0xff,0);
+            glColor4f(0, 0xff, 0, m_opacity);
             std::stringstream ss;
             glfreetype::print(m_font, m_x, m_y, m_buffer.str());
             glPopMatrix();
@@ -180,6 +182,9 @@ namespace glconsole {
 
         /// The callback that will be triggered on enter.
         std::function<void(std::string const &)> m_callback;
+
+        /// Window opacity
+        std::atomic<float> & m_opacity;
 
         /// Does what it sayd.
         void handleBackspace()

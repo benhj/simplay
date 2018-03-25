@@ -34,12 +34,14 @@ namespace graphics {
       , m_threadRunner(threadRunner)
       , m_viewDistance(0.4)
       , m_guiElements()
+      , m_consoleOpacity(0)
       , m_console(m_windowWidth,       // width
                   m_windowHeight / 4,  // height
                   0,                   // x 
                   m_windowHeight - 30, // y
                   12,                  // font size
-                  "/Library/Fonts/Courier New.ttf")
+                  "/Library/Fonts/Courier New.ttf",
+                  m_consoleOpacity)
       , m_displayConsole(false)
       , m_consoleHasFocus(false)
     {
@@ -91,6 +93,11 @@ namespace graphics {
             if(key == 'C') {
                 auto orig = m_displayConsole.load();
                 m_displayConsole = !orig;
+                if(m_displayConsole) {
+                    fadeInConsole();
+                } else {
+                    m_consoleOpacity = 0;
+                }
             } 
             // for all other key presses
             else {
@@ -197,6 +204,19 @@ namespace graphics {
     void Graphics::addGUIElement(std::shared_ptr<GLGUIElement> element)
     {
         m_guiElements.emplace_back(std::move(element));
+    }
+
+    void Graphics::fadeInConsole()
+    {
+        m_threadRunner.add([this]{
+            auto const inc = (0.8 / 20);
+            for(int i = 0; i < 20; ++i) {
+                auto val = m_consoleOpacity.load();
+                val += inc;
+                m_consoleOpacity.store(val);
+                ::usleep(5000);
+            }
+        });
     }
 
 }

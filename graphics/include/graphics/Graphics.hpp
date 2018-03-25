@@ -48,6 +48,9 @@ namespace graphics {
         /// Testing out some GUI ideas
         std::vector<std::shared_ptr<GLGUIElement>> m_guiElements;
 
+        /// Opacity of command window
+        std::atomic<float> m_consoleOpacity;
+
         /// A command window that will slide out from the top
         glconsole::GLConsole m_console;
 
@@ -65,6 +68,9 @@ namespace graphics {
         void drawGUIElements();
         void drawGUIElementsSetup();
         void drawGUIElementsTearDown();
+
+        /// Fade in the console window
+        void fadeInConsole();
 
 
     };
