@@ -3,7 +3,7 @@
 #include "GLEnvironment.hpp"
 #include "GLGUIElement.hpp"
 #include "ThreadRunner.hpp"
-#include "glconsole/GLConsole.hpp"
+#include "GLConsole.hpp"
 #include <atomic>
 #include <memory>
 #include <vector>
