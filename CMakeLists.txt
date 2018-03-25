@@ -13,6 +13,7 @@ file(GLOB_RECURSE simulator simulator/src/*.cpp simulator/include/simulator/*.hp
 file(GLOB_RECURSE neat neat/src/*.cpp neat/include/*.hpp)
 file(GLOB_RECURSE graphics graphics/src/*.cpp graphics/include/graphics/*.hpp)
 file(GLOB_RECURSE glfreetype glfreetype/src/*.cpp glfreetype/include/glfreetype/*.hpp)
+file(GLOB_RECURSE glconsole glconsole/include/glfreetype/*.hpp)
 
 # ensure headers in the src folder are compiler-found
 include_directories(physics/include)
@@ -23,6 +24,7 @@ include_directories(simulator/include)
 include_directories(neat/include)
 include_directories(graphics/include)
 include_directories(glfreetype/include)
+include_directories(glconsole/include)
 include_directories(/usr/local/include/)
 include_directories( ${OPENGL_INCLUDE_DIRS} )
 include_directories( ${FREETYPE_INCLUDE_DIRS} )

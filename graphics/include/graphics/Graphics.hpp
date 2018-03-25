@@ -3,6 +3,7 @@
 #include "GLEnvironment.hpp"
 #include "GLGUIElement.hpp"
 #include "ThreadRunner.hpp"
+#include "glconsole/GLConsole.hpp"
 #include <atomic>
 #include <memory>
 #include <vector>
@@ -46,6 +47,12 @@ namespace graphics {
 
         /// Testing out some GUI ideas
         std::vector<std::shared_ptr<GLGUIElement>> m_guiElements;
+
+        /// A command window that will slide out from the top
+        glconsole::GLConsole m_console;
+
+        /// Display command console?
+        std::atomic<bool> m_displayConsole;
 
         void handleKeyDown(int const key);
         void handleKeyUp(int const key);

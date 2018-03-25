@@ -1,3 +1,6 @@
 [submodule "glfreetype"]
 	path = glfreetype
 	url = https://github.com/benhj/glfreetype
+[submodule "glconsole"]
+	path = glconsole
+	url = git://github.com/benhj/glconsole.git

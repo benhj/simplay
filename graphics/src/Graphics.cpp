@@ -20,7 +20,6 @@ namespace {
         glEnable(GL_POLYGON_SMOOTH);
         glEnable(GL_MULTISAMPLE);  
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-        //glShadeModel(GL_SMOOTH);
     }
 }
 
@@ -35,6 +34,13 @@ namespace graphics {
       , m_threadRunner(threadRunner)
       , m_viewDistance(0.4)
       , m_guiElements()
+      , m_console(m_windowWidth,       // width
+                  m_windowHeight / 4,  // height
+                  0,                   // x 
+                  m_windowHeight - 50, // y
+                  12,                  // font size
+                  "/Library/Fonts/Courier New.ttf")
+      , m_displayConsole(false)
     {
         init();
     }
@@ -142,6 +148,12 @@ namespace graphics {
         for(auto & b : m_guiElements) {
             b->draw();
         }
+
+        // Draw the console, if enabled
+        if(m_displayConsole.load()) {
+            m_console.display();
+        }
+
         drawGUIElementsTearDown();
 
     }
