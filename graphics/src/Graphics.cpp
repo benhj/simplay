@@ -37,10 +37,11 @@ namespace graphics {
       , m_console(m_windowWidth,       // width
                   m_windowHeight / 4,  // height
                   0,                   // x 
-                  m_windowHeight - 50, // y
+                  m_windowHeight - 30, // y
                   12,                  // font size
                   "/Library/Fonts/Courier New.ttf")
       , m_displayConsole(false)
+      , m_consoleHasFocus(false)
     {
         init();
     }
@@ -67,6 +68,11 @@ namespace graphics {
         for (auto & b : m_guiElements) {
             b->mouseIsOver(x, y);
         }
+
+        // If console is activated, check if mouse is over it
+        if(m_displayConsole.load()) {
+            m_consoleHasFocus = m_console.mouseIsOver(x, y);
+        }
     }
 
     void Graphics::keyboardHandler(int const key, 
@@ -74,10 +80,12 @@ namespace graphics {
                                    int const action, 
                                    int const mods) 
     {
-        // if(m_displayConsole.load()) {
-        //     m_console.keyHandler(key, scancode, action, mods);
-        //     return;
-        // }
+        // If the console has focuse, pipe handler through to console
+        if(m_consoleHasFocus.load()) {
+            m_console.keyHandler(key, scancode, action, mods);
+            return;
+        }
+
         if (action == GLFW_PRESS) {
             // special handler for console window
             if(key == 'C') {

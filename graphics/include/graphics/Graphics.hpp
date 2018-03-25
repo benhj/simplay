@@ -54,6 +54,9 @@ namespace graphics {
         /// Display command console?
         std::atomic<bool> m_displayConsole;
 
+        /// Console has focus when mouse is over it
+        std::atomic<bool> m_consoleHasFocus;
+
         void handleKeyDown(int const key);
         void handleKeyUp(int const key);
         void handleKeyContinuous(int const key);
