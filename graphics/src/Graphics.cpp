@@ -36,11 +36,13 @@ namespace graphics {
       , m_viewDistance(0.4)
       , m_guiElements()
       , m_consoleOpacity(0)
-      , m_console(m_windowWidth,       // width
-                  m_windowHeight / 4,  // height
-                  0,                   // x 
-                  m_windowHeight - 30, // y
-                  12,                  // font size
+      , m_console(m_windowWidth,
+                  m_windowHeight,
+                  m_windowWidth,          // width
+                  150,                    // height
+                  0,                      // x 
+                  m_windowHeight - 150,   // y
+                  12,                     // font size
                   "/Library/Fonts/Courier New.ttf",
                   m_consoleOpacity)
       , m_displayConsole(false)

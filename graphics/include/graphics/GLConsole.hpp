@@ -1,3 +1,5 @@
+// GLConsole, based on benhj/glconsole (github). 
+//
 // This 'ere software is hacky as fuck. Use at your peril.
 // I'd appreciate a mention if you do. But if you don't,
 // I'm not going to lose sleep over it.
@@ -18,17 +20,23 @@ namespace glconsole {
     class GLConsole
     {
       public:
-        GLConsole(int const width, 
+        GLConsole(int & windowWidth,
+                  int & windowHeight,
+                  int const width, 
                   int const height,
                   int const x,
                   int const y,
                   int const fontSize,
                   std::string const & fontPath,
                   std::atomic<float> & opacity)
-          : m_width(width)
+          : m_windowWidth(windowWidth)
+          , m_windowHeight(windowHeight)
+          , m_width(width)
           , m_height(height)
-          , m_x(x * graphics::detail::retinaScalar())
-          , m_y(y * graphics::detail::retinaScalar())
+          , m_widthRatio((double)m_width / (double)m_windowWidth)
+          , m_heightRatio((double)m_height / (double)m_windowHeight)
+          , m_x(x)
+          , m_y(y - m_windowHeight/2)
           , m_buffer()
           , m_linesCommitted()
           , m_prompt(">> |")
@@ -42,25 +50,33 @@ namespace glconsole {
             m_buffer << m_prompt;
         }
 
+        void updateWidthAndHeightAndPromptPosition()
+        {
+            m_width = (int)(m_windowWidth * m_widthRatio);
+            //m_height = (int)(m_windowHeight * m_heightRatio);
+            m_y = (m_windowHeight - m_height) - m_windowHeight/2;
+        }
+
         void display()
         {  
-      
+            updateWidthAndHeightAndPromptPosition();
             // draw filled rectangle for background
             glColor4f(0, 0, 0, m_opacity);
-            glBegin(GL_TRIANGLES);
+
+            glBegin(GL_QUADS);
                 glVertex2f(m_x - m_width, m_y);
-                glVertex2f(m_x - m_width, m_height);
                 glVertex2f(m_x + m_width, m_y);
-                glVertex2f(m_x + m_width, m_y);
-                glVertex2f(m_x - m_width, m_height);
-                glVertex2f(m_x + m_width, m_height);
+                glVertex2f(m_x + m_width, m_y + m_height);
+                glVertex2f(m_x - m_width, m_y + m_height);
             glEnd();
+
             // Green text
             glPushMatrix();
             glLoadIdentity();
             glColor4f(0, 0xff, 0, m_opacity);
             std::stringstream ss;
-            glfreetype::print(m_font, m_x, m_y, m_buffer.str());
+            // Offset from bottom of screen
+            glfreetype::print(m_font, m_x, m_y + m_windowHeight * 1.5, m_buffer.str());
             glPopMatrix();
         }
 
@@ -141,12 +157,14 @@ namespace glconsole {
             }
         }
 
-        bool mouseIsOver(int const x, int const y) const
+        bool mouseIsOver(int const x, int y) const
         {
-            if (!(x >= m_x - m_width && 
+            // Hacky offset. God this code is awful.
+            y -= m_height;
+            if ((x >= m_x - m_width && 
                  x <= m_x + m_width &&
-                 y <= m_y &&
-                 y >= m_height)) {
+                 y <= m_y + m_height - (m_windowHeight / 2) &&
+                 y >= m_y - (m_windowHeight / 2))) {
                 return true;
             }
             return false;
@@ -154,11 +172,19 @@ namespace glconsole {
 
       private:
 
+        /// Window width and height
+        int & m_windowWidth;
+        int & m_windowHeight;
+
         /// Width of text area
         int m_width;
 
         /// Height of text area
         int m_height;
+
+        /// Width and height window ratios
+        double m_widthRatio;
+        double m_heightRatio;
 
         /// X and Y position of where text is rendered
         /// relative to width and height
