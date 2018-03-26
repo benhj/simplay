@@ -1,6 +1,7 @@
 // Copyright (c) 2017 - present Ben Jones
 
 #include "graphics/Graphics.hpp"
+#include "graphics/RetinaScalar.hpp"
 #include "graphics/SetScene.hpp"
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>

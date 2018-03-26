@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "RetinaScalar.hpp"
 #include "glfreetype/TextRenderer.hpp"
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -26,8 +27,8 @@ namespace glconsole {
                   std::atomic<float> & opacity)
           : m_width(width)
           , m_height(height)
-          , m_x(x)
-          , m_y(y)
+          , m_x(x * graphics::detail::retinaScalar())
+          , m_y(y * graphics::detail::retinaScalar())
           , m_buffer()
           , m_linesCommitted()
           , m_prompt(">> |")
@@ -35,7 +36,7 @@ namespace glconsole {
           , m_commandEnd(4)
           , m_opacity(opacity)
         {
-            m_font.init(fontPath.c_str(), fontSize);
+            m_font.init(fontPath.c_str(), fontSize * graphics::detail::retinaScalar());
 
             // Begin what the user will see!
             m_buffer << m_prompt;
