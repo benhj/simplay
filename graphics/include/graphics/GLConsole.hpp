@@ -76,9 +76,8 @@ namespace glconsole {
             glColor4f(0, 0xff, 0, m_opacity);
             std::stringstream ss;
             // Offset from bottom of screen
-            glfreetype::print(m_font, m_x, 
-                              (m_y + m_windowHeight * 1.5 + (m_height / 2)), 
-                              m_buffer.str());
+            auto const ypos = (m_windowHeight * graphics::detail::retinaScalar() - (m_height / 2));
+            glfreetype::print(m_font, m_x, ypos, m_buffer.str());
             glPopMatrix();
         }
 

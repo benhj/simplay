@@ -22,6 +22,9 @@ namespace {
         glEnable(GL_MULTISAMPLE);  
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     }
+
+    int const consoleHeight = 75;
+
 }
 
 namespace graphics {
@@ -38,10 +41,10 @@ namespace graphics {
       , m_consoleOpacity(0)
       , m_console(m_windowWidth,
                   m_windowHeight,
-                  m_windowWidth,          // width
-                  150,                    // height
+                  m_windowWidth,
+                  consoleHeight * detail::retinaScalar(),
                   0,                      // x 
-                  m_windowHeight - 150,   // y
+                  m_windowHeight - (consoleHeight * detail::retinaScalar()),
                   12,                     // font size
                   "/Library/Fonts/Courier New.ttf",
                   m_consoleOpacity)
@@ -183,9 +186,7 @@ namespace graphics {
         if(m_displayConsole.load()) {
             m_console.display();
         }
-
         drawGUIElementsTearDown();
-
     }
 
     void Graphics::drawGUIElementsSetup()
