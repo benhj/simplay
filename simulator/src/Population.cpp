@@ -24,22 +24,30 @@ namespace {
     }
 
     // Experimental; crossover function not working
-    neat::Network offspringNet(std::vector<simulator::Agent> const & agents) 
+    neat::Network offspringNet(int const index, std::vector<simulator::Agent> const & agents) 
     {
-        auto & candA = agents[randomInt(agents.size())];
-        auto & candB = agents[randomInt(agents.size())];
-        auto & candC = agents[randomInt(agents.size())];
-        auto & candD = agents[randomInt(agents.size())];
-        auto dmA = candA.distanceMoved();
-        auto dmB = candB.distanceMoved();
-        auto dmC = candC.distanceMoved();
-        auto dmD = candD.distanceMoved();
 
-        auto & parentA = (dmA > dmB) ? candA : candB;
-        auto & parentB = (dmC > dmD) ? candC : candD;
+        // Only cross over most similar
+        auto & candA = agents[index];
+        auto neatA = candA.getNeatNet();
 
-        auto neatA = parentA.getNeatNet();
-        auto neatB = parentB.getNeatNet();
+        auto diff = 10000;
+        int i = 0;
+        int rem = 0;
+        for(auto const & candB : agents) {
+            auto neatB = candB.getNeatNet();
+            auto d = neatA.measureDifference(neatB);
+            if(d < diff && i != index) {
+                diff = d;
+                rem = i;
+            }
+            ++i;
+        }
+
+        auto & candB = agents[rem];
+        auto neatB = candB.getNeatNet();
+
+        //std::cout<<"diff: "<<(neatA.measureDifference(neatB))<<std::endl;
 
         return neatA.crossWith(neatB);
     }
@@ -54,7 +62,9 @@ namespace simulator {
     {
         m_agents.reserve(popSize);
         for(int i = 0;i<popSize;++i){
+            m_animatWorld.randomizePositionSingleAnimat(i, 10, 10);
             m_agents.emplace_back(m_animatWorld.animat(i));
+            m_agents.back().recordStartPosition();
         }
     }
 
@@ -68,9 +78,9 @@ namespace simulator {
                 m_animatWorld.randomizePositionSingleAnimat(p, 10, 10);
                 agent.recordStartPosition();
                 agent.resetController();
-
+                agent.setBad();
                 // give animat a fitter genome, the elite one in fact
-                agent.inheritNeat(m_agents[m_eliteIndex]);
+                // agent.inheritNeat(m_agents[m_eliteIndex]);
             }
         }
     }
@@ -123,30 +133,27 @@ namespace simulator {
 
 
         // pick the top m_popSize/N and regen rest of population out of those
+        std::vector<neat::Network> newPop;
+        newPop.push_back(m_agents[m_eliteIndex].getNeatNet());
         i = 0;
-        int pick = 0;
         for (auto & agent : m_agents) {
-    
-            // inherit neat genome from fit agent, but only if
-            // the inheritee isn't elite
-            if (!iIsIndexedInTopN(i, m_popSize / 10, fitnesses)) {
-                agent.inheritNeat(m_agents[fitnesses[pick].first]);
-
-                // mutate inherited genome
-                if(withMutations) {
-                    agent.modifyController();
-                }  
-
-                ++pick;
-
-                if(pick == m_popSize / 10) {
-                    pick = 0;
-                }   
+            if(i != m_eliteIndex) {
+                newPop.push_back(offspringNet(i, m_agents));
             }
+            ++i;
+        }
+
+        i = 0;
+        for (auto & agent : m_agents) {
+
+            // mutate inherited genome
+            if(i != m_eliteIndex && withMutations) {
+                agent.inheritNeat(newPop[0]);
+                agent.modifyController();
+            }  
             // put controller back in basal state
             agent.resetController();
             ++i;
-            
         }
     }
 }

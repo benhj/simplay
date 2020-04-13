@@ -45,6 +45,8 @@ namespace neat {
         /// calling the given function.
         Network crossWith(Network const & other) const;
 
+        double measureDifference(Network const & other) const;
+
       private:
         int m_inputCount;
         int m_outputCount;

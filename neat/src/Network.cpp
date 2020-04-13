@@ -38,7 +38,7 @@ namespace {
 
 namespace neat {
 
-    int Network::GLOBAL_INNOVATION_NUMBER = 6;
+    int Network::GLOBAL_INNOVATION_NUMBER = 14;
 
     Network::Network(int const inputCount, 
                      int const outputCount,
@@ -136,12 +136,12 @@ namespace neat {
     {
         // Network is to be assembled from a pre-computed innovation map
         for(auto const & it : m_innovationMap) {
-            auto & innovInfo = it.second;
+            auto innovInfo = it.second;
             if(innovInfo.enabled) {
-                auto & preNode = innovInfo.preNode;
-                auto & postNode = innovInfo.postNode;
-                auto & weight = innovInfo.weight;
-                auto & innovationNumber = innovInfo.innovationNumber;
+                auto preNode = innovInfo.preNode;
+                auto postNode = innovInfo.postNode;
+                auto weight = innovInfo.weight;
+                auto innovationNumber = innovInfo.innovationNumber;
 
                 // Make sure have corect node count. Note that any
                 // pre-existing hidden node is automatically mutated here
@@ -153,7 +153,7 @@ namespace neat {
                     }
                 }
                 if(postNode >= m_nodes.size()) {
-                    for (auto i = m_nodes.size(); i <= preNode; ++i) {
+                    for (auto i = m_nodes.size(); i <= postNode; ++i) {
                         m_nodes.emplace_back(i, NodeType::Hidden, 
                         m_muts.nodeFunctionChangeProb);
                     }
@@ -342,7 +342,7 @@ namespace neat {
         for (auto const & innovation : m_innovationMap) {
             // See if this innovation exists in the other map
             auto found = other.m_innovationMap.find(innovation.second.innovationNumber);
-            if (found != std::end(m_innovationMap)) {
+            if (found != std::end(other.m_innovationMap)) {
                 if (((double) rand() / (RAND_MAX)) < 0.5) {
                     crossedMap.emplace(innovation.second.innovationNumber, innovation.second);
                 } else {
@@ -356,18 +356,53 @@ namespace neat {
         // taken into account when calling the crossWith function.
         for (auto const & innovation : other.m_innovationMap) {
             auto found = m_innovationMap.find(innovation.second.innovationNumber);
-
             // If not found, means it is disjoint and should be added to crossed map
             if(found == std::end(m_innovationMap)) {
                 crossedMap.emplace(innovation.second.innovationNumber, innovation.second);
             }
         }
-        
         return Network(m_inputCount,
                        m_outputCount,
                        m_maxSize,
                        m_muts,
                        m_weightInitBound,
                        crossedMap);
+    }
+
+    double Network::measureDifference(Network const & other) const
+    {
+        auto difference = 0.0;
+
+/*
+        for (auto const & innovation : m_innovationMap) {
+            // See if this innovation exists in the other map
+            auto found = other.m_innovationMap.find(innovation.second.innovationNumber);
+            if (found != std::end(other.m_innovationMap)) {
+                auto const w1 = innovation.second.weight;
+                auto const w2 = found->second.weight;
+                if(w1 >= w2) {
+                    difference += (w1 - w2);
+                } else {
+                    difference += (w2 - w1);
+                }
+            }
+        }
+*/
+
+        for (auto const & innovation : other.m_innovationMap) {
+            auto found = m_innovationMap.find(innovation.second.innovationNumber);
+            // If not found, means it is disjoint and should be added to crossed map
+            if(found == std::end(m_innovationMap)) {
+                difference += 1.0;
+            }
+        }
+        for (auto const & innovation : m_innovationMap) {
+            auto found = other.m_innovationMap.find(innovation.second.innovationNumber);
+            // If not found, means it is disjoint and should be added to crossed map
+            if(found == std::end(other.m_innovationMap)) {
+                difference += 1.0;
+            }
+        }
+        return difference;
     }
 }

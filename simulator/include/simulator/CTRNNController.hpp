@@ -33,25 +33,28 @@ namespace simulator {
 
             // Set weights
             for(int i = 0 ; i < nodeCount; ++i) {
-                auto ix = neuralSubstrate.getX(i);
-                auto iy = neuralSubstrate.getY(i);
+                auto ix = neuralSubstrate.getX(i) * 10;
+                auto iy = neuralSubstrate.getY(i) * 10;
+                m_neatNet.setInput(0, ix);
+                m_neatNet.setInput(1, iy);
                 for(int j = 0; j < nodeCount; ++j) {
                     if (i != j && i >= nodeCount / 2) {
-                        auto jx = neuralSubstrate.getX(j);
-                        auto jy = neuralSubstrate.getY(j);
-                        m_neatNet.setInput(0, ix);
-                        m_neatNet.setInput(1, iy);
+                        auto jx = neuralSubstrate.getX(j) * 10;
+                        auto jy = neuralSubstrate.getY(j) * 10;
                         m_neatNet.setInput(2, jx);
                         m_neatNet.setInput(3, jy);
-                        m_ctrnn.connect(i, j, m_neatNet.getOutput(0) * 10.0);
+                        m_ctrnn.connect(i, j, m_neatNet.getOutput(0) * 50.0);
                     }
                 }
 
                 // Set time constants
-                m_neatNet.setInput(0, ix);
-                m_neatNet.setInput(1, iy);
+                m_neatNet.setInput(0, 0);
+                m_neatNet.setInput(1, 0);
                 m_neatNet.setInput(2, 0);
                 m_neatNet.setInput(3, 0);
+                m_neatNet.setInput(4, ix);
+                m_neatNet.setInput(5, iy);
+                m_neatNet.setInput(6, 10);
                 auto tau = fabs(m_neatNet.getOutput(1));
                 tau *= 20.0;
                 tau += 20.0;

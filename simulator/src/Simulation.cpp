@@ -13,7 +13,7 @@ namespace simulator {
     , m_paused(false)
     , m_sleepDuration{0}
     {
-        m_animatWorld.randomizePositions(10, 10);
+        //m_animatWorld.randomizePositions(10, 10);
     }
 
     model::AnimatWorld & Simulation::animatWorld()

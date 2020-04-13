@@ -25,7 +25,7 @@
 
 int windowWidth = 800;
 int windowHeight = 800;
-int popSize = 10;
+int popSize = 30;
 
 // For running operations asynchronously
 graphics::detail::ThreadRunner threadRunner;
@@ -153,7 +153,7 @@ int main(int argc, char **argv)
     std::cout << sx << std::endl;
 
     // Start the main simulation loop
-    // sim.start();
+    sim.start();
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {

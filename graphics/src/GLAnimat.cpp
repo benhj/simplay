@@ -15,7 +15,7 @@
 #include <unistd.h>
 
 namespace {
-    glfreetype::font_data g_animatText;
+    // glfreetype::font_data g_animatText;
     std::once_flag g_textInitGuard;
 }
 
@@ -48,11 +48,11 @@ namespace graphics {
       , m_selected(std::make_shared<std::atomic<bool>>(false))
       , m_opacity(std::make_shared<std::atomic<double>>(1))
     {
-        std::call_once(g_textInitGuard, 
-                       [&](){ 
-                           g_animatText.init("../fonts/Action_Man.ttf", 
-                           12 * detail::retinaScalar()); 
-                        });
+        // std::call_once(g_textInitGuard, 
+        //                [&](){ 
+        //                    g_animatText.init("../fonts/Action_Man.ttf", 
+        //                    12 * detail::retinaScalar()); 
+        //                 });
     }
 
     void GLAnimat::draw()
@@ -223,9 +223,9 @@ namespace graphics {
         cy += (boundingPair.second * 1.2);
         double sx, sy;
         detail::worldToScreen(cx, cy, sx, sy);
-        std::stringstream ss;
-        ss << "ID: " << m_animat.getID();
-        glfreetype::print(g_animatText, sx - 20, sy, ss.str());
+        //std::stringstream ss;
+        //ss << "ID: " << m_animat.getID();
+        //glfreetype::print(g_animatText, sx - 20, sy, ss.str());
         glPopMatrix();
     }
 

@@ -41,6 +41,8 @@ namespace simulator {
 
         neat::Network getNeatNet() const;
 
+        void setBad();
+
       private:
 
         /// The physical shell of the animat agent  
@@ -57,6 +59,9 @@ namespace simulator {
         physics::Vector3 m_startPosition;
 
         double m_distanceMoved;
+
+        /// When physics broke
+        bool mutable m_bad;
 
     };
 }

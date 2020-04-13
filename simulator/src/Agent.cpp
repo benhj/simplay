@@ -5,11 +5,11 @@
 #include "neat/MutationParameters.hpp"
 
 namespace {
-    int const NEAT_INPUTS = 4;
+    int const NEAT_INPUTS = 7;
     int const NEAT_OUTPUTS = 2;
-    int const MAX_NEAT_NODES = 40;
-    double const NEAT_WEIGHT_BOUND = 8.0;
-    neat::MutationParameters NEAT_MUTS{0.2, 0.2, 0.3, 0.5};
+    int const MAX_NEAT_NODES = 12;
+    double const NEAT_WEIGHT_BOUND = 16.0;
+    neat::MutationParameters NEAT_MUTS{0.4, 0.1, 0.5, 0.1};
 }
 
 namespace simulator {
@@ -21,11 +21,12 @@ namespace simulator {
                NEAT_MUTS,
                NEAT_WEIGHT_BOUND)
       , m_controller(std::make_shared<CTRNNController>(animat.getBlockCount(), m_neat))
+      , m_startPosition{0,0,0}
       , m_distanceMoved(0)
     {
         // set where the animat currently is in the world
         // will be used as a basis for computing distance moved
-        recordStartPosition();
+        // recordStartPosition();
     }
 
     int Agent::update()
@@ -78,7 +79,12 @@ namespace simulator {
 
     void Agent::recordDistanceMoved() 
     {
-        m_distanceMoved = (m_animat.getCentralPoint().first).distance(m_startPosition);
+        if(m_bad) {
+            m_bad = false;
+            m_distanceMoved = 0;
+        } else {
+            m_distanceMoved = (m_animat.getCentralPoint().first).distance(m_startPosition);
+        }
     }
 
     double Agent::distanceMoved() const
@@ -89,5 +95,10 @@ namespace simulator {
     neat::Network Agent::getNeatNet() const
     {
         return m_neat;
+    }
+
+    void Agent::setBad()
+    {
+        m_bad = true;
     }
 }
