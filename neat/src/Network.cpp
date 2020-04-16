@@ -21,7 +21,6 @@ namespace {
     {
         for (auto i = 0; i < oldNodes.size(); ++i) {
             for (auto j = 0; j < oldNodes.size(); ++j) {
-                if (i == j) { continue; }
                 if (oldNodes[j].hasConnectionFrom(i)) {
                     auto const weight = oldNodes[j].getConnectionWeightFrom(i);
                     auto const innovNumber = oldNodes[j].getInnovNumberForConnectionFrom(i);
@@ -120,6 +119,7 @@ namespace neat {
         // Fully connect from inputs to outputs (i.e. feed-forward)
         for (auto i = 0; i < m_inputCount; ++i) {
             for (auto j = m_inputCount; j < m_inputCount + m_outputCount; ++j) {
+                assert(i != j);
                 m_nodes[j].addIncomingConnectionFrom(m_nodes[i], 
                                                      m_weightInitBound, 
                                                      m_muts.weightChangeProb,
@@ -196,16 +196,17 @@ namespace neat {
     void Network::addNewNodes()
     {
         // Ouput ID (the node index within the array of nodes)
-        // will always be inputNodeCount + outputNodeCount
-        for(int j = 0 ; j < m_outputCount ; ++j) {
-            auto const outputID = m_inputCount + j;
-            auto & node = m_nodes[outputID];
+        // will always start with inputNodeCount + outputNodeCount
+        for(int j = m_inputCount + m_outputCount ; j < m_nodes.size() ; ++j) {
+            auto & node = m_nodes[j];
             for(int i = 0 ; i < m_nodes.size(); ++i) {
-                if(i == outputID) {
+                // An output node can't be an input to another node
+                if(i >= m_inputCount && i < m_inputCount + m_outputCount) {
                     continue;
                 }
-                if(node.hasConnectionFrom(i)) {
+                if(node.hasConnectionFrom(i) && i != j) {
                     if (((double) rand() / (RAND_MAX)) < m_muts.nodeAdditionProb) {
+                        std::cout<<"HERE"<<std::endl;
                         auto & connection = node.getConnectionFrom(i);
                         addNodeInPlaceOf(connection);
                     }
@@ -325,11 +326,11 @@ namespace neat {
 
         auto random_integer = uni(rng);
         if(random_integer == 0) {
-            addConnectionToHiddenOrOutputNode();
+            //addConnectionToHiddenOrOutputNode();
         } else if(random_integer == 1) {
             perturbNodeFunctions();
         } else {
-            addNewNodes();
+            //addNewNodes();
         }
     }
 

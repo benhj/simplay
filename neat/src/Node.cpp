@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cassert>
+#include <iostream>
 
 namespace {
 
@@ -87,11 +88,6 @@ namespace neat {
                                          int const innovNumber)
     {
 
-        // Nodes can't connect to nodes of same type (or be recurrent)
-        if (otherNode.getNodeType() == m_nodeType) {
-            return;
-        }
-
         // Sanity A: Input nodes can't having incoming connections
         assert(m_nodeType != NodeType::Input);
 
@@ -113,11 +109,6 @@ namespace neat {
                                          int const innovNumber,
                                          double const weight)
     {
-        // Nodes can't connect to nodes of same type (or be recurrent)
-        if (otherNode.getNodeType() == m_nodeType) {
-            return;
-        }
-
         // Sanity A: Input nodes can't having incoming connections
         assert(m_nodeType != NodeType::Input);
 
