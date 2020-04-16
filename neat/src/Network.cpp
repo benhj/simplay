@@ -197,7 +197,7 @@ namespace neat {
     {
         // Ouput ID (the node index within the array of nodes)
         // will always start with inputNodeCount + outputNodeCount
-        for(int j = m_inputCount + m_outputCount ; j < m_nodes.size() ; ++j) {
+        for(int j = m_inputCount ; j < m_nodes.size() ; ++j) {
             auto & node = m_nodes[j];
             for(int i = 0 ; i < m_nodes.size(); ++i) {
                 // An output node can't be an input to another node
@@ -206,7 +206,6 @@ namespace neat {
                 }
                 if(node.hasConnectionFrom(i) && i != j) {
                     if (((double) rand() / (RAND_MAX)) < m_muts.nodeAdditionProb) {
-                        std::cout<<"HERE"<<std::endl;
                         auto & connection = node.getConnectionFrom(i);
                         addNodeInPlaceOf(connection);
                     }
@@ -222,16 +221,25 @@ namespace neat {
         // is less than max permitted size
         auto id = m_nodes.size();
         if (id < m_maxSize) {
-            m_nodes.emplace_back(id, NodeType::Hidden, 
-                                 m_muts.nodeFunctionChangeProb);
-
             // Find out original connectivity
             auto & nodePre = con.getNodeRefA();
             auto & nodePost = con.getNodeRefB();
-            
+
+            // To prevent loops in the network, prevent any connections
+            // between hidden nodes
+            if(nodePre.getNodeType() == NodeType::Hidden ||
+               nodePost.getNodeType() == NodeType::Hidden) {
+                return;
+            }
+
+            m_nodes.emplace_back(id, NodeType::Hidden, 
+                     m_muts.nodeFunctionChangeProb);
+
             // Remove old connection from nodePre to nodePost
             auto nodePreIndex = nodePre.getIndex();
             auto innovation = nodePost.removeIncomingConnectionFrom(nodePreIndex);
+
+            auto nodePostIndex = nodePost.getIndex();
 
             // Disable the original innovation
             if(innovation > -1) {
@@ -246,7 +254,6 @@ namespace neat {
                                                   m_muts.weightChangeProb,
                                                   GLOBAL_INNOVATION_NUMBER,
                                                   1.0);
-
             // Make the new weight to hidden 1.0 (as specified by
             // NEAT paper).
             m_innovationMap.emplace(GLOBAL_INNOVATION_NUMBER,

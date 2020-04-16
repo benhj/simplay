@@ -14,11 +14,11 @@ namespace {
 
     neat::NodeFunction initNodeFunction(neat::NodeType const & nodeType)
     {
-        if(nodeType == neat::NodeType::Output) {
-            return neat::NodeFunction::HyperbolicTangent;
-        } else {
+        //if(nodeType == neat::NodeType::Output) {
+        //    return neat::NodeFunction::HyperbolicTangent;
+        //} else {
             return static_cast<neat::NodeFunction>(rand() % 8);
-        }
+        //}
     }
 
     double applyNodeFunction(neat::NodeFunction const & nodeFunction, double const in)
