@@ -51,6 +51,25 @@ namespace {
 
         return neatA.crossWith(neatB);
     }
+
+    double getSharedFitness(int const index, std::vector<simulator::Agent> const & agents)
+    {
+        // Only cross over most similar
+        auto & candA = agents[index];
+        auto neatA = candA.getNeatNet();
+
+        auto thresh = 5.0;
+        int i = 0;
+        for(auto const & candB : agents) {
+            auto neatB = candB.getNeatNet();
+            auto d = neatA.measureDifference(neatB);
+            if(d < thresh) {
+                ++i;
+            }
+        }
+        return agents[index].distanceMoved() / i;
+        
+    }
 }
 
 namespace simulator {
@@ -129,28 +148,32 @@ namespace simulator {
 
         // Store index of the fittest to replace broken agents
         m_eliteIndex = fitnesses[0].first;
+
+
         std::cout<<m_eliteIndex<<"\t"<<m_agents[m_eliteIndex].distanceMoved()<<std::endl;
 
 
         // pick the top m_popSize/N and regen rest of population out of those
         std::vector<neat::Network> newPop;
         newPop.push_back(m_agents[m_eliteIndex].getNeatNet());
-        i = 0;
-        for (auto & agent : m_agents) {
-            if(i != m_eliteIndex) {
-                newPop.push_back(offspringNet(i, m_agents));
+
+        for(int i = 1; i < m_popSize; ++i) {
+            auto candA = randomInt(m_popSize);
+            auto candB = randomInt(m_popSize);
+            if(getSharedFitness(candA, m_agents) > getSharedFitness(candB, m_agents)) {
+                newPop.push_back(m_agents[candA].getNeatNet());
+            } else {
+                newPop.push_back(m_agents[candB].getNeatNet());
             }
-            ++i;
         }
 
         i = 0;
         for (auto & agent : m_agents) {
-
+            agent.inheritNeat(newPop[i]);
             // mutate inherited genome
-            if(i != m_eliteIndex && withMutations) {
-                agent.inheritNeat(newPop[0]);
+            if(i != 0 && withMutations) {
                 agent.modifyController();
-            }  
+            } 
             // put controller back in basal state
             agent.resetController();
             ++i;
