@@ -17,7 +17,7 @@ namespace simulator {
 
         /// update the agents based on some optimiation process
         void optimize(long const tick, 
-                      int const everyN = 200,
+                      int const everyN = 400,
                       bool const withMutations = true);
 
       private:

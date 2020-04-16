@@ -9,7 +9,7 @@ namespace {
     int const NEAT_OUTPUTS = 2;
     int const MAX_NEAT_NODES = 12;
     double const NEAT_WEIGHT_BOUND = 16.0;
-    neat::MutationParameters NEAT_MUTS{0.4, 0.1, 0.5, 0.1};
+    neat::MutationParameters NEAT_MUTS{0.1, 0.1, 0.1, 0.1};
 }
 
 namespace simulator {
@@ -27,6 +27,20 @@ namespace simulator {
         // set where the animat currently is in the world
         // will be used as a basis for computing distance moved
         // recordStartPosition();
+    }
+
+
+    long Agent::getAge() const
+    {
+        return m_age;
+    }
+    void Agent::resetAge()
+    {
+        m_age = 0;
+    }
+    void Agent::incrementAge()
+    {
+        ++m_age;
     }
 
     int Agent::update()
@@ -47,6 +61,15 @@ namespace simulator {
         }   
         m_controller->update();
         return 0;
+    }
+
+    void Agent::resetNeat()
+    {
+        m_neat = neat::Network(NEAT_INPUTS, 
+                               NEAT_OUTPUTS, 
+                               MAX_NEAT_NODES, 
+                               NEAT_MUTS,
+                               NEAT_WEIGHT_BOUND);
     }
 
     void Agent::inheritNeat(Agent const & other)

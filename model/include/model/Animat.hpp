@@ -20,7 +20,7 @@ namespace model {
       public:
         /// Initialize animat with an ID and default properties (10 segments
         /// a width of 2.0 and a height of 3.8611)
-        Animat(int const id, AnimatProperties const & props = {6, 2.0, 4.0});
+        Animat(int const id, AnimatProperties const & props = {8, 2.0, 4.0});
    
         void applyBlockContraction(int const block, 
                                    int const side, 

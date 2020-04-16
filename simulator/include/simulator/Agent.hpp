@@ -43,6 +43,12 @@ namespace simulator {
 
         void setBad();
 
+        long getAge() const;
+        void resetAge();
+        void incrementAge();
+
+        void resetNeat();
+
       private:
 
         /// The physical shell of the animat agent  
@@ -62,6 +68,9 @@ namespace simulator {
 
         /// When physics broke
         bool mutable m_bad;
+
+        /// rt-neat
+        long m_age;
 
     };
 }

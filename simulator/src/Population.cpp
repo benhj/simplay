@@ -89,6 +89,7 @@ namespace simulator {
 
     void Population::update()
     {
+        /*
         for (int p = 0; p < m_popSize; ++p) {
             auto & agent = m_agents[p];
 
@@ -98,17 +99,54 @@ namespace simulator {
                 agent.recordStartPosition();
                 agent.resetController();
                 agent.setBad();
+                agent.resetAge();
                 // give animat a fitter genome, the elite one in fact
                 // agent.inheritNeat(m_agents[m_eliteIndex]);
             }
-        }
+        }*/
     }
 
     void Population::optimize(long const tick, 
                   int const everyN,
                   bool const withMutations)
     {
+        int p = 0;
+        for (auto & agent : m_agents) {
+
+            if(agent.update() == -1) {
+
+                // Reinitialize the underlying neat genome
+                agent.resetNeat();
+
+                m_animatWorld.randomizePositionSingleAnimat(p, 10, 10);
+                agent.recordStartPosition();
+                agent.resetController();
+                agent.resetAge();
+            }
+            ++p;
+
+            agent.recordDistanceMoved();
+
+            // old age
+            // choose another population member at random
+            // and replace this one if chosen one is fitter.
+            if(agent.getAge() == 50) {
+                auto cand = randomInt(m_popSize);
+                if(m_agents[cand].distanceMoved() > agent.distanceMoved()) {
+                    agent.inheritNeat(m_agents[cand]);
+                    agent.modifyController();
+                    agent.resetController();
+                }
+                agent.resetAge();
+                agent.recordStartPosition();
+            } else {
+                agent.incrementAge();
+            }
+        }
+
+
         /// How often to 'mutate the controllers'
+        /*
         if(tick % everyN == 0 && tick > 0) {
 
             // record distances travelled for each agent
@@ -125,6 +163,7 @@ namespace simulator {
                 agent.recordStartPosition();
             }
         }
+        */
     }
 
     void Population::regenerate(bool const withMutations)

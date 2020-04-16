@@ -381,7 +381,6 @@ namespace neat {
     {
         auto difference = 0.0;
 
-/*
         for (auto const & innovation : m_innovationMap) {
             // See if this innovation exists in the other map
             auto found = other.m_innovationMap.find(innovation.second.innovationNumber);
@@ -395,7 +394,6 @@ namespace neat {
                 }
             }
         }
-*/
 
         for (auto const & innovation : other.m_innovationMap) {
             auto found = m_innovationMap.find(innovation.second.innovationNumber);
