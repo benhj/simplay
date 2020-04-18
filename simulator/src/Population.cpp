@@ -149,6 +149,10 @@ namespace simulator {
                     worstIndex = p;
                 }
                 agent.resetAge();
+
+                // check bounds
+                m_animatWorld.translateIfOutOfBounds(p, 200, 200);
+
                 agent.recordStartPosition();
             } else {
                 agent.incrementAge();

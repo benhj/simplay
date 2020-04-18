@@ -393,6 +393,7 @@ namespace neat {
         auto newNode = false;
         perturbWeights(m_weightInitBound / 4.0);
         auto random_integer = uni(rng);
+        
         if(random_integer == 0) {
             newCon = addConnectionToHiddenOrOutputNode();
         } else if(random_integer == 1) {

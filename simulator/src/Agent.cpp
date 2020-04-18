@@ -9,10 +9,10 @@ namespace {
     int const NEAT_OUTPUTS = 2;
     int const MAX_NEAT_NODES = 12;
     double const NEAT_WEIGHT_BOUND = 30.0;
-    neat::MutationParameters NEAT_MUTS{0.1,  // node addition
-                                       0.1,  // node function change
-                                       0.1,  // weight change
-                                       0.1}; // connection addition
+    neat::MutationParameters NEAT_MUTS{0.2,  // node addition
+                                       0.2,  // node function change
+                                       0.5,  // weight change
+                                       0.2}; // connection addition
 }
 
 namespace simulator {

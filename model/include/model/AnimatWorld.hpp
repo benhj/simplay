@@ -33,6 +33,10 @@ namespace model {
 
          int getPopSize() const;
 
+         void translateIfOutOfBounds(int const index,
+                                     double const boundX,
+                                     double const boundY);
+
        private:
          std::vector<model::Animat> m_animats;
 

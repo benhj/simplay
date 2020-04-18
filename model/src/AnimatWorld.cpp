@@ -81,7 +81,9 @@ namespace model {
         if (posOrNeg >= 0.5) {
             randomY = -randomY;
         }
+        auto cp = m_animats[index].getCentralPoint().first[0];
         doTranslateAnimatPosition(index, randomX, randomY);
+        cp = m_animats[index].getCentralPoint().first[0];
         auto angle = ((double) rand() / (RAND_MAX)) * (3.14159265 * 2);
         doSetHeading(index, angle);
     }
@@ -171,5 +173,27 @@ namespace model {
 
         // Then update the derived stuff (antenna, bounding circles etc.)
         animat.updateDerivedComponents();
+    }
+
+    void AnimatWorld::translateIfOutOfBounds(int const index,
+                                              double const boundX,
+                                              double const boundY)
+    {
+        auto centralPoint = m_animats[index].getCentralPoint();
+        auto transX = 0.0;
+        auto transY = 0.0;
+        if(centralPoint.first[0] < -boundX) {
+            transX = (boundX * 2);
+        } else if(centralPoint.first[0] > boundX) {
+            transX = -(boundX * 2);
+        }
+        if(centralPoint.first[1] < -boundY) {
+            transY = (boundY * 2);
+        } else if(centralPoint.first[1] > boundY) {
+            transY = -(boundY * 2);
+        }
+        if(transX != 0 || transY != 0) {
+            doTranslateAnimatPosition(index, transX, transY);
+        }
     }
 }
