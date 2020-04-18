@@ -37,7 +37,7 @@ namespace neat {
 
         /// Mutates the network -- modifies weights, adds connections
         /// add nodes in place of connections, modifies the node type etc.
-        void mutate();
+        bool mutate();
 
         /// Performs a cross-over with another network. Note
         /// the other network is *always* considered the fitter
@@ -58,11 +58,16 @@ namespace neat {
         std::vector<Node> m_nodes;
         std::vector<int> m_outputIDs;
 
-        // Tracks innovatations; eases crossover process 
+        /// Tracks innovatations for this specific individual
         InnovationMap m_innovationMap;
 
-        // Keeps track of new structural innovations
+        /// Keeps track of new structural innovations accross
+        /// the whole population.
         static int GLOBAL_INNOVATION_NUMBER;
+
+        /// Keeps track of new innovations added, accross
+        /// the whole population
+        static InnovationMap GLOBAL_INNOVATION_MAP;
 
         /// Fully connect all inputs to all outputs, or,
         /// based on innovation map when map non-empty
@@ -82,11 +87,11 @@ namespace neat {
 
         /// Loops over all connections going into output and
         /// calls addNodeInPlaceOf if mutation probability satisfied
-        void addNewNodes();
+        bool addNewNodes();
 
         /// Add a node in place of connection. That is
         /// A--->B becomes A--->C--->B
-        void addNodeInPlaceOf(Connection & con);
+        bool addNodeInPlaceOf(Connection & con);
 
         /// All connections going into hidden and output nodes
         /// are perturbed byAmount if probability satisfied
@@ -95,7 +100,7 @@ namespace neat {
 
         /// Adds a new connection from an unconnected input node 
         /// to a newly added hidden node, or an existing output node
-        void addConnectionToHiddenOrOutputNode();
+        bool addConnectionToHiddenOrOutputNode();
 
         /// Mutates node function type
         void perturbNodeFunctions();

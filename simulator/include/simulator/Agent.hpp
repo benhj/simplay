@@ -1,9 +1,10 @@
-/// Copyright (c) 2017 Ben Jones
+/// Copyright (c) 2017-present Ben Jones
 
 #pragma once
 
 #include "Controller.hpp"
 #include "model/Animat.hpp"
+#include "model/SpeciesColour.hpp"
 #include "neat/Network.hpp"
 #include "physics/Vector3.hpp"
 
@@ -36,6 +37,7 @@ namespace simulator {
 
         /// use start and end point to compute distance moved
         double distanceMoved() const;
+        double previousDistanceMoved() const;
 
         void resetController();
 
@@ -46,8 +48,13 @@ namespace simulator {
         long getAge() const;
         void resetAge();
         void incrementAge();
-
         void resetNeat();
+
+        void setAdjustedFitness(double const adjustedFitness);
+        double getAdjustedFitness() const;
+
+        void updateSpeciesColour(double r, double g, double b);
+        model::SpeciesColour getSpeciesColour() const;
 
       private:
 
@@ -65,12 +72,15 @@ namespace simulator {
         physics::Vector3 m_startPosition;
 
         double m_distanceMoved;
+        double mutable m_previousDistanceMoved;
 
         /// When physics broke
         bool mutable m_bad;
 
         /// rt-neat
         long m_age;
+
+        double m_adjustedFitness;
 
     };
 }

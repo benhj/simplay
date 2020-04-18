@@ -4,6 +4,7 @@
 #include "AnimatLayer.hpp"
 #include "AnimatBlock.hpp"
 #include "AnimatProperties.hpp"
+#include "SpeciesColour.hpp"
 
 #include "physics/Vector3.hpp"
 #include "physics/PhysicsEngine.hpp"
@@ -70,6 +71,9 @@ namespace model {
         /// Retrieve the population ID of this animat
         int getID() const;
 
+        void updateSpeciesColour(double r, double g, double b);
+        SpeciesColour getSpeciesColour() const;
+
       private:
         int m_id;
         std::vector<AnimatLayer> m_layers;
@@ -86,6 +90,9 @@ namespace model {
 
         /// Useful for collision detection and resolution
         std::vector<std::pair<physics::Vector3, double>> m_boundingCircles;
+
+        SpeciesColour m_speciesColour;
+
         void constructAntennae();
 
         /// Derived components are those whose geometry are calculated

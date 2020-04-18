@@ -8,8 +8,11 @@ namespace {
     int const NEAT_INPUTS = 7;
     int const NEAT_OUTPUTS = 2;
     int const MAX_NEAT_NODES = 12;
-    double const NEAT_WEIGHT_BOUND = 16.0;
-    neat::MutationParameters NEAT_MUTS{0.1, 0.1, 0.1, 0.1};
+    double const NEAT_WEIGHT_BOUND = 30.0;
+    neat::MutationParameters NEAT_MUTS{0.1,  // node addition
+                                       0.1,  // node function change
+                                       0.1,  // weight change
+                                       0.1}; // connection addition
 }
 
 namespace simulator {
@@ -23,12 +26,25 @@ namespace simulator {
       , m_controller(std::make_shared<CTRNNController>(animat.getBlockCount(), m_neat))
       , m_startPosition{0,0,0}
       , m_distanceMoved(0)
+      , m_previousDistanceMoved(0)
+      , m_bad(false)
+      , m_age(0)
+      , m_adjustedFitness(0)
     {
         // set where the animat currently is in the world
         // will be used as a basis for computing distance moved
         // recordStartPosition();
     }
 
+    void Agent::setAdjustedFitness(double const adjustedFitness)
+    {
+        m_adjustedFitness = adjustedFitness;
+    }
+
+    double Agent::getAdjustedFitness() const
+    {
+        return m_adjustedFitness;
+    }
 
     long Agent::getAge() const
     {
@@ -37,10 +53,21 @@ namespace simulator {
     void Agent::resetAge()
     {
         m_age = 0;
+        m_bad = false;
     }
     void Agent::incrementAge()
     {
         ++m_age;
+    }
+
+    void Agent::updateSpeciesColour(double r, double g, double b)
+    {
+        m_animat.updateSpeciesColour(r, g, b);
+    }
+
+    model::SpeciesColour Agent::getSpeciesColour() const
+    {
+        return m_animat.getSpeciesColour();
     }
 
     int Agent::update()
@@ -86,7 +113,19 @@ namespace simulator {
 
     void Agent::modifyController()
     {
-        m_neat.mutate();
+        // see if new species
+        if(m_neat.mutate()) {
+            auto r = ::rand() / double(RAND_MAX);
+            auto g = ::rand() / double(RAND_MAX);
+            auto b = ::rand() / double(RAND_MAX);
+            r *= 100;
+            g *= 100;
+            b *= 100;
+            r += 155;
+            g += 155;
+            b += 155;
+            updateSpeciesColour(r, g, b);
+        }
     }
 
     void Agent::resetController()
@@ -103,7 +142,6 @@ namespace simulator {
     void Agent::recordDistanceMoved() 
     {
         if(m_bad) {
-            m_bad = false;
             m_distanceMoved = 0;
         } else {
             m_distanceMoved = (m_animat.getCentralPoint().first).distance(m_startPosition);
@@ -112,7 +150,13 @@ namespace simulator {
 
     double Agent::distanceMoved() const
     {
+        m_previousDistanceMoved = m_distanceMoved;
         return m_distanceMoved;
+    }
+
+    double Agent::previousDistanceMoved() const
+    {
+        return m_previousDistanceMoved;
     }
 
     neat::Network Agent::getNeatNet() const

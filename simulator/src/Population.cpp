@@ -46,30 +46,34 @@ namespace {
 
         auto & candB = agents[rem];
         auto neatB = candB.getNeatNet();
-
-        //std::cout<<"diff: "<<(neatA.measureDifference(neatB))<<std::endl;
-
         return neatA.crossWith(neatB);
     }
 
-    double getSharedFitness(int const index, std::vector<simulator::Agent> const & agents)
+    double getSharedFitness(simulator::Agent & candidate, std::vector<simulator::Agent> & agents)
     {
         // Only cross over most similar
-        auto & candA = agents[index];
-        auto neatA = candA.getNeatNet();
+        auto neatA = candidate.getNeatNet();
 
-        auto thresh = 5.0;
+        // Species colour-coded (r,g,b);
+        auto speciesColour = candidate.getSpeciesColour();
+        auto const r = speciesColour.R;
+        auto const g = speciesColour.G;
+        auto const b = speciesColour.B;
+
+        auto thresh = 1;
         int i = 0;
-        for(auto const & candB : agents) {
+        for(auto & candB : agents) {
             auto neatB = candB.getNeatNet();
             auto d = neatA.measureDifference(neatB);
             if(d < thresh) {
+                candB.updateSpeciesColour(r, g, b);
                 ++i;
             }
         }
-        return agents[index].distanceMoved() / i;
-        
+        auto const adjusted = candidate.distanceMoved() / (double)i;
+        return adjusted;
     }
+
 }
 
 namespace simulator {
@@ -110,40 +114,81 @@ namespace simulator {
                   int const everyN,
                   bool const withMutations)
     {
+
         int p = 0;
+        double best = 0.0;
+        double worst = 10000;
+        int worstIndex = -1;
+        int bestIndex = -1;
+        double totalAdjusted = 0;
         for (auto & agent : m_agents) {
 
             if(agent.update() == -1) {
 
                 // Reinitialize the underlying neat genome
-                agent.resetNeat();
-
                 m_animatWorld.randomizePositionSingleAnimat(p, 10, 10);
                 agent.recordStartPosition();
                 agent.resetController();
-                agent.resetAge();
+                agent.setBad();
             }
-            ++p;
 
             agent.recordDistanceMoved();
 
             // old age
             // choose another population member at random
             // and replace this one if chosen one is fitter.
-            if(agent.getAge() == 50) {
-                auto cand = randomInt(m_popSize);
-                if(m_agents[cand].distanceMoved() > agent.distanceMoved()) {
-                    agent.inheritNeat(m_agents[cand]);
-                    agent.modifyController();
-                    agent.resetController();
+            if(agent.getAge() >= 20) {
+                auto adjustedFitness = getSharedFitness(agent, m_agents);
+                agent.setAdjustedFitness(adjustedFitness);
+                if(adjustedFitness > best) {
+                    best = adjustedFitness;
+                    bestIndex = p;
+                }
+                if(adjustedFitness < worst) {
+                    worst = adjustedFitness;
+                    worstIndex = p;
                 }
                 agent.resetAge();
                 agent.recordStartPosition();
             } else {
                 agent.incrementAge();
             }
+            ++p;
         }
 
+        // Probabilitisticazlly choose parent to generate offspring scaled
+        // according to the overall best adjusted fitness
+        std::vector<FitnessPair> fitnesses;
+        fitnesses.reserve(m_popSize);
+        int i = 0;
+        for (auto const & agent : m_agents) {
+            auto f = agent.getAdjustedFitness();
+            fitnesses.emplace_back(i, f);
+            ++i;
+        }
+
+        // sort according to fitness (lowest to highest)
+        std::sort(std::begin(fitnesses), std::end(fitnesses),
+                  [](FitnessPair const & a,
+                     FitnessPair const & b) {
+                      return b.second > a.second;
+                  });
+
+        auto arand = ::rand() / double(RAND_MAX);
+        int choice = 0;
+        for (auto const & fitness : fitnesses) {
+            if(arand <= (fitness.second / best)) {
+                choice = fitness.first;
+                break;
+            }
+        }
+
+        if(bestIndex > -1 && worstIndex > -1 && worstIndex != choice) {
+            //std::cout<<m_agents[worstIndex].getAdjustedFitness()<<"\t"<<m_agents[choice].getAdjustedFitness()<<std::endl;
+            m_agents[worstIndex].inheritNeat(m_agents[choice]);
+            m_agents[worstIndex].modifyController();
+            m_agents[worstIndex].resetController();
+        }
 
         /// How often to 'mutate the controllers'
         /*
@@ -168,6 +213,7 @@ namespace simulator {
 
     void Population::regenerate(bool const withMutations)
     {
+        /*
         // store all fitness values
         std::vector<FitnessPair> fitnesses;
         fitnesses.reserve(m_popSize);
@@ -217,5 +263,6 @@ namespace simulator {
             agent.resetController();
             ++i;
         }
+        */
     }
 }

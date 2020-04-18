@@ -1,11 +1,11 @@
-// Copyright (c) 2017 Ben Jones
+// Copyright (c) 2017-2020 Ben Jones
 
 #include "neat/Network.hpp"
 #include "neat/NodeType.hpp"
 #include <cstdlib>
 #include <utility>
 #include <iostream>
-
+#include <optional>
 #include <random>
 
 namespace {
@@ -33,11 +33,25 @@ namespace {
             }
         }
     }
+
+    std::optional<int> containsInnovation(neat::Network::InnovationMap const & map,
+                                          int const pre, int const post) {
+        auto found = std::find_if(std::begin(map), std::end(map),
+                                  [pre, post, &map](std::pair<int, neat::InnovationInfo> const & p) {
+                                    return pre == p.second.preNode && post == p.second.postNode;
+                                  });
+        if(found != std::end(map)) {
+            return found->first;
+        }
+        return std::nullopt;
+    }
+
 }
 
 namespace neat {
 
     int Network::GLOBAL_INNOVATION_NUMBER = 14;
+    Network::InnovationMap Network::GLOBAL_INNOVATION_MAP;
 
     Network::Network(int const inputCount, 
                      int const outputCount,
@@ -193,7 +207,7 @@ namespace neat {
         return m_nodes[outputIndex].getOutput();
     }
 
-    void Network::addNewNodes()
+    bool Network::addNewNodes()
     {
         // Ouput ID (the node index within the array of nodes)
         // will always start with inputNodeCount + outputNodeCount
@@ -207,16 +221,18 @@ namespace neat {
                 if(node.hasConnectionFrom(i) && i != j) {
                     if (((double) rand() / (RAND_MAX)) < m_muts.nodeAdditionProb) {
                         auto & connection = node.getConnectionFrom(i);
-                        addNodeInPlaceOf(connection);
+                        return addNodeInPlaceOf(connection);
                     }
                 }
             }
         }
-        
+        return false;
     }
 
-    void Network::addNodeInPlaceOf(Connection & con)
+    bool Network::addNodeInPlaceOf(Connection & con)
     {
+        auto added = false;
+
         // Create a new node but only if number of nodes
         // is less than max permitted size
         auto id = m_nodes.size();
@@ -229,7 +245,7 @@ namespace neat {
             // between hidden nodes
             if(nodePre.getNodeType() == NodeType::Hidden ||
                nodePost.getNodeType() == NodeType::Hidden) {
-                return;
+                return false;
             }
 
             m_nodes.emplace_back(id, NodeType::Hidden, 
@@ -237,52 +253,79 @@ namespace neat {
 
             // Remove old connection from nodePre to nodePost
             auto nodePreIndex = nodePre.getIndex();
-            auto innovation = nodePost.removeIncomingConnectionFrom(nodePreIndex);
-
             auto nodePostIndex = nodePost.getIndex();
 
-            // Disable the original innovation
-            if(innovation > -1) {
-                // m_innovationMap[innovation].enabled = false;
-                // Just erase instead?
-                m_innovationMap.erase(innovation);
+            {
+                auto innovation = nodePost.removeIncomingConnectionFrom(nodePreIndex);
+                // Disable the original innovation
+                if(innovation > -1) {
+                    // m_innovationMap[innovation].enabled = false;
+                    // Just erase instead?
+                    m_innovationMap.erase(innovation);
+                }
             }
 
-            // Add new connection from nodePre to new node
-            m_nodes[id].addIncomingConnectionFrom(nodePre, 
-                                                  m_weightInitBound, 
-                                                  m_muts.weightChangeProb,
-                                                  GLOBAL_INNOVATION_NUMBER,
-                                                  1.0);
-            // Make the new weight to hidden 1.0 (as specified by
-            // NEAT paper).
-            m_innovationMap.emplace(GLOBAL_INNOVATION_NUMBER,
-                                    InnovationInfo{GLOBAL_INNOVATION_NUMBER, 
-                                                   nodePre.getIndex(), 
-                                                   static_cast<int>(id),
-                                                   1.0 /* weight */, 
-                                                   true});
+            // Do we already have an innovation from nodePre to id?
+            {
+                auto existsAlready = containsInnovation(GLOBAL_INNOVATION_MAP, nodePreIndex, id);
+                int innovationNum = GLOBAL_INNOVATION_NUMBER;
+                if(existsAlready) {
+                    innovationNum = *existsAlready;
+                }
 
-            ++GLOBAL_INNOVATION_NUMBER;
+                assert(id != nodePreIndex);
 
-            // ..and from new node to node post (make new weight
-            // from hidden the same as the original weight, again, as
-            // specified by NEAT paper).
-            nodePost.addIncomingConnectionFrom(m_nodes[id], 
-                                               m_weightInitBound, 
-                                               m_muts.weightChangeProb,
-                                               GLOBAL_INNOVATION_NUMBER,
-                                               con.weight());
-
-            m_innovationMap.emplace(GLOBAL_INNOVATION_NUMBER,
-                                    InnovationInfo{GLOBAL_INNOVATION_NUMBER, 
-                                                   static_cast<int>(id),
-                                                   nodePost.getIndex(),
-                                                   con.weight(), 
-                                                   true});
-
-            ++GLOBAL_INNOVATION_NUMBER;
+                // Add new connection from nodePre to new node
+                m_nodes[id].addIncomingConnectionFrom(nodePre, 
+                                                      m_weightInitBound, 
+                                                      m_muts.weightChangeProb,
+                                                      innovationNum,
+                                                      1.0);
+                
+                // See if we need to add a new global innovation and additionally
+                // add to the innovation map of 'this'
+                auto innovation = InnovationInfo{innovationNum, 
+                                                 nodePre.getIndex(), 
+                                                 static_cast<int>(id),
+                                                 1.0 /* weight */, 
+                                                 true};
+                if(!existsAlready) {      
+                    GLOBAL_INNOVATION_MAP.emplace(GLOBAL_INNOVATION_NUMBER, innovation);
+                    ++GLOBAL_INNOVATION_NUMBER;
+                } else {
+                    added = true;
+                }
+                m_innovationMap.emplace(innovationNum, innovation);
+            }
+            
+            // Do we already have an innovation from id to nodePost?
+            {
+                auto existsAlready = containsInnovation(GLOBAL_INNOVATION_MAP, id, nodePostIndex);
+                int innovationNum = GLOBAL_INNOVATION_NUMBER;
+                if(existsAlready) {
+                    innovationNum = *existsAlready;
+                }
+                assert(id != nodePostIndex);
+                nodePost.addIncomingConnectionFrom(m_nodes[id], 
+                                                   m_weightInitBound, 
+                                                   m_muts.weightChangeProb,
+                                                   innovationNum,
+                                                   con.weight());
+                auto innovation = InnovationInfo{innovationNum, 
+                                                 static_cast<int>(id),
+                                                 nodePost.getIndex(),
+                                                 con.weight(), 
+                                                 true};
+                if(!existsAlready) {      
+                    GLOBAL_INNOVATION_MAP.emplace(GLOBAL_INNOVATION_NUMBER, innovation);
+                    ++GLOBAL_INNOVATION_NUMBER;
+                } else {
+                    added = true;
+                }
+                m_innovationMap.emplace(innovationNum, innovation);
+            }
         }
+        return added;
     }
 
     void Network::perturbWeights(double const byAmount)
@@ -292,7 +335,7 @@ namespace neat {
         }
     }
 
-    void Network::addConnectionToHiddenOrOutputNode()
+    bool Network::addConnectionToHiddenOrOutputNode()
     {
         auto it = std::begin(m_nodes) + m_inputCount;
         if (it != std::end(m_nodes)) {
@@ -300,24 +343,39 @@ namespace neat {
                 for (int i = 0; i < m_inputCount; ++i) {
                     if(!it->hasConnectionFrom(i)) {
                         if (((double) rand() / (RAND_MAX)) < m_muts.connectionAdditionProb) {
-                            it->addIncomingConnectionFrom(m_nodes[i], 
-                                                          m_weightInitBound,
-                                                          m_muts.weightChangeProb,
-                                                          GLOBAL_INNOVATION_NUMBER);
-                            auto const weight = it->getConnectionWeightFrom(i);
-                            m_innovationMap.emplace(GLOBAL_INNOVATION_NUMBER,
-                                                    InnovationInfo{GLOBAL_INNOVATION_NUMBER, 
-                                                                   i,
-                                                                   it->getIndex(),
-                                                                   weight,
-                                                                   true});
-                            ++GLOBAL_INNOVATION_NUMBER;
+                            // Do we already have an innovation from id to nodePost?
+                            {
+                                auto existsAlready = containsInnovation(GLOBAL_INNOVATION_MAP, i, it->getIndex());
+                                int innovationNum = GLOBAL_INNOVATION_NUMBER;
+                                if(existsAlready) {
+                                    innovationNum = *existsAlready;
+                                }
+
+                                it->addIncomingConnectionFrom(m_nodes[i], 
+                                                              m_weightInitBound,
+                                                              m_muts.weightChangeProb,
+                                                              innovationNum);
+                                auto const weight = it->getConnectionWeightFrom(i);
+                                auto innovation = InnovationInfo{innovationNum, 
+                                                                 i,
+                                                                 it->getIndex(),
+                                                                 weight, 
+                                                                 true};
+                                if(!existsAlready) {      
+                                    GLOBAL_INNOVATION_MAP.emplace(GLOBAL_INNOVATION_NUMBER, innovation);
+                                    ++GLOBAL_INNOVATION_NUMBER;
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                                m_innovationMap.emplace(innovationNum, innovation);
+                            }
                         }
                     }
                 }
             }
         }
-
+        return false;
     }
 
     void Network::perturbNodeFunctions()
@@ -327,18 +385,22 @@ namespace neat {
         }
     }
 
-    void Network::mutate()
+    bool Network::mutate()
     {
-        perturbWeights(m_weightInitBound / 4.0);
 
+        // Return true if a mutation led to a new species
+        auto newCon = false;
+        auto newNode = false;
+        perturbWeights(m_weightInitBound / 4.0);
         auto random_integer = uni(rng);
         if(random_integer == 0) {
-            //addConnectionToHiddenOrOutputNode();
+            newCon = addConnectionToHiddenOrOutputNode();
         } else if(random_integer == 1) {
             perturbNodeFunctions();
         } else {
-            //addNewNodes();
+            newNode = addNewNodes();
         }
+        return newCon || newNode;
     }
 
     Network Network::crossWith(Network const & other) const
@@ -381,19 +443,19 @@ namespace neat {
     {
         auto difference = 0.0;
 
-        for (auto const & innovation : m_innovationMap) {
-            // See if this innovation exists in the other map
-            auto found = other.m_innovationMap.find(innovation.second.innovationNumber);
-            if (found != std::end(other.m_innovationMap)) {
-                auto const w1 = innovation.second.weight;
-                auto const w2 = found->second.weight;
-                if(w1 >= w2) {
-                    difference += (w1 - w2);
-                } else {
-                    difference += (w2 - w1);
-                }
-            }
-        }
+        // for (auto const & innovation : m_innovationMap) {
+        //     // See if this innovation exists in the other map
+        //     auto found = other.m_innovationMap.find(innovation.second.innovationNumber);
+        //     if (found != std::end(other.m_innovationMap)) {
+        //         auto const w1 = innovation.second.weight;
+        //         auto const w2 = found->second.weight;
+        //         if(w1 >= w2) {
+        //             difference += (w1 - w2);
+        //         } else {
+        //             difference += (w2 - w1);
+        //         }
+        //     }
+        // }
 
         for (auto const & innovation : other.m_innovationMap) {
             auto found = m_innovationMap.find(innovation.second.innovationNumber);

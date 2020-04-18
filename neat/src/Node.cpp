@@ -14,8 +14,8 @@ namespace {
 
     neat::NodeFunction initNodeFunction(neat::NodeType const & nodeType)
     {
-        //if(nodeType == neat::NodeType::Output) {
-        //    return neat::NodeFunction::HyperbolicTangent;
+        //if(nodeType == neat::NodeType::Output || nodeType == neat::NodeType::Input) {
+            //return neat::NodeFunction::Transfer;
         //} else {
             return static_cast<neat::NodeFunction>(rand() % 8);
         //}
@@ -214,6 +214,10 @@ namespace neat {
         double accumulator = 0;
         for (auto & con : m_incomingConnections) {
             auto & nodeRef = con.getNodeRefA();
+            if(con.getNodeRefA().getIndex() == con.getNodeRefB().getIndex()) { 
+                continue;
+            }
+            //std::cout<<con.getNodeRefA().getIndex()<<"\t"<<con.getNodeRefB().getIndex()<<std::endl;
             accumulator += nodeRef.getOutput() * con.weight();
         }
         accumulator += m_externalInput;

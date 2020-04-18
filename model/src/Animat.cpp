@@ -15,6 +15,7 @@ namespace model {
       , m_antennaeMutex(std::make_shared<std::mutex>())
       , m_centralPointMutex(std::make_shared<std::mutex>())
       , m_physicsBecameUnstable(false)
+      , m_speciesColour{ 197, 217, 200 }
     {
         auto const layers = props.blocks + 1;
         m_layers.reserve(layers);
@@ -60,6 +61,18 @@ namespace model {
         return m_id;
     }
 
+    SpeciesColour Animat::getSpeciesColour() const
+    {
+        return m_speciesColour;
+    }
+
+    void Animat::updateSpeciesColour(double r, double g, double b)
+    {
+        m_speciesColour.R = r;
+        m_speciesColour.G = g;
+        m_speciesColour.B = b;
+    }
+
     void Animat::constructAntennae()
     {
         auto const PI = 3.14149;
@@ -87,7 +100,7 @@ namespace model {
         else if (dirLeft.m_vec[0]<=0&&dirLeft.m_vec[1]>=0)baseAngle = -baseAngle-(PI/4);
         else if (dirLeft.m_vec[0]>=0&&dirLeft.m_vec[1]<=0)baseAngle = baseAngle-(PI/4);
         else if (dirLeft.m_vec[0]>=0&&dirLeft.m_vec[1]>=0)baseAngle = baseAngle-(PI/4);
-        auto ant = 1.0;
+        auto ant = 3.0;
         auto cosBit = cos(baseAngle);
         auto sinBit = sin(baseAngle);
         auto xLeft = leftPM.m_vec[0] + (sinBit * ant);

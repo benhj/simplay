@@ -114,7 +114,7 @@ namespace graphics {
 
     void GLAnimat::drawBody()
     {
-        detail::lineWidth(2.0);
+        detail::lineWidth(4.0);
         auto & physicsEngine = m_animat.getPhysicsEngine();
         for(int b = 0; b < m_animat.getBlockCount(); ++b) {
             auto block = m_animat.getBlock(b);
@@ -136,7 +136,8 @@ namespace graphics {
                 glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], 0);
                 glVertex3f(layer2Right.m_vec[0], layer2Right.m_vec[1], 0);
             glEnd();
-            detail::setColor(m_segmentColor);
+            auto sc = m_animat.getSpeciesColour();
+            detail::setColor({sc.R, sc.G, sc.B});
             glBegin(GL_QUADS);
                 glVertex3f(layer1Left.m_vec[0], layer1Left.m_vec[1], 0);
                 glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], 0);
