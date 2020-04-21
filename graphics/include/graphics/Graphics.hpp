@@ -5,6 +5,7 @@
 #include "ThreadRunner.hpp"
 #include "GLConsole.hpp"
 #include <atomic>
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -27,6 +28,8 @@ namespace graphics {
         void clickHandler(int const button, 
                           int const action, 
                           int const mods);
+
+        void setGraphicsConsoleCallback(std::function<void(std::string)> callback);
 
         void addGUIElement(std::shared_ptr<GLGUIElement> element);
 

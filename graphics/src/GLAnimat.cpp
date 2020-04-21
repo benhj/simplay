@@ -52,7 +52,7 @@ namespace graphics {
         std::call_once(g_textInitGuard, 
                        [&](){
                            g_animatText.init("../fonts/Action_Man.ttf",
-                           14 * detail::retinaScalar()); 
+                           25 * detail::retinaScalar()); 
                         });
     }
 

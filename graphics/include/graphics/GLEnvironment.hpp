@@ -194,8 +194,9 @@ namespace graphics {
                     double sx, sy;
 
                     detail::worldToScreen(cx, -cy, sx, sy);
-                    auto width = m_windowHeight * detail::retinaScalar();
+                    auto width = m_windowWidth * detail::retinaScalar();
                     auto height = m_windowHeight * detail::retinaScalar();
+
                     auto fx = (sx * m_viewDistance) - ((width / 2) * m_viewDistance) + m_centerX;
                     auto fy = (sy * m_viewDistance) - ((height / 2) * m_viewDistance) + m_centerY;
                     auto distx = std::sqrt((fx - m_centerX) * (fx - m_centerX));

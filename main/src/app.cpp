@@ -93,14 +93,13 @@ int main(int argc, char **argv)
                                          glEnvironment,
                                          threadRunner));
 
-
-
     // Callbacks
     glfwSetWindowSizeCallback(window, reshape);
     glfwSetFramebufferSizeCallback(window, reshape);
     glfwSetCursorPosCallback(window, passiveMouseFunc);
     glfwSetKeyCallback(window, keyboardHandler);
     glfwSetMouseButtonCallback(window, clickHandler);
+
 
     // Add some GUI Elements
     auto button = std::make_shared<graphics::GLButton>(window,
@@ -150,6 +149,15 @@ int main(int argc, char **argv)
     graphix->addGUIElement(std::move(slider));
     graphix->addGUIElement(std::move(dial));
 
+    graphix->setGraphicsConsoleCallback([&sim](std::string command) {
+        if(command.find_first_of("pause") == 0) {
+            sim.pause();
+        } else if(command.find_first_of("resume") == 0) {
+            sim.resume();
+        }
+    });
+
+
     float sx = windowWidth / 2.0;
     float sy = windowHeight / 2.0;
     sx *= graphics::detail::retinaScalar();
@@ -172,6 +180,7 @@ int main(int argc, char **argv)
 
         /* Poll for and process events */
         glfwPollEvents();
+
     }
     glfwTerminate();
     return 0;

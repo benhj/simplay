@@ -81,9 +81,9 @@ namespace glconsole {
             glPopMatrix();
         }
 
-        void setCallback(std::function<void(std::string const &)> const & callback)
+        void setCallback(std::function<void(std::string)> callback)
         {
-            m_callback = callback;
+            m_callback = std::move(callback);
         }
 
         void keyHandler(int const key, 
@@ -156,6 +156,8 @@ namespace glconsole {
                 } else {
                     handleBackspace();
                 }
+            } else if (action == 2 && key == GLFW_KEY_BACKSPACE) {
+                handleBackspace();
             }
         }
 
@@ -210,7 +212,7 @@ namespace glconsole {
         int m_commandEnd;
 
         /// The callback that will be triggered on enter.
-        std::function<void(std::string const &)> m_callback;
+        std::function<void(std::string)> m_callback;
 
         /// Window opacity
         std::atomic<float> & m_opacity;

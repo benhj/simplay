@@ -54,6 +54,12 @@ namespace graphics {
         init();
     }
 
+    void 
+    Graphics::setGraphicsConsoleCallback(std::function<void(std::string)> callback)
+    {
+        m_console.setCallback(std::move(callback));
+    }
+
     void Graphics::display()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -106,9 +112,8 @@ namespace graphics {
                 }
             } 
             // for all other key presses
-            else 
-            {
-            handleKeyDown(key);
+            else {
+                handleKeyDown(key);
             }
         } else if(action == GLFW_RELEASE) {
             handleKeyUp(key);
