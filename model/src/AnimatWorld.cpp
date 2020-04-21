@@ -5,19 +5,40 @@
 #include <cstdlib> // rand
 #include <ctime> // time
 #include <cmath>
+#include <utility>
 
 namespace model {
+
+    std::vector<std::shared_ptr<std::mutex>> AnimatWorld::g_fuckers;
+
     AnimatWorld::AnimatWorld(int const populationSize)
       : m_animats()
+      , m_animatUpdatedObserver()
+      , m_optimizations(0)
     {
         m_animats.reserve(populationSize);
 
         for (int p = 0; p < populationSize; ++p) {
-            m_animats.push_back(Animat(p));
+            m_animats.push_back(std::make_shared<Animat>(p));
         }
 
         // seed random generator for random pop placement
         ::srand(::time(NULL));
+
+        if(g_fuckers.empty()) {
+            g_fuckers.push_back(std::make_shared<std::mutex>());
+        }
+
+    }
+
+
+    void AnimatWorld::incrementOptimizationCount()
+    {
+        ++m_optimizations;
+    }
+    long AnimatWorld::getOptimizationCount() const
+    {
+        return m_optimizations;
     }
 
     int AnimatWorld::getPopSize() const
@@ -25,18 +46,38 @@ namespace model {
         return m_animats.size();
     }
 
+    void AnimatWorld::reconstructAnimat(int const index, int const segments)
+    {
+        /*
+        if(m_animatUpdatedObserver) {
+            m_animatUpdatedObserver(index);
+        }*/
+        //std::lock_guard<std::mutex> lg(*g_fuckers[0]);
+        auto newAnimat = std::make_shared<Animat>(index, AnimatProperties{segments, 2.0, 4.0});
+        m_animats[index] = newAnimat;
+        if(m_animatUpdatedObserver) {
+            m_animatUpdatedObserver(index, m_animats[index]);
+        }
+    }
+
+    void AnimatWorld::setAnimatUpdatedObserver
+    (std::function<void(int const, std::shared_ptr<Animat>)> func)
+    {
+        m_animatUpdatedObserver = std::move(func);
+    }
+
     bool AnimatWorld::nearAnotherAnimat(int const index)
     {
-        auto centralPointIndex = m_animats[index].getCentralPoint();
+        auto centralPointIndex = m_animats[index]->getCentralPoint();
         for (int i = 0; i < index; ++i) {
-            auto centralPointOther = m_animats[i].getCentralPoint();
+            auto centralPointOther = m_animats[i]->getCentralPoint();
             if (centralPointIndex.first.distance(centralPointOther.first) 
                 < centralPointIndex.second + centralPointOther.second) {
                 return true;
             }
         }
         for (int i = m_animats.size() - 1; i > index; --i) {
-            auto centralPointOther = m_animats[i].getCentralPoint();
+            auto centralPointOther = m_animats[i]->getCentralPoint();
             if (centralPointIndex.first.distance(centralPointOther.first) 
                 < centralPointIndex.second + centralPointOther.second) {
                 return true;
@@ -49,7 +90,7 @@ namespace model {
                                          double const boundY)
     {
         for (auto i = 0; i < m_animats.size(); ++i) {
-            m_animats[i].resetAnimatStructure();
+            m_animats[i]->resetAnimatStructure();
             doRandomizePosition(i, boundX, boundY);
             while (nearAnotherAnimat(i)) {
                 doRandomizePosition(i, boundX, boundY);
@@ -81,9 +122,9 @@ namespace model {
         if (posOrNeg >= 0.5) {
             randomY = -randomY;
         }
-        auto cp = m_animats[index].getCentralPoint().first[0];
+        auto cp = m_animats[index]->getCentralPoint().first[0];
         doTranslateAnimatPosition(index, randomX, randomY);
-        cp = m_animats[index].getCentralPoint().first[0];
+        cp = m_animats[index]->getCentralPoint().first[0];
         auto angle = ((double) rand() / (RAND_MAX)) * (3.14159265 * 2);
         doSetHeading(index, angle);
     }
@@ -113,18 +154,18 @@ namespace model {
 
         // Rotate around zero so need to offset
         auto & animat = m_animats[index];
-        auto & physicsEngine = animat.getPhysicsEngine();
-        auto centerPoint = animat.getCentralPoint();
-        auto difference = physicsEngine.getPointMassPosition(animat.getLayer(0).getIndexLeft())
+        auto & physicsEngine = animat->getPhysicsEngine();
+        auto centerPoint = animat->getCentralPoint();
+        auto difference = physicsEngine.getPointMassPosition(animat->getLayer(0).getIndexLeft())
                         - centerPoint.first;
         doTranslateAnimatPosition(index, difference.m_vec[0], difference.m_vec[1]);
 
         // Rotate animat by heading matrix
-        auto const blockCount = animat.getBlockCount();
+        auto const blockCount = animat->getBlockCount();
 
         // First update the point mass positions
         for (auto lay = 0 ; lay <= blockCount; ++lay) {
-            auto & layer = animat.getLayer(lay);
+            auto & layer = animat->getLayer(lay);
             auto const indexLeft = layer.getIndexLeft();
             auto const indexRight = layer.getIndexRight();
             auto & leftPos = physicsEngine.getPointMassPositionRef(indexLeft);
@@ -141,11 +182,11 @@ namespace model {
     void AnimatWorld::update()
     {
         for (auto & animat : m_animats) {
-            animat.update();
+            animat->update();
         }
     }
 
-    model::Animat & AnimatWorld::animat(int const index)
+    std::shared_ptr<model::Animat>AnimatWorld::animat(int const index)
     {
         return m_animats[index];
     }
@@ -155,12 +196,12 @@ namespace model {
                                                 double const y)
     {
         auto & animat = m_animats[index];
-        auto & physicsEngine = animat.getPhysicsEngine();
-        auto const blockCount = animat.getBlockCount();
+        auto & physicsEngine = animat->getPhysicsEngine();
+        auto const blockCount = animat->getBlockCount();
 
         // First update the point mass positions
         for (auto lay = 0 ; lay <= blockCount; ++lay) {
-            auto & layer = animat.getLayer(lay);
+            auto & layer = animat->getLayer(lay);
             auto const indexLeft = layer.getIndexLeft();
             auto const indexRight = layer.getIndexRight();
             auto & leftPos = physicsEngine.getPointMassPositionRef(indexLeft);
@@ -172,14 +213,14 @@ namespace model {
         }
 
         // Then update the derived stuff (antenna, bounding circles etc.)
-        animat.updateDerivedComponents();
+        animat->updateDerivedComponents();
     }
 
     void AnimatWorld::translateIfOutOfBounds(int const index,
                                               double const boundX,
                                               double const boundY)
     {
-        auto centralPoint = m_animats[index].getCentralPoint();
+        auto centralPoint = m_animats[index]->getCentralPoint();
         auto transX = 0.0;
         auto transY = 0.0;
         if(centralPoint.first[0] < -boundX) {

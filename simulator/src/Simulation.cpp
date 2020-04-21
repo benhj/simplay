@@ -46,8 +46,7 @@ namespace simulator {
                             int const everyN, 
                             bool const withMutations)
     {
-        m_population.update();
-        m_population.optimize(tick, everyN, withMutations);
+        m_population.update(tick, everyN, withMutations);
     }
 
     void Simulation::loop()

@@ -50,7 +50,7 @@ namespace model {
         }
 
         // antennae
-        constructAntennae();
+        // constructAntennae();
 
         // center point -- the center of the animat
         updateCentralPoint();
@@ -203,7 +203,7 @@ namespace model {
 
     void Animat::doUpdateDerivedComponents()
     {
-        constructAntennae();
+        //constructAntennae();
         updateBoundingCircles();
         updateCentralPoint();
     }

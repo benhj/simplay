@@ -130,7 +130,8 @@ namespace glconsole {
                             auto beforeNewLine = m_buffer.str();
 
                             // New line
-                            m_buffer << "\n"  << m_prompt;
+                            m_buffer.str("");
+                            m_buffer << m_prompt;
 
                             // Store buffer so far (in aid of
                             // a bug-free backspace process).

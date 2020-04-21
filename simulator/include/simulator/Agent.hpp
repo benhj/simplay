@@ -17,14 +17,14 @@ namespace simulator {
     class Agent 
     {
       public:
-        Agent(model::Animat & animat);
+        Agent(std::shared_ptr<model::Animat> animat);
 
         /// Actuate the animat based on control output
         /// Returns 0 on success, -1 if problem
         int update();
 
-        /// Mutates the control mechanism
-        void modifyController();
+        /// Mutates the NEAT architecture
+        void mutateNeat();
 
         /// Inherits genome from another agent
         void inheritNeat(Agent const & other);
@@ -43,6 +43,9 @@ namespace simulator {
 
         neat::Network getNeatNet() const;
 
+        /// An agent is considered 'bad' if its physics
+        /// became unstable during the simulation process.
+        /// This is reset with age.
         void setBad();
 
         long getAge() const;
@@ -59,7 +62,7 @@ namespace simulator {
       private:
 
         /// The physical shell of the animat agent  
-        model::Animat & m_animat;
+        std::shared_ptr<model::Animat> m_animat;
 
         /// The neat network that will encode the 
         /// connectivity of the controller
@@ -72,7 +75,6 @@ namespace simulator {
         physics::Vector3 m_startPosition;
 
         double m_distanceMoved;
-        double mutable m_previousDistanceMoved;
 
         /// When physics broke
         bool mutable m_bad;
@@ -80,6 +82,8 @@ namespace simulator {
         /// rt-neat
         long m_age;
 
+        /// Fitness is adjusted according to distance swam
+        /// divided by the number of members making up the species.
         double m_adjustedFitness;
 
     };

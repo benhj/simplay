@@ -74,6 +74,17 @@ namespace {
         return adjusted;
     }
 
+    int getSegmentCount(int const index, std::vector<simulator::Agent> & agents)
+    {
+        auto neat = agents[index].getNeatNet();
+        auto output = neat.getOutput(2);
+        output += 1;
+        auto segments = output * 5.0;
+        if(segments > 12) {
+            segments = 12;
+        }
+        return (int)(segments);
+    }
 }
 
 namespace simulator {
@@ -91,28 +102,9 @@ namespace simulator {
         }
     }
 
-    void Population::update()
-    {
-        /*
-        for (int p = 0; p < m_popSize; ++p) {
-            auto & agent = m_agents[p];
-
-            // if physics broke, reinit position in world
-            if(agent.update() == -1) {
-                m_animatWorld.randomizePositionSingleAnimat(p, 10, 10);
-                agent.recordStartPosition();
-                agent.resetController();
-                agent.setBad();
-                agent.resetAge();
-                // give animat a fitter genome, the elite one in fact
-                // agent.inheritNeat(m_agents[m_eliteIndex]);
-            }
-        }*/
-    }
-
-    void Population::optimize(long const tick, 
-                  int const everyN,
-                  bool const withMutations)
+    void Population::update(long const tick, 
+                            int const everyN,
+                            bool const withMutations)
     {
 
         int p = 0;
@@ -188,85 +180,21 @@ namespace simulator {
         }
 
         if(bestIndex > -1 && worstIndex > -1 && worstIndex != choice) {
-            //std::cout<<m_agents[worstIndex].getAdjustedFitness()<<"\t"<<m_agents[choice].getAdjustedFitness()<<std::endl;
             m_agents[worstIndex].inheritNeat(m_agents[choice]);
-            m_agents[worstIndex].modifyController();
+            m_agents[worstIndex].mutateNeat();
+            // Mutating the NEAT architecture can result in a
+            // different number of body segments meaning that
+            // the animat needs to be reconstructed.
+            /*
+            auto const oldSegmentCount = m_animatWorld.animat(worstIndex)
+                                         ->getBlockCount();
+            auto const segments = getSegmentCount(worstIndex, m_agents);
+            if(segments != oldSegmentCount) {
+                m_animatWorld.reconstructAnimat(worstIndex, segments);
+                m_animatWorld.randomizePositionSingleAnimat(worstIndex, 10, 10);
+            }*/
             m_agents[worstIndex].resetController();
+            m_animatWorld.incrementOptimizationCount();
         }
-
-        /// How often to 'mutate the controllers'
-        /*
-        if(tick % everyN == 0 && tick > 0) {
-
-            // record distances travelled for each agent
-            for (auto & agent : m_agents) {
-                agent.recordDistanceMoved();
-            }
-
-            regenerate(withMutations);
-
-            m_animatWorld.randomizePositions(10, 10);
-
-            // set agent starting positions
-            for (auto & agent : m_agents) {
-                agent.recordStartPosition();
-            }
-        }
-        */
-    }
-
-    void Population::regenerate(bool const withMutations)
-    {
-        /*
-        // store all fitness values
-        std::vector<FitnessPair> fitnesses;
-        fitnesses.reserve(m_popSize);
-        int i = 0;
-        for (auto const & agent : m_agents) {
-            auto dm = agent.distanceMoved();
-            fitnesses.emplace_back(i, dm);
-            ++i;
-        }
-
-        // sort according to fitness
-        std::sort(std::begin(fitnesses), std::end(fitnesses),
-                  [](FitnessPair const & a,
-                     FitnessPair const & b) {
-                      return b.second < a.second;
-                  });
-
-        // Store index of the fittest to replace broken agents
-        m_eliteIndex = fitnesses[0].first;
-
-
-        std::cout<<m_eliteIndex<<"\t"<<m_agents[m_eliteIndex].distanceMoved()<<std::endl;
-
-
-        // pick the top m_popSize/N and regen rest of population out of those
-        std::vector<neat::Network> newPop;
-        newPop.push_back(m_agents[m_eliteIndex].getNeatNet());
-
-        for(int i = 1; i < m_popSize; ++i) {
-            auto candA = randomInt(m_popSize);
-            auto candB = randomInt(m_popSize);
-            if(getSharedFitness(candA, m_agents) > getSharedFitness(candB, m_agents)) {
-                newPop.push_back(m_agents[candA].getNeatNet());
-            } else {
-                newPop.push_back(m_agents[candB].getNeatNet());
-            }
-        }
-
-        i = 0;
-        for (auto & agent : m_agents) {
-            agent.inheritNeat(newPop[i]);
-            // mutate inherited genome
-            if(i != 0 && withMutations) {
-                agent.modifyController();
-            } 
-            // put controller back in basal state
-            agent.resetController();
-            ++i;
-        }
-        */
     }
 }

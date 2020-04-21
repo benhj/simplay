@@ -71,6 +71,9 @@ namespace model {
         /// Retrieve the population ID of this animat
         int getID() const;
 
+        /// Colour is used as a representation of species.
+        /// The species changes when a new innovation occurs
+        /// in the neat genome.
         void updateSpeciesColour(double r, double g, double b);
         SpeciesColour getSpeciesColour() const;
 

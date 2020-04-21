@@ -23,7 +23,7 @@ namespace {
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     }
 
-    //int const consoleHeight = 75;
+    int const consoleHeight = 75;
 
 }
 
@@ -38,18 +38,18 @@ namespace graphics {
       , m_threadRunner(threadRunner)
       , m_viewDistance(0.4)
       , m_guiElements()
-      // , m_consoleOpacity(0)
-      // , m_console(m_windowWidth,
-      //             m_windowHeight,
-      //             m_windowWidth,
-      //             consoleHeight * detail::retinaScalar(),
-      //             0,                      // x 
-      //             m_windowHeight - (consoleHeight * detail::retinaScalar()),
-      //             12,                     // font size
-      //             "/Library/Fonts/Courier New.ttf",
-      //             m_consoleOpacity)
-      // , m_displayConsole(false)
-      // , m_consoleHasFocus(false)
+      , m_consoleOpacity(0)
+      , m_console(m_windowWidth,
+                  m_windowHeight,
+                  m_windowWidth,
+                  consoleHeight * detail::retinaScalar(),
+                  0,                      // x 
+                  m_windowHeight - (consoleHeight * detail::retinaScalar()),
+                  14,                     // font size
+                  "../fonts/09809_COURIER.ttf",
+                  m_consoleOpacity)
+      , m_displayConsole(false)
+      , m_consoleHasFocus(false)
     {
         init();
     }
@@ -78,9 +78,9 @@ namespace graphics {
         }
 
         // If console is activated, check if mouse is over it
-        // if(m_displayConsole.load()) {
-        //     m_consoleHasFocus = m_console.mouseIsOver(x, y);
-        // }
+        if(m_displayConsole.load()) {
+            m_consoleHasFocus = m_console.mouseIsOver(x, y);
+        }
     }
 
     void Graphics::keyboardHandler(int const key, 
@@ -89,27 +89,27 @@ namespace graphics {
                                    int const mods) 
     {
         // If the console has focuse, pipe handler through to console
-        // if(m_consoleHasFocus.load()) {
-        //     m_console.keyHandler(key, scancode, action, mods);
-        //     return;
-        // }
+        if(m_consoleHasFocus.load()) {
+            m_console.keyHandler(key, scancode, action, mods);
+            return;
+        }
 
         if (action == GLFW_PRESS) {
             // special handler for console window
-            // if(key == 'C') {
-            //     auto orig = m_displayConsole.load();
-            //     m_displayConsole = !orig;
-            //     if(m_displayConsole) {
-            //         fadeInConsole();
-            //     } else {
-            //         m_consoleOpacity = 0;
-            //     }
-            // } 
-            // // for all other key presses
-            // else 
-            // {
+            if(key == 'C') {
+                auto orig = m_displayConsole.load();
+                m_displayConsole = !orig;
+                if(m_displayConsole) {
+                    fadeInConsole();
+                } else {
+                    m_consoleOpacity = 0;
+                }
+            } 
+            // for all other key presses
+            else 
+            {
             handleKeyDown(key);
-            // }
+            }
         } else if(action == GLFW_RELEASE) {
             handleKeyUp(key);
         } else if(action == GLFW_REPEAT) {
@@ -184,9 +184,9 @@ namespace graphics {
         }
 
         // Draw the console, if enabled
-        // if(m_displayConsole.load()) {
-        //     m_console.display();
-        // }
+        if(m_displayConsole.load()) {
+            m_console.display();
+        }
         drawGUIElementsTearDown();
     }
 
@@ -211,18 +211,17 @@ namespace graphics {
         m_guiElements.emplace_back(std::move(element));
     }
 
-    // void Graphics::fadeInConsole()
-    // {
-    //     m_threadRunner.add([this]{
-    //         auto const inc = (0.8 / 20);
-    //         for(int i = 0; i < 20; ++i) {
-    //             auto val = m_consoleOpacity.load();
-    //             val += inc;
-    //             m_consoleOpacity.store(val);
-    //             ::usleep(5000);
-    //         }
-    //     });
-    // }
-
+    void Graphics::fadeInConsole()
+    {
+        m_threadRunner.add([this]{
+            auto const inc = (0.8 / 20);
+            for(int i = 0; i < 20; ++i) {
+                auto val = m_consoleOpacity.load();
+                val += inc;
+                m_consoleOpacity.store(val);
+                ::usleep(5000);
+            }
+        });
+    }
 }
 

@@ -1,4 +1,4 @@
-/// Copyright (c) 2017 Ben Jones
+/// Copyright (c) 2017-present Ben Jones
 
 #pragma once
 
@@ -13,12 +13,10 @@ namespace simulator {
       public:
         Population(int const popSize, model::AnimatWorld & animatWorld);
 
-        void update();
-
         /// update the agents based on some optimiation process
-        void optimize(long const tick, 
-                      int const everyN = 400,
-                      bool const withMutations = true);
+        void update(long const tick, 
+                    int const everyN = 400,
+                    bool const withMutations = true);
 
       private:
 

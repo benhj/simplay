@@ -36,7 +36,7 @@ namespace graphics {
             auto const rad = 50.0;
 
             // Draw outer compass circle
-            detail::setColor(m_compassOutline, 0.5 /* opacity */);
+            detail::setColor(m_compassOutline, 0.3 /* opacity */);
             detail::lineWidth(3.0);
             glBegin(GL_LINE_LOOP);
                 for (double angle = 0; angle < 3.1415926f * 2; angle += 0.25) {
@@ -46,7 +46,7 @@ namespace graphics {
             detail::lineWidth(1.0);
 
             // Draw blue 'north' part of pointer
-            detail::setColor(m_pointerUp);
+            detail::setColor(m_pointerUp, 0.3 /* opacity */);
             glBegin(GL_POLYGON);
                 glVertex3f(0, 50, 0);
                 glVertex3f(-5, 0,0);
@@ -54,7 +54,7 @@ namespace graphics {
             glEnd();
 
             // Draw white 'south' part of pointer
-            detail::setColor(m_pointerDown);
+            detail::setColor(m_pointerDown, 0.3 /* opacity */);
             glBegin(GL_POLYGON);
                 glVertex3f(0, -50, 0);
                 glVertex3f(-5, 0,0);
@@ -62,7 +62,7 @@ namespace graphics {
             glEnd();
 
             // Draw outline around pointer
-            detail::setColor(m_pointerOutline);
+            detail::setColor(m_pointerOutline, 0.3 /* opacity */);
             glBegin(GL_LINES);
                 glVertex3f(0, 50, 0);
                 glVertex3f(-5, 0,0);

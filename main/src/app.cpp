@@ -21,6 +21,7 @@
 #include <thread>
 #include <atomic>
 #include <memory>
+#include <mutex>
 #include <unistd.h>
 
 int windowWidth = 800;
@@ -29,8 +30,6 @@ int popSize = 20;
 
 // For running operations asynchronously
 graphics::detail::ThreadRunner threadRunner;
-
-
 
 std::unique_ptr<graphics::Graphics> graphix;
 
@@ -82,6 +81,11 @@ int main(int argc, char **argv)
                                           windowHeight, 
                                           animatWorld,
                                           threadRunner);
+
+    animatWorld.setAnimatUpdatedObserver([&glEnvironment]
+        (int const index, std::shared_ptr<model::Animat> animat) {
+        glEnvironment.updateAnimat(index, std::move(animat));
+    });
 
     // GUI agnostics GL calls
     graphix.reset(new graphics::Graphics(windowWidth, 

@@ -19,6 +19,7 @@
 #include <vector>
 #include <atomic>
 #include <chrono>
+#include <sstream>
 #include <unistd.h>
 
 namespace graphics {
@@ -40,7 +41,7 @@ namespace graphics {
         , m_oldFlyXDiv(0)
         , m_oldFlyYDiv(0)
         , m_selected(-1)
-        // , m_generationText()
+        , m_generationText()
         {
             auto const popSize = m_animatWorld.getPopSize();
             m_glAnimats.reserve(popSize);
@@ -48,8 +49,15 @@ namespace graphics {
                 m_glAnimats.emplace_back(m_animatWorld.animat(p),
                                          m_threadRunner);
             }
-            // m_generationText.init("/Library/Fonts/Arial.ttf", 
-            //                       25 * detail::retinaScalar());
+            m_generationText.init("../fonts/digital-7.ttf", 
+                                   25 * detail::retinaScalar());
+        }
+
+        void updateAnimat(int const index,
+                          std::shared_ptr<model::Animat> animat)
+        {
+            std::lock_guard<std::mutex> lg(m_mutex);
+            m_glAnimats[index].updateAnimat(std::move(animat));
         }
 
         void draw()
@@ -66,23 +74,28 @@ namespace graphics {
                              m_worldOrientation,
                              m_centerX,
                              m_centerY);
-            for (int p = 0; p < m_animatWorld.getPopSize(); ++p) {
-                m_glAnimats[p].draw();
+            {
+                std::lock_guard<std::mutex> lg(m_mutex);
+                for (int p = 0; p < m_animatWorld.getPopSize(); ++p) {
+                    m_glAnimats[p].draw();
+                }
             }
-            if (m_displayCompass) {
-                graphics::GLCompass(m_windowWidth, 
-                                    m_windowHeight,
-                                    m_viewDistance,
-                                    m_worldOrientation).draw();
-            }
-            // glPushMatrix();
-            // glLoadIdentity();
-            // // Blue texts
-            // glColor3ub(0,0,0xff);
-            // auto realWidth = m_windowWidth * detail::retinaScalar();
-            // glfreetype::print(m_generationText, realWidth / 1.5, 
-            //                   10 * detail::retinaScalar(), "Generation: ");
-            // glPopMatrix();
+
+            graphics::GLCompass(m_windowWidth, 
+                                m_windowHeight,
+                                m_viewDistance,
+                                m_worldOrientation).draw();
+            
+            glPushMatrix();
+            glLoadIdentity();
+            // Blue texts
+            glColor4f(0.5, 0.5, 0.9, 0.9);
+            auto realWidth = m_windowWidth * detail::retinaScalar();
+            std::stringstream ss;
+            ss << "GEN " << m_animatWorld.getOptimizationCount();
+            glfreetype::print(m_generationText, 200, 
+                              35 * detail::retinaScalar(), ss.str());
+            glPopMatrix();
         }
 
         std::atomic<double> & getWorldOrientation()
@@ -112,6 +125,7 @@ namespace graphics {
 
         void checkForAnimatHighlight(double const x, double const y)
         {
+            std::lock_guard<std::mutex> lg(m_mutex);
             for (auto & glAnimat : m_glAnimats) {
                 glAnimat.checkForHighlight(x, m_windowHeight - y, 
                                            m_viewDistance, 
@@ -164,6 +178,7 @@ namespace graphics {
         // WARNING -- the following function is hacky as fuck!!
         void flyIn()
         {
+            std::lock_guard<std::mutex> lg(m_mutex);
             // Whether to 'fly in' or 'fly out'
             static bool in = true;
 
@@ -171,8 +186,8 @@ namespace graphics {
             if (in) {
                 if(m_selected > -1) {
                     auto & flAnimat = m_glAnimats[m_selected];
-                    auto & animat = flAnimat.animatRef();
-                    auto centralPoint = animat.getCentralPoint();
+                    auto animat = flAnimat.animatRef();
+                    auto centralPoint = animat->getCentralPoint();
                     auto & pos = centralPoint.first;
                     auto cx = pos.m_vec[0];
                     auto cy = pos.m_vec[1];
@@ -220,8 +235,10 @@ namespace graphics {
         std::atomic<bool> m_displayAxis{true};
         std::atomic<bool> m_displayCompass{false};
 
+        std::mutex m_mutex;
+
         // Display current generation
-        // glfreetype::font_data m_generationText;
+        glfreetype::font_data m_generationText;
 
 
         void processFlyIn(double const centerDivX, 

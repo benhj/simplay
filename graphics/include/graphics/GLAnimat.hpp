@@ -12,7 +12,7 @@ namespace graphics {
 
     struct GLAnimat
     {
-        GLAnimat(model::Animat & animat,
+        GLAnimat(std::shared_ptr<model::Animat> animat,
                  detail::ThreadRunner & threadRunner);
 
         GLAnimat() = delete;
@@ -27,11 +27,13 @@ namespace graphics {
                                double const centerX,
                                double const centerY);
 
-        model::Animat & animatRef();
+        std::shared_ptr<model::Animat> animatRef();
+
+        void updateAnimat(std::shared_ptr<model::Animat> animat);
 
       private:
 
-        model::Animat & m_animat;
+        std::shared_ptr<model::Animat> m_animat;
 
         /// Threads the fade-in or fade-out process
         detail::ThreadRunner & m_threadRunner;
@@ -51,6 +53,8 @@ namespace graphics {
 
         /// For fade-level of button
         std::shared_ptr<std::atomic<double>> m_opacity;
+
+        std::shared_ptr<std::mutex> m_mutex;
 
         void drawBody();
         void drawAntennae();

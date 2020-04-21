@@ -16,17 +16,16 @@ namespace {
 }
 
 namespace simulator {
-    Agent::Agent(model::Animat & animat)
-      : m_animat(animat)
+    Agent::Agent(std::shared_ptr<model::Animat> animat)
+      : m_animat(std::move(animat))
       , m_neat(NEAT_INPUTS, 
                NEAT_OUTPUTS, 
                MAX_NEAT_NODES, 
                NEAT_MUTS,
                NEAT_WEIGHT_BOUND)
-      , m_controller(std::make_shared<CTRNNController>(animat.getBlockCount(), m_neat))
+      , m_controller(std::make_shared<CTRNNController>(m_animat->getBlockCount(), m_neat))
       , m_startPosition{0,0,0}
       , m_distanceMoved(0)
-      , m_previousDistanceMoved(0)
       , m_bad(false)
       , m_age(0)
       , m_adjustedFitness(0)
@@ -62,27 +61,27 @@ namespace simulator {
 
     void Agent::updateSpeciesColour(double r, double g, double b)
     {
-        m_animat.updateSpeciesColour(r, g, b);
+        m_animat->updateSpeciesColour(r, g, b);
     }
 
     model::SpeciesColour Agent::getSpeciesColour() const
     {
-        return m_animat.getSpeciesColour();
+        return m_animat->getSpeciesColour();
     }
 
     int Agent::update()
     {
-        auto blockCount = m_animat.getBlockCount();
+        auto blockCount = m_animat->getBlockCount();
         for(int integ = 0; integ < 10; ++integ) {
             for (auto i = 0 ; i < blockCount; ++i) {
                 auto outputLeft = m_controller->getLeftMotorOutput(i) * 20;
                 auto outputRight = m_controller->getRightMotorOutput(i) * 20;
-                m_animat.applyBlockContraction(i, 0, outputLeft);
-                m_animat.applyBlockContraction(i, 1, outputRight);
+                m_animat->applyBlockContraction(i, 0, outputLeft);
+                m_animat->applyBlockContraction(i, 1, outputRight);
             }
-            m_animat.applyWaterForces();    
-            m_animat.update();
-            if (m_animat.broke()) {
+            m_animat->applyWaterForces();    
+            m_animat->update();
+            if (m_animat->broke()) {
                 return -1;
             }
         }   
@@ -111,9 +110,12 @@ namespace simulator {
         m_controller->set();
     }
 
-    void Agent::modifyController()
+    void Agent::mutateNeat()
     {
-        // see if new species
+        // During mutation, it is possible for new
+        // innovations to appear. Whenever this happens
+        // the agent becomes a new species which is
+        // visualized using colour.
         if(m_neat.mutate()) {
             auto r = ::rand() / double(RAND_MAX);
             auto g = ::rand() / double(RAND_MAX);
@@ -131,12 +133,12 @@ namespace simulator {
     void Agent::resetController()
     {
         m_controller.reset();
-        m_controller = std::make_shared<CTRNNController>(m_animat.getBlockCount(), m_neat);
+        m_controller = std::make_shared<CTRNNController>(m_animat->getBlockCount(), m_neat);
     }
 
     void Agent::recordStartPosition()
     {
-        m_startPosition = m_animat.getCentralPoint().first;
+        m_startPosition = m_animat->getCentralPoint().first;
     }
 
     void Agent::recordDistanceMoved() 
@@ -144,19 +146,13 @@ namespace simulator {
         if(m_bad) {
             m_distanceMoved = 0;
         } else {
-            m_distanceMoved = (m_animat.getCentralPoint().first).distance(m_startPosition);
+            m_distanceMoved = (m_animat->getCentralPoint().first).distance(m_startPosition);
         }
     }
 
     double Agent::distanceMoved() const
     {
-        m_previousDistanceMoved = m_distanceMoved;
         return m_distanceMoved;
-    }
-
-    double Agent::previousDistanceMoved() const
-    {
-        return m_previousDistanceMoved;
     }
 
     neat::Network Agent::getNeatNet() const

@@ -6,6 +6,7 @@
 #include "graphics/RetinaScalar.hpp"
 #include "physics/PhysicsEngine.hpp"
 #include "model/Animat.hpp"
+#include "model/AnimatWorld.hpp"
 #include <OpenGL/gl.h>
 #include <cmath>
 #include <atomic>
@@ -15,7 +16,7 @@
 #include <unistd.h>
 
 namespace {
-    // glfreetype::font_data g_animatText;
+    glfreetype::font_data g_animatText;
     std::once_flag g_textInitGuard;
 }
 
@@ -40,19 +41,24 @@ namespace graphics {
         }
     }
 
-    GLAnimat::GLAnimat(model::Animat & animat,
+    GLAnimat::GLAnimat(std::shared_ptr<model::Animat> animat,
                        detail::ThreadRunner & threadRunner)
-      : m_animat(animat)
+      : m_animat(std::move(animat))
       , m_threadRunner(threadRunner)
       , m_highlighted(std::make_shared<std::atomic<bool>>(false)) 
       , m_selected(std::make_shared<std::atomic<bool>>(false))
       , m_opacity(std::make_shared<std::atomic<double>>(1))
     {
-        // std::call_once(g_textInitGuard, 
-        //                [&](){ 
-        //                    g_animatText.init("../fonts/Action_Man.ttf", 
-        //                    12 * detail::retinaScalar()); 
-        //                 });
+        std::call_once(g_textInitGuard, 
+                       [&](){
+                           g_animatText.init("../fonts/Action_Man.ttf",
+                           14 * detail::retinaScalar()); 
+                        });
+    }
+
+    void GLAnimat::updateAnimat(std::shared_ptr<model::Animat> animat)
+    {
+        m_animat = std::move(animat);
     }
 
     void GLAnimat::draw()
@@ -87,7 +93,7 @@ namespace graphics {
         x -= centerX;
         x *= detail::retinaScalar();
         y *= detail::retinaScalar();
-        auto centralPoint = m_animat.getCentralPoint();
+        auto centralPoint = m_animat->getCentralPoint();
         auto & pos = centralPoint.first;
         auto cx = pos.m_vec[0];
         auto cy = pos.m_vec[1];
@@ -107,7 +113,7 @@ namespace graphics {
         }
     }
 
-    model::Animat & GLAnimat::animatRef() 
+    std::shared_ptr<model::Animat> GLAnimat::animatRef() 
     {
         return m_animat;
     }
@@ -115,9 +121,12 @@ namespace graphics {
     void GLAnimat::drawBody()
     {
         detail::lineWidth(4.0);
-        auto & physicsEngine = m_animat.getPhysicsEngine();
-        for(int b = 0; b < m_animat.getBlockCount(); ++b) {
-            auto block = m_animat.getBlock(b);
+        auto & physicsEngine = m_animat->getPhysicsEngine();
+
+        auto blocks = m_animat->getBlockCount();
+
+        for(int b = 0; b < m_animat->getBlockCount(); ++b) {
+            auto block = m_animat->getBlock(b);
             auto layer1 = block.getLayerOne();
             auto layer2 = block.getLayerTwo();
             auto layer1Left = layer1.getPositionLeft(physicsEngine);
@@ -136,7 +145,7 @@ namespace graphics {
                 glVertex3f(layer1Right.m_vec[0], layer1Right.m_vec[1], 0);
                 glVertex3f(layer2Right.m_vec[0], layer2Right.m_vec[1], 0);
             glEnd();
-            auto sc = m_animat.getSpeciesColour();
+            auto sc = m_animat->getSpeciesColour();
             detail::setColor({sc.R, sc.G, sc.B});
             glBegin(GL_QUADS);
                 glVertex3f(layer1Left.m_vec[0], layer1Left.m_vec[1], 0);
@@ -152,12 +161,13 @@ namespace graphics {
     void GLAnimat::drawAntennae()
     {
         detail::lineWidth(2.0);
-        auto & physicsEngine = m_animat.getPhysicsEngine();
-        auto blocks = m_animat.getBlockCount();
+        auto & physicsEngine = m_animat->getPhysicsEngine();
+        auto blocks = m_animat->getBlockCount();
+
         // Draw antennae
-        auto leftAnt = m_animat.getLeftAntennaePoint();
-        auto rightAnt = m_animat.getRightAntennaePoint();
-        auto & layer1 = m_animat.getBlock(blocks-1).getLayerTwo();
+        auto leftAnt = m_animat->getLeftAntennaePoint();
+        auto rightAnt = m_animat->getRightAntennaePoint();
+        auto & layer1 = m_animat->getBlock(blocks-1).getLayerTwo();
         auto layer1Left = layer1.getPositionLeft(physicsEngine);
         auto layer1Right = layer1.getPositionRight(physicsEngine);
         glBegin(GL_LINES);
@@ -181,8 +191,8 @@ namespace graphics {
 
     void GLAnimat::drawBoundingCircles()
     {
-        for(int b = 0; b < m_animat.getBlockCount(); ++b) {
-            auto boundingPair = m_animat.getBoundingCircle(b);
+        for(int b = 0; b < m_animat->getBlockCount(); ++b) {
+            auto boundingPair = m_animat->getBoundingCircle(b);
             auto & centerPoint = boundingPair.first;
             detail::drawCircle(centerPoint.m_vec[0], 
                                centerPoint.m_vec[1],
@@ -224,15 +234,15 @@ namespace graphics {
         cy += (boundingPair.second * 1.2);
         double sx, sy;
         detail::worldToScreen(cx, cy, sx, sy);
-        //std::stringstream ss;
-        //ss << "ID: " << m_animat.getID();
-        //glfreetype::print(g_animatText, sx - 20, sy, ss.str());
+        std::stringstream ss;
+        ss << "ID: " << m_animat->getID();
+        glfreetype::print(g_animatText, sx - 20, sy, ss.str());
         glPopMatrix();
     }
 
     void GLAnimat::drawBigBoundingCircle()
     {
-        auto boundingPair = m_animat.getCentralPoint();
+        auto boundingPair = m_animat->getCentralPoint();
         if(*m_selected) {
             detail::lineWidth(2.0);
         } else {

@@ -52,13 +52,13 @@ namespace graphics {
         std::atomic<float> m_consoleOpacity;
 
         /// A command window that will slide out from the top
-        //glconsole::GLConsole m_console;
+        glconsole::GLConsole m_console;
 
         /// Display command console?
-        //std::atomic<bool> m_displayConsole;
+        std::atomic<bool> m_displayConsole;
 
         /// Console has focus when mouse is over it
-        //std::atomic<bool> m_consoleHasFocus;
+        std::atomic<bool> m_consoleHasFocus;
 
         void handleKeyDown(int const key);
         void handleKeyUp(int const key);
@@ -70,7 +70,7 @@ namespace graphics {
         void drawGUIElementsTearDown();
 
         /// Fade in the console window
-        //void fadeInConsole();
+        void fadeInConsole();
 
 
     };

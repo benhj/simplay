@@ -1,4 +1,4 @@
-/// Copyright (c) 2017 Ben Jones
+/// Copyright (c) 2017-present Ben Jones
 
 #pragma once
 
@@ -6,6 +6,8 @@
 /// Responsible for initializing and updating the world.
 
 #include "Animat.hpp"
+#include <functional>
+#include <memory>
 #include <vector>
 
 namespace model {
@@ -29,16 +31,45 @@ namespace model {
          void update();
 
          /// Retrieve an animat
-         model::Animat & animat(int const index);
+         std::shared_ptr<model::Animat> animat(int const index);
 
          int getPopSize() const;
 
+         /// If the animat falls out of the designated
+         /// bounds of the environment, 'wrap' it around
+         /// in the manner of a toroid.
          void translateIfOutOfBounds(int const index,
                                      double const boundX,
                                      double const boundY);
 
+         /// Rebuild a given animat with an updated number
+         /// of body segments.
+         void reconstructAnimat(int const index, int const segments);
+
+         /// The observer that gets triggered before and after updating
+         /// the physical morphology of a given animat so that the
+         /// graphics subsystem can be appropriately locked
+         void setAnimatUpdatedObserver
+         (std::function<void(int const, std::shared_ptr<Animat>)> func);
+
+         static std::vector<std::shared_ptr<std::mutex>> g_fuckers;
+
+         void incrementOptimizationCount();
+         long getOptimizationCount() const;
+
        private:
-         std::vector<model::Animat> m_animats;
+         std::vector<std::shared_ptr<model::Animat>> m_animats;
+
+         /// Before updating an animat's geometry, this function
+         /// should be called to lock the graphics observer
+         /// and called againt afterwards to unlock it
+         std::function<void(int const, std::shared_ptr<Animat>)> 
+         m_animatUpdatedObserver;
+
+         /// Records the number of times the population
+         /// has been optimized. Equivalent to the concept
+         /// of 'generation'.
+         long m_optimizations;
 
          /// Move animat to new relative position in world
          void doTranslateAnimatPosition(int const index,
