@@ -123,6 +123,7 @@ namespace graphics {
     /// Draw slider knob at some position on slider
     void GLVerticalSlider::drawSliderKnob()
     {
+
         auto position = - m_sliderPosition 
                         + m_windowHeight
                         - m_windowOffset;
@@ -142,5 +143,14 @@ namespace graphics {
                    position,
                    15.0, 
                    10);  
+    }
+
+    void GLVerticalSlider::updateSliderPosition(double const value)
+    {
+        m_currentVal = value;
+        auto position = m_currentVal * m_length;
+        position += m_windowOffset;
+        position = position - m_windowHeight;
+        m_sliderPosition = -position;
     }
 }

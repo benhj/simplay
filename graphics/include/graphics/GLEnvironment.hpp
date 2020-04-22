@@ -19,6 +19,7 @@
 #include <vector>
 #include <atomic>
 #include <chrono>
+#include <functional>
 #include <sstream>
 #include <unistd.h>
 
@@ -28,13 +29,14 @@ namespace graphics {
       public:
         GLEnvironment(int & windowWidth,
                       int & windowHeight,
+                      double & viewDistance,
                       model::AnimatWorld & animatWorld,
                       detail::ThreadRunner & threadRunner)
         : m_windowWidth(windowWidth)
         , m_windowHeight(windowHeight)
         , m_animatWorld(animatWorld)
         , m_threadRunner(threadRunner)
-        , m_viewDistance(0.4)
+        , m_viewDistance(viewDistance)
         , m_worldOrientation(0)
         , m_centerX(0)
         , m_centerY(0)
@@ -103,7 +105,7 @@ namespace graphics {
             return m_worldOrientation;
         }
 
-        std::atomic<double> & getViewDistance()
+        double & getViewDistance()
         {
             return m_viewDistance;
         }
@@ -216,6 +218,11 @@ namespace graphics {
             }
         }
 
+        void setZoomTrigger(std::function<void()> zoomTrigger)
+        {
+            m_zoomTrigger = std::move(zoomTrigger);
+        }
+
       private:
         int & m_windowWidth;
         int & m_windowHeight;
@@ -224,7 +231,7 @@ namespace graphics {
 
         /// Index of the currently selected animat
         std::atomic<int> m_selected;
-        std::atomic<double> m_viewDistance;
+        double & m_viewDistance;
         std::atomic<double> m_worldOrientation;
         std::atomic<double> m_centerX;
         std::atomic<double> m_centerY;
@@ -241,6 +248,11 @@ namespace graphics {
         // Display current generation
         glfreetype::font_data m_generationText;
 
+        // Tiggered when view distance is updated so that components
+        // relying on this value (e.g. the vertical slider)
+        // can be updated
+        std::function<void()> m_zoomTrigger;
+
 
         void processFlyIn(double const centerDivX, 
                           double const centerDivY,
@@ -252,7 +264,7 @@ namespace graphics {
             m_viewDistance = 0.4;
             m_oldZoomIt = (m_viewDistance - 0.15) / 10.0;
             std::function<void()> func([=]() {
-                auto zoomVal = m_viewDistance.load();
+                auto zoomVal = m_viewDistance;
                 for(int i = 0; i < 10; ++i) {
                     auto valX = m_centerX.load();
 
@@ -275,7 +287,11 @@ namespace graphics {
                     }
                     m_centerY.store(valY);
                     zoomVal -= m_oldZoomIt;
-                    m_viewDistance.store(zoomVal);
+                    m_viewDistance = zoomVal;
+
+                    if(m_zoomTrigger) {
+                        m_zoomTrigger();
+                    }
 
                     usleep(10000);
                 }
@@ -289,7 +305,7 @@ namespace graphics {
             m_oldFlyYDiv /= 10;
             m_oldFlyXDiv /= 10;
             std::function<void()> func([=]() {
-                auto zoomVal = m_viewDistance.load();
+                auto zoomVal = m_viewDistance;
                 for(int i = 0; i < 10; ++i) {
                     auto valX = m_centerX.load();
                     valX -= m_oldFlyXDiv;
@@ -299,7 +315,12 @@ namespace graphics {
                     valY -= m_oldFlyYDiv;
                     m_centerY.store(valY);
                     zoomVal += m_oldZoomIt;
-                    m_viewDistance.store(zoomVal);
+                    m_viewDistance = zoomVal;
+
+                    if(m_zoomTrigger) {
+                        m_zoomTrigger();
+                    }
+
                     usleep(10000);
                 }
             });

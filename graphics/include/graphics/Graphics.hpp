@@ -42,11 +42,11 @@ namespace graphics {
         /// Represents the drawing of the animat environment
         GLEnvironment & m_glEnviro;
 
+        /// Zoom parameter
+        double & m_viewDistance;
+
         /// To run stuff async
         detail::ThreadRunner & m_threadRunner;
-
-        /// Zoom parameter
-        std::atomic<double> m_viewDistance;
 
         /// Testing out some GUI ideas
         std::vector<std::shared_ptr<GLGUIElement>> m_guiElements;
@@ -75,6 +75,10 @@ namespace graphics {
         /// Fade in the console window
         void fadeInConsole();
 
+        /// When zoom in / out via the +/- keys
+        /// this function is called to update the
+        /// slider value
+        void updateSliderPosition();
 
     };
 }

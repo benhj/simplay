@@ -1,6 +1,7 @@
 // Copyright (c) 2017 - present Ben Jones
 
 #include "graphics/Graphics.hpp"
+#include "graphics/GLVerticalSlider.hpp"
 #include "graphics/RetinaScalar.hpp"
 #include "graphics/SetScene.hpp"
 #include <OpenGL/gl.h>
@@ -35,8 +36,8 @@ namespace graphics {
       : m_windowWidth(windowWidth)
       , m_windowHeight(windowHeight)
       , m_glEnviro(glEnviro)
+      , m_viewDistance(m_glEnviro.getViewDistance())
       , m_threadRunner(threadRunner)
-      , m_viewDistance(0.4)
       , m_guiElements()
       , m_consoleOpacity(0)
       , m_console(m_windowWidth,
@@ -52,6 +53,9 @@ namespace graphics {
       , m_consoleHasFocus(false)
     {
         init();
+        m_glEnviro.setZoomTrigger([this]{
+            updateSliderPosition();
+        });
     }
 
     void 
@@ -130,19 +134,27 @@ namespace graphics {
         }
     }
 
+    void Graphics::updateSliderPosition()
+    {
+        auto slider = m_guiElements[1].get();
+        auto reinterpred = reinterpret_cast<GLVerticalSlider*>(slider);
+
+        // Note the view distance is computed from m_currentValue as
+        // 1 - value + 0.1, so we need to reverse this when updating
+        // the slider.
+        auto val = -(m_viewDistance - 0.9);
+        reinterpred->updateSliderPosition(val);
+    }
+
     void Graphics::handleKeyDown(int const key)
     {
         // zoom control
         if (key == '+' || key == '=') {
-            auto loaded = m_viewDistance.load();
-            loaded -= 0.01;
-            m_viewDistance = loaded;
-            m_glEnviro.setViewDistance(loaded);
-        } else if (key == GLFW_KEY_MINUS) {
-            auto loaded = m_viewDistance.load();
-            loaded += 0.01;
-            m_viewDistance = loaded;
-            m_glEnviro.setViewDistance(loaded);
+            m_viewDistance -= 0.01;
+            updateSliderPosition();
+        } else if (key == GLFW_KEY_MINUS) {;
+            m_viewDistance += 0.01;
+            updateSliderPosition();
         } 
         // centre axis on/off; 
         // note always code 65 ('A') even for lowercase

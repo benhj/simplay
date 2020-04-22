@@ -14,7 +14,7 @@ namespace graphics {
       public:
         GLAxis(int & windowWidth,
                int & windowHeight,
-               std::atomic<double> & viewDistance,
+               double & viewDistance,
                std::atomic<double> & worldOrientation)
         : m_windowWidth(windowWidth)
         , m_windowHeight(windowHeight)
@@ -46,7 +46,7 @@ namespace graphics {
       private:
         int & m_windowWidth;
         int & m_windowHeight;
-        std::atomic<double> & m_viewDistance;
+        double & m_viewDistance;
         std::atomic<double> & m_worldOrientation;
         Color m_axisColor { 87, 79, 92 };
     };

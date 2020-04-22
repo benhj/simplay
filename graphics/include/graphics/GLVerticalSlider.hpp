@@ -31,6 +31,9 @@ namespace graphics {
 
         void installHandler(std::function<void(double const value)> const & handler);
 
+        /// Updates the slider position based on the passed-in value
+        void updateSliderPosition(double const value);
+
       private:
         GLFWwindow* m_window;
         int m_derivedX;

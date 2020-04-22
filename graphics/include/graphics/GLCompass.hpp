@@ -16,7 +16,7 @@ namespace graphics {
       public:
         GLCompass(int & windowWidth,
                   int & windowHeight,
-                  std::atomic<double> & viewDistance,
+                  double & viewDistance,
                   std::atomic<double> & angle)
           : m_windowWidth(windowWidth)
           , m_windowHeight(windowHeight)
@@ -82,7 +82,7 @@ namespace graphics {
       private:
         int & m_windowWidth;
         int & m_windowHeight;
-        std::atomic<double> & m_viewDistance;
+        double & m_viewDistance;
         std::atomic<double> & m_angle;
         Color m_pointerUp { 0, 0, 255 };
         Color m_pointerDown { 255, 255, 255};

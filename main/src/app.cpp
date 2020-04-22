@@ -77,8 +77,10 @@ int main(int argc, char **argv)
     simulator::Simulation sim(popSize);
 
     model::AnimatWorld & animatWorld = sim.animatWorld();
+    auto viewDistance = 0.4;
     graphics::GLEnvironment glEnvironment(windowWidth, 
-                                          windowHeight, 
+                                          windowHeight,
+                                          viewDistance,
                                           animatWorld,
                                           threadRunner);
 
