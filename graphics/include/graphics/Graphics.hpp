@@ -63,6 +63,9 @@ namespace graphics {
         /// Console has focus when mouse is over it
         std::atomic<bool> m_consoleHasFocus;
 
+        /// Track an agent when selected
+        std::atomic<bool> m_trackAgent;
+
         void handleKeyDown(int const key);
         void handleKeyUp(int const key);
         void handleKeyContinuous(int const key);

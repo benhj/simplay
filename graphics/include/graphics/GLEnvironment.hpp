@@ -177,6 +177,23 @@ namespace graphics {
                              m_centerY);
         }
 
+        void track()
+        {
+            std::lock_guard<std::mutex> lg(m_mutex);
+            static long count = 0;
+            if(m_selected > -1) {
+                if(count % 200 == 0) {
+                    doFlyIn(false /* == don't zoom */);
+                }
+                ++count;
+            }
+        }
+
+        void untrack()
+        {
+
+        }
+
         // WARNING -- the following function is hacky as fuck!!
         void flyIn()
         {
@@ -187,29 +204,7 @@ namespace graphics {
             // Figure out center point to screen point
             if (in) {
                 if(m_selected > -1) {
-                    auto & flAnimat = m_glAnimats[m_selected];
-                    auto animat = flAnimat.animatRef();
-                    auto centralPoint = animat->getCentralPoint();
-                    auto & pos = centralPoint.first;
-                    auto cx = pos.m_vec[0];
-                    auto cy = pos.m_vec[1];
-                    double sx, sy;
-
-                    detail::worldToScreen(cx, -cy, sx, sy);
-                    auto width = m_windowWidth * detail::retinaScalar();
-                    auto height = m_windowHeight * detail::retinaScalar();
-
-                    auto fx = (sx * m_viewDistance) - ((width / 2) * m_viewDistance) + m_centerX;
-                    auto fy = (sy * m_viewDistance) - ((height / 2) * m_viewDistance) + m_centerY;
-                    auto distx = std::sqrt((fx - m_centerX) * (fx - m_centerX));
-                    auto disty = std::sqrt((fy - m_centerY) * (fy - m_centerY));
-
-                    distx /= detail::retinaScalar();
-                    disty /= detail::retinaScalar();
-
-                    auto centerDivX = distx / 10.0;
-                    auto centerDivY = disty / 10.0;
-                    processFlyIn(centerDivX, centerDivY, fx, fy);
+                    doFlyIn();
                     in = false;
                 }
             } else {
@@ -253,11 +248,40 @@ namespace graphics {
         // can be updated
         std::function<void()> m_zoomTrigger;
 
+        void doFlyIn(bool const zoom = true)
+        {
+            auto & flAnimat = m_glAnimats[m_selected];
+            auto animat = flAnimat.animatRef();
+            auto centralPoint = animat->getCentralPoint();
+            auto & pos = centralPoint.first;
+            auto cx = pos.m_vec[0];
+            auto cy = pos.m_vec[1];
+            double sx, sy;
+
+            detail::worldToScreen(cx, -cy, sx, sy);
+
+            auto width = m_windowWidth * detail::retinaScalar();
+            auto height = m_windowHeight * detail::retinaScalar();
+
+            auto fx = (sx * m_viewDistance) - ((width / 2) * m_viewDistance);
+            auto fy = (sy * m_viewDistance) - ((height / 2) * m_viewDistance);
+            auto distx = std::sqrt(fx * fx);
+            auto disty = std::sqrt(fy * fy);
+
+
+            distx /= detail::retinaScalar();
+            disty /= detail::retinaScalar();
+
+            auto centerDivX = distx / 10.0;
+            auto centerDivY = disty / 10.0;
+            processFlyIn(centerDivX, centerDivY, fx, fy, zoom);
+        }
 
         void processFlyIn(double const centerDivX, 
                           double const centerDivY,
                           double const fx,
-                          double const fy)
+                          double const fy,
+                          bool const zoom)
         {
             m_oldFlyXDiv = 0;
             m_oldFlyYDiv = 0;
@@ -286,11 +310,14 @@ namespace graphics {
                         m_oldFlyYDiv -= centerDivY;
                     }
                     m_centerY.store(valY);
-                    zoomVal -= m_oldZoomIt;
-                    m_viewDistance = zoomVal;
 
-                    if(m_zoomTrigger) {
-                        m_zoomTrigger();
+                    if(zoom) {
+                        zoomVal -= m_oldZoomIt;
+                        m_viewDistance = zoomVal;
+
+                        if(m_zoomTrigger) {
+                            m_zoomTrigger();
+                        }
                     }
 
                     usleep(10000);

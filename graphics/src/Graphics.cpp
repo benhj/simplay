@@ -51,6 +51,7 @@ namespace graphics {
                   m_consoleOpacity)
       , m_displayConsole(false)
       , m_consoleHasFocus(false)
+      , m_trackAgent(false)
     {
         init();
         m_glEnviro.setZoomTrigger([this]{
@@ -67,6 +68,11 @@ namespace graphics {
     void Graphics::display()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        if(m_trackAgent.load()) {
+            m_glEnviro.track();
+        }
+
         m_glEnviro.draw();
 
         // Draw GUI elements here
@@ -114,7 +120,10 @@ namespace graphics {
                 } else {
                     m_consoleOpacity = 0;
                 }
-            } 
+            } else if(key == 'T') {
+                auto orig = m_trackAgent.load();
+                m_trackAgent = !orig;
+            }
             // for all other key presses
             else {
                 handleKeyDown(key);

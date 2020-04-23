@@ -95,10 +95,11 @@ namespace graphics {
         y *= detail::retinaScalar();
         auto centralPoint = m_animat->getCentralPoint();
         auto & pos = centralPoint.first;
-        auto cx = pos.m_vec[0];
-        auto cy = pos.m_vec[1];
+        auto cx = pos.m_vec[0] - centerX;
+        auto cy = pos.m_vec[1] - centerY;
         double sx, sy;
         detail::worldToScreen(cx, cy, sx, sy);
+
         auto diffX = (sx - x - centerX);
         auto diffY = centerY - (sy - y);
         auto diffXSq = std::sqrt(diffX * diffX) * viewDistance;
