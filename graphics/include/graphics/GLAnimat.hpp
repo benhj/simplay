@@ -31,6 +31,10 @@ namespace graphics {
 
         void updateAnimat(std::shared_ptr<model::Animat> animat);
 
+        void track();
+        void untrack();
+        bool isTracked() const;
+
       private:
 
         std::shared_ptr<model::Animat> m_animat;
@@ -53,6 +57,9 @@ namespace graphics {
 
         /// For fade-level of button
         std::shared_ptr<std::atomic<double>> m_opacity;
+
+        /// Indicates if the animat is currently bbeing tracked
+        bool m_isTracked;
 
         std::shared_ptr<std::mutex> m_mutex;
 

@@ -71,6 +71,8 @@ namespace graphics {
 
         if(m_trackAgent.load()) {
             m_glEnviro.track();
+        } else {
+            m_glEnviro.untrack();
         }
 
         m_glEnviro.draw();

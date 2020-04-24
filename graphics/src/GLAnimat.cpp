@@ -48,12 +48,26 @@ namespace graphics {
       , m_highlighted(std::make_shared<std::atomic<bool>>(false)) 
       , m_selected(std::make_shared<std::atomic<bool>>(false))
       , m_opacity(std::make_shared<std::atomic<double>>(1))
+      , m_isTracked(false)
     {
         std::call_once(g_textInitGuard, 
                        [&](){
                            g_animatText.init("../fonts/Action_Man.ttf",
                            25 * detail::retinaScalar()); 
                         });
+    }
+
+    void GLAnimat::track()
+    {
+        m_isTracked = true;
+    }
+    void GLAnimat::untrack()
+    {
+        m_isTracked = false;
+    }
+    bool GLAnimat::isTracked() const
+    {
+        return m_isTracked;
     }
 
     void GLAnimat::updateAnimat(std::shared_ptr<model::Animat> animat)

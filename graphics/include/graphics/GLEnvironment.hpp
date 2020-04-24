@@ -182,7 +182,8 @@ namespace graphics {
             std::lock_guard<std::mutex> lg(m_mutex);
             static long count = 0;
             if(m_selected > -1) {
-                if(count % 200 == 0) {
+                m_glAnimats[m_selected].track();
+                if(count % 50 == 0) {
                     doFlyIn(false /* == don't zoom */);
                 }
                 ++count;
@@ -191,7 +192,12 @@ namespace graphics {
 
         void untrack()
         {
-
+            if(m_selected > -1) {
+                if(m_glAnimats[m_selected].isTracked()) {
+                    m_glAnimats[m_selected].untrack();
+                    processFlyOut(false /* == don't zoom */);
+                }
+            }
         }
 
         // WARNING -- the following function is hacky as fuck!!
@@ -258,16 +264,28 @@ namespace graphics {
             auto cy = pos.m_vec[1];
             double sx, sy;
 
-            detail::worldToScreen(cx, -cy, sx, sy);
+            detail::worldToScreen(cx, cy, sx, sy);
 
             auto width = m_windowWidth * detail::retinaScalar();
             auto height = m_windowHeight * detail::retinaScalar();
 
-            auto fx = (sx * m_viewDistance) - ((width / 2) * m_viewDistance);
-            auto fy = (sy * m_viewDistance) - ((height / 2) * m_viewDistance);
-            auto distx = std::sqrt(fx * fx);
-            auto disty = std::sqrt(fy * fy);
+            auto fx = sx - (width / 2);
+            auto fy = (height / 2) - sy;
+            auto distx = std::sqrt(fx * fx) * m_viewDistance;
+            auto disty = std::sqrt(fy * fy) * m_viewDistance;
 
+            // Fix above-computed values according to how
+            // central world point has changed
+            if(m_centerX > 0) {
+                distx -= m_centerX;
+            } else {
+                distx += m_centerX;
+            }
+            if(m_centerY > 0) {
+                disty -= m_centerY;
+            } else {
+                disty += m_centerY;
+            }
 
             distx /= detail::retinaScalar();
             disty /= detail::retinaScalar();
@@ -283,10 +301,15 @@ namespace graphics {
                           double const fy,
                           bool const zoom)
         {
-            m_oldFlyXDiv = 0;
-            m_oldFlyYDiv = 0;
-            m_viewDistance = 0.4;
-            m_oldZoomIt = (m_viewDistance - 0.15) / 10.0;
+            //m_oldFlyXDiv = 0;
+            //m_oldFlyYDiv = 0;
+            if(zoom) {
+                m_viewDistance = 0.4;
+                m_oldZoomIt = (m_viewDistance - 0.15) / 10.0;
+            } else {
+                m_oldZoomIt = (0.4 - 0.15) / 10.0;
+            }
+
             std::function<void()> func([=]() {
                 auto zoomVal = m_viewDistance;
                 for(int i = 0; i < 10; ++i) {
@@ -327,7 +350,7 @@ namespace graphics {
             m_threadRunner.add(func);
         }
 
-        void processFlyOut()
+        void processFlyOut(bool zoom = true)
         {
             m_oldFlyYDiv /= 10;
             m_oldFlyXDiv /= 10;
@@ -341,11 +364,14 @@ namespace graphics {
                     auto valY = m_centerY.load();
                     valY -= m_oldFlyYDiv;
                     m_centerY.store(valY);
-                    zoomVal += m_oldZoomIt;
-                    m_viewDistance = zoomVal;
 
-                    if(m_zoomTrigger) {
-                        m_zoomTrigger();
+                    if(zoom) {
+                        zoomVal += m_oldZoomIt;
+                        m_viewDistance = zoomVal;
+
+                        if(m_zoomTrigger) {
+                            m_zoomTrigger();
+                        }
                     }
 
                     usleep(10000);
