@@ -49,12 +49,18 @@ namespace graphics {
       , m_selected(std::make_shared<std::atomic<bool>>(false))
       , m_opacity(std::make_shared<std::atomic<double>>(1))
       , m_isTracked(false)
+      , m_drawAntennae(false)
     {
         std::call_once(g_textInitGuard, 
                        [&](){
                            g_animatText.init("../fonts/Action_Man.ttf",
                            25 * detail::retinaScalar()); 
                         });
+    }
+
+    void GLAnimat::toggleAntennaeDraw()
+    {
+        m_drawAntennae = !m_drawAntennae;
     }
 
     void GLAnimat::track()
@@ -84,7 +90,7 @@ namespace graphics {
     {
         detail::setColor(m_basicColor);
         drawBody();
-        //drawAntennae();
+        if(m_drawAntennae){ drawAntennae(); }
         drawBoundingCircles();
         if (*m_highlighted || *m_selected) {
             drawBigBoundingCircle();

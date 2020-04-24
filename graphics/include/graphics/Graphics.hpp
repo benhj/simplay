@@ -33,6 +33,8 @@ namespace graphics {
 
         void addGUIElement(std::shared_ptr<GLGUIElement> element);
 
+        void toggleAntennaeDraw();
+
       private:
 
         /// Dimensions of window

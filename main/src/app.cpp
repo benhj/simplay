@@ -160,6 +160,9 @@ int main(int argc, char **argv)
             sim.activateEvolution();
         } else if(command.find("evo off") == 0) {
             sim.deactivateEvolution();
+        } else if(command.find("ant") == 0) {
+            //sim.deactivateEvolution();
+            graphix->toggleAntennaeDraw();
         }
     });
 

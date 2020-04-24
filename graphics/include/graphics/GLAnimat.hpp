@@ -37,6 +37,8 @@ namespace graphics {
 
         bool hadToWrap() const;
 
+        void toggleAntennaeDraw();
+
       private:
 
         std::shared_ptr<model::Animat> m_animat;
@@ -64,6 +66,9 @@ namespace graphics {
         bool m_isTracked;
 
         std::shared_ptr<std::mutex> m_mutex;
+
+        /// Controls if antennae should be drawn
+        bool m_drawAntennae;
 
         void drawBody();
         void drawAntennae();

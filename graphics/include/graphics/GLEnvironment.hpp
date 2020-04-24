@@ -228,6 +228,13 @@ namespace graphics {
             }
         }
 
+        void toggleAntennaeDraw()
+        {
+            for(auto & a : m_glAnimats) {
+                a.toggleAntennaeDraw();
+            }
+        }
+
         // WARNING -- the following function is hacky as fuck!!
         void flyIn()
         {

@@ -252,5 +252,10 @@ namespace graphics {
             }
         });
     }
+
+    void Graphics::toggleAntennaeDraw()
+    {
+        m_glEnviro.toggleAntennaeDraw();
+    }
 }
 
