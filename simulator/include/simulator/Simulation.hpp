@@ -21,6 +21,9 @@ namespace simulator {
         void pause();
         void resume();
 
+        void activateEvolution();
+        void deactivateEvolution();
+
         void setSleepDuration(int const duration);
 
         /// Returns a reference to the simulated world

@@ -73,6 +73,18 @@ namespace model {
         m_speciesColour.B = b;
     }
 
+    bool Animat::hadToWrap() const
+    {
+        auto const w = m_wrapped;
+        m_wrapped = false;
+        return w;
+    }
+
+    void Animat::setWrapped(bool const w)
+    {
+        m_wrapped = w;
+    }
+
     void Animat::constructAntennae()
     {
         auto const PI = 3.14149;

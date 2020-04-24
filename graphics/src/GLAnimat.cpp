@@ -70,6 +70,11 @@ namespace graphics {
         return m_isTracked;
     }
 
+    bool GLAnimat::hadToWrap() const
+    {
+        return m_animat->hadToWrap();
+    }
+
     void GLAnimat::updateAnimat(std::shared_ptr<model::Animat> animat)
     {
         m_animat = std::move(animat);

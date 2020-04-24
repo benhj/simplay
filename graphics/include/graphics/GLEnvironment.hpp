@@ -24,6 +24,14 @@
 #include <unistd.h>
 
 namespace graphics {
+
+    struct FlyInfo {
+        double centerDivX;
+        double centerDivY;
+        double fx;
+        double fy;
+    };
+
     class GLEnvironment
     {
       public:
@@ -43,7 +51,9 @@ namespace graphics {
         , m_oldFlyXDiv(0)
         , m_oldFlyYDiv(0)
         , m_selected(-1)
+        , m_selectedOrig(-1)
         , m_generationText()
+        , m_trackCounter(0)
         {
             auto const popSize = m_animatWorld.getPopSize();
             m_glAnimats.reserve(popSize);
@@ -180,13 +190,28 @@ namespace graphics {
         void track()
         {
             std::lock_guard<std::mutex> lg(m_mutex);
-            static long count = 0;
             if(m_selected > -1) {
                 m_glAnimats[m_selected].track();
-                if(count % 50 == 0) {
-                    doFlyIn(false /* == don't zoom */);
+                if(m_selected != m_selectedOrig && m_selectedOrig > -1) {
+                    m_glAnimats[m_selectedOrig].untrack();
+                    m_centerY = 0;
+                    m_centerX = 0;
+                    m_viewDistance = 0.4;
+                } else if(m_glAnimats[m_selected].hadToWrap()) {
+                    m_centerY = 0;
+                    m_centerX = 0;
+                    m_viewDistance = 0.4;
                 }
-                ++count;
+
+                auto fi = doFlyIn();
+                if(m_trackCounter == 0) {
+                    processFlyIn(fi.centerDivX, fi.centerDivY, fi.fx, fi.fy, false);
+                } else if(m_trackCounter > 20) {
+                    moveWorldForTracking(fi.centerDivX, fi.centerDivY, fi.fx, fi.fy);
+                }
+
+                m_selectedOrig.store(m_selected);
+                ++m_trackCounter;
             }
         }
 
@@ -195,7 +220,10 @@ namespace graphics {
             if(m_selected > -1) {
                 if(m_glAnimats[m_selected].isTracked()) {
                     m_glAnimats[m_selected].untrack();
-                    processFlyOut(false /* == don't zoom */);
+                    m_centerY = 0;
+                    m_centerX = 0;
+                    m_viewDistance = 0.4;
+                    m_trackCounter = 0;
                 }
             }
         }
@@ -210,7 +238,8 @@ namespace graphics {
             // Figure out center point to screen point
             if (in) {
                 if(m_selected > -1) {
-                    doFlyIn();
+                    auto fi = doFlyIn();
+                    processFlyIn(fi.centerDivX, fi.centerDivY, fi.fx, fi.fy);
                     in = false;
                 }
             } else {
@@ -232,10 +261,13 @@ namespace graphics {
 
         /// Index of the currently selected animat
         std::atomic<int> m_selected;
+        std::atomic<int> m_selectedOrig;
+
         double & m_viewDistance;
         std::atomic<double> m_worldOrientation;
         std::atomic<double> m_centerX;
         std::atomic<double> m_centerY;
+
         double m_oldFlyXDiv;
         double m_oldFlyYDiv;
         double m_oldZoomIt;
@@ -254,7 +286,9 @@ namespace graphics {
         // can be updated
         std::function<void()> m_zoomTrigger;
 
-        void doFlyIn(bool const zoom = true)
+        long long m_trackCounter;
+
+        FlyInfo doFlyIn()
         {
             auto & flAnimat = m_glAnimats[m_selected];
             auto animat = flAnimat.animatRef();
@@ -269,40 +303,78 @@ namespace graphics {
             auto width = m_windowWidth * detail::retinaScalar();
             auto height = m_windowHeight * detail::retinaScalar();
 
-            auto fx = sx - (width / 2);
-            auto fy = (height / 2) - sy;
-            auto distx = std::sqrt(fx * fx) * m_viewDistance;
-            auto disty = std::sqrt(fy * fy) * m_viewDistance;
+            FlyInfo fi;
+
+            fi.fx = sx - (width / 2);
+            fi.fy = (height / 2) - sy;
+            auto distx = std::sqrt(fi.fx * fi.fx) * m_viewDistance;
+            auto disty = std::sqrt(fi.fy * fi.fy) * m_viewDistance;
 
             // Fix above-computed values according to how
             // central world point has changed
             if(m_centerX > 0) {
                 distx -= m_centerX;
-            } else {
+            } else if(m_centerX < 0) {
                 distx += m_centerX;
             }
             if(m_centerY > 0) {
                 disty -= m_centerY;
-            } else {
+            } else if(m_centerY < 0)  {
                 disty += m_centerY;
             }
 
             distx /= detail::retinaScalar();
             disty /= detail::retinaScalar();
 
-            auto centerDivX = distx / 10.0;
-            auto centerDivY = disty / 10.0;
-            processFlyIn(centerDivX, centerDivY, fx, fy, zoom);
+            fi.centerDivX = distx / 10.0;
+            fi.centerDivY = disty / 10.0;
+            return fi;
+        }
+
+        void update(double const valX,
+                    double const valY)
+        {
+            m_centerX.store(valX);
+            m_centerY.store(valY);
+        }
+
+        void moveWorldForTracking(double centerDivX, 
+                                  double centerDivY,
+                                  double const fx,
+                                  double const fy)
+        {
+            centerDivX *= 10;
+            centerDivY *= 10;
+            auto valX = m_centerX.load();
+
+            if (valX < fx - centerDivX) {
+                valX += centerDivX;
+                m_oldFlyXDiv += centerDivX;
+            } else if (valX > fx + centerDivX) {
+                valX -= centerDivX;
+                m_oldFlyXDiv -= centerDivX;
+            }
+
+            auto valY = m_centerY.load();
+            if (valY > fy - centerDivY) {
+                valY += centerDivY;
+                m_oldFlyYDiv += centerDivY;
+            } else if (valY < fy + centerDivY) {
+                valY -= centerDivY;
+                m_oldFlyYDiv -= centerDivY;
+            }
+
+            update(valX, valY);
         }
 
         void processFlyIn(double const centerDivX, 
                           double const centerDivY,
                           double const fx,
                           double const fy,
-                          bool const zoom)
+                          bool const zoom = true)
         {
-            //m_oldFlyXDiv = 0;
-            //m_oldFlyYDiv = 0;
+            m_oldFlyXDiv = 0;
+            m_oldFlyYDiv = 0;
             if(zoom) {
                 m_viewDistance = 0.4;
                 m_oldZoomIt = (m_viewDistance - 0.15) / 10.0;
@@ -322,7 +394,6 @@ namespace graphics {
                         valX -= centerDivX;
                         m_oldFlyXDiv -= centerDivX;
                     }
-                    m_centerX.store(valX);
 
                     auto valY = m_centerY.load();
                     if (valY > fy - centerDivY) {
@@ -332,7 +403,8 @@ namespace graphics {
                         valY -= centerDivY;
                         m_oldFlyYDiv -= centerDivY;
                     }
-                    m_centerY.store(valY);
+
+                    update(valX, valY);
 
                     if(zoom) {
                         zoomVal -= m_oldZoomIt;
@@ -359,11 +431,11 @@ namespace graphics {
                 for(int i = 0; i < 10; ++i) {
                     auto valX = m_centerX.load();
                     valX -= m_oldFlyXDiv;
-                    m_centerX.store(valX);
 
                     auto valY = m_centerY.load();
                     valY -= m_oldFlyYDiv;
-                    m_centerY.store(valY);
+
+                    update(valX, valY);
 
                     if(zoom) {
                         zoomVal += m_oldZoomIt;

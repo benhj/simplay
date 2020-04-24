@@ -21,7 +21,7 @@ namespace model {
       public:
         /// Initialize animat with an ID and default properties (10 segments
         /// a width of 2.0 and a height of 3.8611)
-        Animat(int const id, AnimatProperties const & props = {8, 2.0, 4.0});
+        Animat(int const id, AnimatProperties const & props = {6, 2.0, 4.0});
    
         void applyBlockContraction(int const block, 
                                    int const side, 
@@ -77,6 +77,13 @@ namespace model {
         void updateSpeciesColour(double r, double g, double b);
         SpeciesColour getSpeciesColour() const;
 
+        /// Indicates the the animat went out of the world
+        /// bounds and had to be wrapped in the manner
+        /// of a toroidal displacement.
+        bool hadToWrap() const;
+
+        void setWrapped(bool const w = true);
+
       private:
         int m_id;
         std::vector<AnimatLayer> m_layers;
@@ -95,6 +102,9 @@ namespace model {
         std::vector<std::pair<physics::Vector3, double>> m_boundingCircles;
 
         SpeciesColour m_speciesColour;
+
+        /// When the animat goes out of bounds it is 'wrapped'
+        bool mutable m_wrapped;
 
         void constructAntennae();
 

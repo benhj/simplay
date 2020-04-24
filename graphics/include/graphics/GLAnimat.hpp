@@ -35,6 +35,8 @@ namespace graphics {
         void untrack();
         bool isTracked() const;
 
+        bool hadToWrap() const;
+
       private:
 
         std::shared_ptr<model::Animat> m_animat;

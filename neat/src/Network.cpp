@@ -444,19 +444,19 @@ namespace neat {
     {
         auto difference = 0.0;
 
-        // for (auto const & innovation : m_innovationMap) {
-        //     // See if this innovation exists in the other map
-        //     auto found = other.m_innovationMap.find(innovation.second.innovationNumber);
-        //     if (found != std::end(other.m_innovationMap)) {
-        //         auto const w1 = innovation.second.weight;
-        //         auto const w2 = found->second.weight;
-        //         if(w1 >= w2) {
-        //             difference += (w1 - w2);
-        //         } else {
-        //             difference += (w2 - w1);
-        //         }
-        //     }
-        // }
+        for (auto const & innovation : m_innovationMap) {
+            // See if this innovation exists in the other map
+            auto found = other.m_innovationMap.find(innovation.second.innovationNumber);
+            if (found != std::end(other.m_innovationMap)) {
+                auto const w1 = innovation.second.weight;
+                auto const w2 = found->second.weight;
+                if(w1 >= w2) {
+                    difference += (w1 - w2);
+                } else {
+                    difference += (w2 - w1);
+                }
+            }
+        }
 
         for (auto const & innovation : other.m_innovationMap) {
             auto found = m_innovationMap.find(innovation.second.innovationNumber);

@@ -16,6 +16,15 @@ namespace simulator {
         //m_animatWorld.randomizePositions(10, 10);
     }
 
+    void Simulation::activateEvolution()
+    {
+        m_population.activateEvolution();
+    }
+    void Simulation::deactivateEvolution()
+    {
+        m_population.deactivateEvolution();
+    }
+
     model::AnimatWorld & Simulation::animatWorld()
     {
         return m_animatWorld;

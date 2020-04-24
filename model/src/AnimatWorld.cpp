@@ -234,6 +234,7 @@ namespace model {
             transY = -(boundY * 2);
         }
         if(transX != 0 || transY != 0) {
+            m_animats[index]->setWrapped();
             doTranslateAnimatPosition(index, transX, transY);
         }
     }

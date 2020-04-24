@@ -60,7 +60,7 @@ namespace {
         auto const g = speciesColour.G;
         auto const b = speciesColour.B;
 
-        auto thresh = 1;
+        auto thresh = 2;
         int i = 0;
         for(auto & candB : agents) {
             auto neatB = candB.getNeatNet();
@@ -93,6 +93,7 @@ namespace simulator {
     : m_popSize(popSize)
     , m_animatWorld(animatWorld)
     , m_eliteIndex(0)
+    , m_evoOn(true)
     {
         m_agents.reserve(popSize);
         for(int i = 0;i<popSize;++i){
@@ -100,6 +101,15 @@ namespace simulator {
             m_agents.emplace_back(m_animatWorld.animat(i));
             m_agents.back().recordStartPosition();
         }
+    }
+
+    void Population::activateEvolution()
+    {
+        m_evoOn = true;
+    }
+    void Population::deactivateEvolution()
+    {
+        m_evoOn = false;
     }
 
     void Population::update(long const tick, 
@@ -154,47 +164,49 @@ namespace simulator {
 
         // Probabilitisticazlly choose parent to generate offspring scaled
         // according to the overall best adjusted fitness
-        std::vector<FitnessPair> fitnesses;
-        fitnesses.reserve(m_popSize);
-        int i = 0;
-        for (auto const & agent : m_agents) {
-            auto f = agent.getAdjustedFitness();
-            fitnesses.emplace_back(i, f);
-            ++i;
-        }
-
-        // sort according to fitness (lowest to highest)
-        std::sort(std::begin(fitnesses), std::end(fitnesses),
-                  [](FitnessPair const & a,
-                     FitnessPair const & b) {
-                      return b.second > a.second;
-                  });
-
-        auto arand = ::rand() / double(RAND_MAX);
-        int choice = 0;
-        for (auto const & fitness : fitnesses) {
-            if(arand <= (fitness.second / best)) {
-                choice = fitness.first;
-                break;
+        if(m_evoOn) {
+            std::vector<FitnessPair> fitnesses;
+            fitnesses.reserve(m_popSize);
+            int i = 0;
+            for (auto const & agent : m_agents) {
+                auto f = agent.getAdjustedFitness();
+                fitnesses.emplace_back(i, f);
+                ++i;
             }
-        }
 
-        if(bestIndex > -1 && worstIndex > -1 && worstIndex != choice) {
-            m_agents[worstIndex].inheritNeat(m_agents[choice]);
-            m_agents[worstIndex].mutateNeat();
-            // Mutating the NEAT architecture can result in a
-            // different number of body segments meaning that
-            // the animat needs to be reconstructed.
-            /*
-            auto const oldSegmentCount = m_animatWorld.animat(worstIndex)
-                                         ->getBlockCount();
-            auto const segments = getSegmentCount(worstIndex, m_agents);
-            if(segments != oldSegmentCount) {
-                m_animatWorld.reconstructAnimat(worstIndex, segments);
-                m_animatWorld.randomizePositionSingleAnimat(worstIndex, 10, 10);
-            }*/
-            m_agents[worstIndex].resetController();
-            m_animatWorld.incrementOptimizationCount();
+            // sort according to fitness (lowest to highest)
+            std::sort(std::begin(fitnesses), std::end(fitnesses),
+                      [](FitnessPair const & a,
+                         FitnessPair const & b) {
+                          return b.second > a.second;
+                      });
+
+            auto arand = ::rand() / double(RAND_MAX);
+            int choice = 0;
+            for (auto const & fitness : fitnesses) {
+                if(arand <= (fitness.second / best)) {
+                    choice = fitness.first;
+                    break;
+                }
+            }
+
+            if(bestIndex > -1 && worstIndex > -1 && worstIndex != choice) {
+                m_agents[worstIndex].inheritNeat(m_agents[choice]);
+                m_agents[worstIndex].mutateNeat();
+                // Mutating the NEAT architecture can result in a
+                // different number of body segments meaning that
+                // the animat needs to be reconstructed.
+                /*
+                auto const oldSegmentCount = m_animatWorld.animat(worstIndex)
+                                             ->getBlockCount();
+                auto const segments = getSegmentCount(worstIndex, m_agents);
+                if(segments != oldSegmentCount) {
+                    m_animatWorld.reconstructAnimat(worstIndex, segments);
+                    m_animatWorld.randomizePositionSingleAnimat(worstIndex, 10, 10);
+                }*/
+                m_agents[worstIndex].resetController();
+                m_animatWorld.incrementOptimizationCount();
+            }
         }
     }
 }

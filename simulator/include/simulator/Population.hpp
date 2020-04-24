@@ -18,6 +18,9 @@ namespace simulator {
                     int const everyN = 400,
                     bool const withMutations = true);
 
+        void activateEvolution();
+        void deactivateEvolution();
+
       private:
 
         /// The size of the population
@@ -31,6 +34,9 @@ namespace simulator {
 
         /// The index of the elite agent
         int m_eliteIndex;
+
+        /// For controlling if evolution is activated or not
+        bool m_evoOn;
 
         /// Regenerate the population based on distances travelled
         /// with some offspring updated if withMutations is true

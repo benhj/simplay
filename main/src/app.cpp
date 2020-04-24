@@ -26,7 +26,7 @@
 
 int windowWidth = 800;
 int windowHeight = 800;
-int popSize = 20;
+int popSize = 40;
 
 // For running operations asynchronously
 graphics::detail::ThreadRunner threadRunner;
@@ -152,10 +152,14 @@ int main(int argc, char **argv)
     graphix->addGUIElement(std::move(dial));
 
     graphix->setGraphicsConsoleCallback([&sim](std::string command) {
-        if(command.find_first_of("pause") == 0) {
+        if(command.find("pause") == 0) {
             sim.pause();
-        } else if(command.find_first_of("resume") == 0) {
+        } else if(command.find("resume") == 0) {
             sim.resume();
+        } else if(command.find("evo on") == 0) {
+            sim.activateEvolution();
+        } else if(command.find("evo off") == 0) {
+            sim.deactivateEvolution();
         }
     });
 
