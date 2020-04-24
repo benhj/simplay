@@ -60,7 +60,7 @@ namespace {
         auto const g = speciesColour.G;
         auto const b = speciesColour.B;
 
-        auto thresh = 2;
+        auto thresh = 4;
         int i = 0;
         for(auto & candB : agents) {
             auto neatB = candB.getNeatNet();

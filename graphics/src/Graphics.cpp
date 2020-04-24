@@ -119,6 +119,7 @@ namespace graphics {
                 m_displayConsole = !orig;
                 if(m_displayConsole) {
                     fadeInConsole();
+                    m_consoleHasFocus = true;
                 } else {
                     m_consoleOpacity = 0;
                 }
