@@ -1,5 +1,6 @@
 /// Copyright (c) 2017-present Ben Jones
 
+#include "model/AnimatProperties.hpp"
 #include "model/AnimatWorld.hpp"
 #include "physics/Matrix.hpp"
 #include <cstdlib> // rand
@@ -17,9 +18,20 @@ namespace model {
       , m_optimizations(0)
     {
         m_animats.reserve(populationSize);
+        auto blocks = 4;
+
 
         for (int p = 0; p < populationSize; ++p) {
-            m_animats.push_back(std::make_shared<Animat>(p));
+            if(p < 5) {
+                blocks = 5;
+            } else if(p < 10) {
+                blocks = 6;
+            } else if(p < 15) {
+                blocks = 7;
+            } else {
+                blocks = 8;
+            }
+            m_animats.push_back(std::make_shared<Animat>(p, model::AnimatProperties{blocks, 2.0, 4.0}));
         }
 
         // seed random generator for random pop placement
