@@ -21,7 +21,7 @@ namespace simulator {
 
         /// Actuate the animat based on control output
         /// Returns 0 on success, -1 if problem
-        int update();
+        int update(std::vector<Agent> & otherAgents);
 
         /// Mutates the NEAT architecture
         void mutateNeat();
@@ -59,6 +59,9 @@ namespace simulator {
         void updateSpeciesColour(double r, double g, double b);
         model::SpeciesColour getSpeciesColour() const;
 
+        /// Collision handling with other agents
+        bool checkForCollisionWithOther(Agent & other, bool const resolve = true);
+
       private:
 
         /// The physical shell of the animat agent  
@@ -85,6 +88,9 @@ namespace simulator {
         /// Fitness is adjusted according to distance swam
         /// divided by the number of members making up the species.
         double m_adjustedFitness;
+
+        /// Should we do collision detection?
+        bool m_handleCollisions;
 
     };
 }

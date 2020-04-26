@@ -29,6 +29,7 @@ namespace simulator {
       , m_bad(false)
       , m_age(0)
       , m_adjustedFitness(0)
+      , m_handleCollisions(false)
     {
         // set where the animat currently is in the world
         // will be used as a basis for computing distance moved
@@ -69,7 +70,7 @@ namespace simulator {
         return m_animat->getSpeciesColour();
     }
 
-    int Agent::update()
+    int Agent::update(std::vector<Agent> & otherAgents)
     {
         auto blockCount = m_animat->getBlockCount();
         for(int integ = 0; integ < 10; ++integ) {
@@ -79,7 +80,17 @@ namespace simulator {
                 m_animat->applyBlockContraction(i, 0, outputLeft);
                 m_animat->applyBlockContraction(i, 1, outputRight);
             }
-            m_animat->applyWaterForces();    
+            m_animat->applyWaterForces();
+
+            // Collision check
+            if(m_handleCollisions) {
+                for(auto & other : otherAgents) {
+                    if(this != &other) {
+                        checkForCollisionWithOther(other);
+                    }
+                }
+            }
+
             m_animat->update();
             if (m_animat->broke()) {
                 return -1;
@@ -163,5 +174,10 @@ namespace simulator {
     void Agent::setBad()
     {
         m_bad = true;
+    }
+
+    bool Agent::checkForCollisionWithOther(Agent & other, bool const resolve)
+    {
+        return m_animat->checkForCollisionWithOther(other.m_animat, resolve);
     }
 }

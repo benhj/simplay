@@ -334,6 +334,155 @@ namespace model {
         }
         return false;
     }
+
+    bool Animat::isOtherAnimatClose(Animat const & other) const
+    {
+        auto centralPoint = getCentralPoint();
+        auto otherCentral = other.getCentralPoint();
+        return centralPoint.first.distance(otherCentral.first);
+    }
+
+    bool
+    Animat::checkForCollisionWithOther(std::shared_ptr<Animat> other, bool const resolve)
+    {
+
+        // Figure out if animats are close enough to consider
+        // trying to do collision detection for.
+        auto centralPoint = getCentralPoint();
+        auto otherCentral = other->getCentralPoint();
+        double coarseCloseness = centralPoint.first.distance(otherCentral.first);
+        double coarseRadii = centralPoint.second + otherCentral.second;
+        if (coarseCloseness >= coarseRadii) {
+            return false;
+        }
+
+        double const K_ELASTIC = 0.5f;
+        bool collision = false;
+
+        auto & otherPhysicsEngine = other->getPhysicsEngine();
+
+        for(auto & block : m_blocks) {
+
+            auto bc = block.deriveBoundingCircle(m_physicsEngine);
+            auto radA = bc.second;
+            auto & layerOne = block.getLayerOne();
+            auto & layerTwo = block.getLayerTwo();
+
+            for(auto & otherBlock : other->m_blocks) {
+
+                auto otherBc = otherBlock.deriveBoundingCircle(otherPhysicsEngine);
+                auto radB = otherBc.second;
+                auto radii = radA + radB;
+                auto & otherLayerOne = otherBlock.getLayerOne();
+                auto & otherLayerTwo = otherBlock.getLayerTwo();
+                auto layerOnePositionLeft = layerOne.getPositionLeft(m_physicsEngine);
+                auto layerOnePositionRight =  layerOne.getPositionRight(m_physicsEngine);
+                auto layerTwoPositionLeft = layerTwo.getPositionLeft(m_physicsEngine);
+                auto layerTwoPositionRight = layerTwo.getPositionRight(m_physicsEngine);
+                auto otherLayerOnePositionLeft = otherLayerOne.getPositionLeft(otherPhysicsEngine);
+                auto otherLayerOnePositionRight =  otherLayerOne.getPositionRight(otherPhysicsEngine);
+                auto otherLayerTwoPositionLeft = otherLayerTwo.getPositionLeft(otherPhysicsEngine);
+                auto otherLayerTwoPositionRight = otherLayerTwo.getPositionRight(otherPhysicsEngine);
+
+                physics::Vector3 apos;
+                physics::Vector3 bpos;
+                apos += layerOnePositionLeft;
+                apos += layerOnePositionRight;
+                apos += layerTwoPositionLeft;
+                apos += layerTwoPositionRight;
+                bpos += otherLayerOnePositionLeft;
+                bpos += otherLayerOnePositionRight;
+                bpos += otherLayerTwoPositionLeft;
+                bpos += otherLayerTwoPositionRight;
+
+                apos /= 4;
+                bpos /= 4;
+
+                auto fineCloseness = apos.distance(bpos);
+                if (fineCloseness > radii) {
+                    continue;
+                }
+
+                collision=true;
+
+                // Add epsilon to avoid NaN.
+                fineCloseness += 0.000001f;
+
+                if (resolve) {
+
+                    auto relativepos = bpos - apos;
+                    auto relativeUnit = relativepos * (1.0f / fineCloseness);
+                    auto penetration = relativeUnit * (radii - fineCloseness);
+
+                    // get average velocity of point masses making up this Agent's segment
+                    physics::Vector3 p_vel;
+                    p_vel += layerOne.getVelocityLeft(m_physicsEngine);
+                    p_vel += layerOne.getVelocityRight(m_physicsEngine);
+                    p_vel += layerTwo.getVelocityLeft(m_physicsEngine);
+                    p_vel += layerTwo.getVelocityRight(m_physicsEngine);
+                    p_vel /= 4;
+
+                    // get average velocity of point masses making up other Agent's segment
+                    physics::Vector3 s_vel;
+                    s_vel += otherLayerOne.getVelocityLeft(otherPhysicsEngine);
+                    s_vel += otherLayerOne.getVelocityRight(otherPhysicsEngine);
+                    s_vel += otherLayerTwo.getVelocityLeft(otherPhysicsEngine);
+                    s_vel += otherLayerTwo.getVelocityRight(otherPhysicsEngine);
+                    s_vel /= 4;
+
+                    auto weight1 = 0.1f;
+                    auto weight2 = 0.1f;
+                    // udpdate positions of each of the two body segments
+                    layerOnePositionLeft -= (weight2 * penetration);
+                    layerOnePositionRight -= (weight2 * penetration);
+                    layerOne.setPositionLeft(layerOnePositionLeft, m_physicsEngine);
+                    layerOne.setPositionRight(layerOnePositionRight, m_physicsEngine);
+
+                    layerTwoPositionLeft -= (weight2 * penetration);
+                    layerTwoPositionRight -= (weight2 * penetration);
+                    layerTwo.setPositionLeft(layerTwoPositionLeft, m_physicsEngine);
+                    layerTwo.setPositionRight(layerTwoPositionRight, m_physicsEngine);
+
+                    otherLayerOnePositionLeft -= (weight1 * penetration);
+                    otherLayerOnePositionRight -= (weight1 * penetration);
+                    otherLayerOne.setPositionLeft(otherLayerOnePositionLeft, otherPhysicsEngine);
+                    otherLayerOne.setPositionRight(otherLayerOnePositionRight, otherPhysicsEngine);
+
+                    otherLayerTwoPositionLeft -= (weight1 * penetration);
+                    otherLayerTwoPositionRight -= (weight1 * penetration);
+                    otherLayerTwo.setPositionLeft(otherLayerTwoPositionLeft, otherPhysicsEngine);
+                    otherLayerTwo.setPositionRight(otherLayerTwoPositionRight, otherPhysicsEngine);
+
+
+                    /**
+                     * Update the velocity values of the offending segments but first make sure that
+                     * they're actually moving towards each other
+                     */
+                    auto mass1 = 1.0f;
+                    auto mass2 = 1.0f;
+                    auto velocityTotal = p_vel * weight1 + s_vel * weight2;
+                    auto i2 = (s_vel - velocityTotal) * mass2;
+
+                    if (i2.dot(relativeUnit) < 0) {
+                        // i1+i2 == 0, approx
+                        auto di = i2.dot(relativeUnit) * relativeUnit;
+                        i2 -= (di * (K_ELASTIC + 1));
+
+                        layerOne.setVelocityLeft((-i2) / mass1 + velocityTotal, m_physicsEngine);
+                        layerOne.setVelocityRight((-i2) / mass1 + velocityTotal, m_physicsEngine);
+                        layerTwo.setVelocityLeft((-i2) / mass1 + velocityTotal, m_physicsEngine);
+                        layerTwo.setVelocityRight((-i2) / mass1 + velocityTotal, m_physicsEngine);
+
+                        otherLayerOne.setVelocityLeft(i2 / mass2 + velocityTotal, otherPhysicsEngine);
+                        otherLayerOne.setVelocityRight(i2 / mass2 + velocityTotal, otherPhysicsEngine);
+                        otherLayerTwo.setVelocityLeft(i2 / mass2 + velocityTotal, otherPhysicsEngine);
+                        otherLayerTwo.setVelocityRight(i2 / mass2 + velocityTotal, otherPhysicsEngine);
+                    }
+                }
+            }
+        }
+        return collision;
+    }
 }
 
 

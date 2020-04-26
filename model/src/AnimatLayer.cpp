@@ -91,13 +91,35 @@ namespace model {
     physics::Vector3
     AnimatLayer::getVelocityRight(physics::PhysicsEngine const & physicsEngine) const
     {
-        return physicsEngine.getPointMassVelocity(m_indexLeft);
+        return physicsEngine.getPointMassVelocity(m_indexRight);
     }
 
     void AnimatLayer::toInitialPosition(physics::PhysicsEngine & physicsEngine)
     {
         physicsEngine.pointMassToInitialPosition(m_indexLeft);
         physicsEngine.pointMassToInitialPosition(m_indexRight);
+    }
+
+    void AnimatLayer::setPositionLeft(physics::Vector3 const & left,
+                                      physics::PhysicsEngine & physicsEngine)
+    {
+        physicsEngine.setPointMassPosition(m_indexLeft, left);
+    }
+    void AnimatLayer::setPositionRight(physics::Vector3 const & right,
+                                       physics::PhysicsEngine & physicsEngine)
+    {
+        physicsEngine.setPointMassPosition(m_indexRight, right);
+    }
+
+    void AnimatLayer::setVelocityLeft(physics::Vector3 const & left,
+                                      physics::PhysicsEngine & physicsEngine)
+    {
+        physicsEngine.setPointMassVelocity(m_indexLeft, left);
+    }
+    void AnimatLayer::setVelocityRight(physics::Vector3 const & right,
+                                       physics::PhysicsEngine & physicsEngine)
+    {
+        physicsEngine.setPointMassVelocity(m_indexRight, right);
     }
 
 }

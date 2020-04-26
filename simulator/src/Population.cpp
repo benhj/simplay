@@ -125,7 +125,7 @@ namespace simulator {
         double totalAdjusted = 0;
         for (auto & agent : m_agents) {
 
-            if(agent.update() == -1) {
+            if(agent.update(m_agents) == -1) {
 
                 // Reinitialize the underlying neat genome
                 m_animatWorld.randomizePositionSingleAnimat(p, 10, 10);

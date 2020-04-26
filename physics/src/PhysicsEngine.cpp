@@ -79,6 +79,12 @@ namespace physics {
     {
         m_masses[i].setPosition(position);
     }
+    void
+    PhysicsEngine::setPointMassVelocity(int const i, Vector3 const & velocity)
+    {
+        m_masses[i].setVelocity(velocity);
+    }
+
 
     Vector3 PhysicsEngine::getPointMassPosition(int const i) const
     {

@@ -22,6 +22,8 @@ namespace physics {
 
         void setPointMassPosition(int const i, 
                                   Vector3 const & position);
+        void setPointMassVelocity(int const i,
+                                  Vector3 const & velocity);
 
         /// returns index of spring
         int createSpring(int const i, 

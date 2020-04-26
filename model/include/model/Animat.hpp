@@ -81,8 +81,10 @@ namespace model {
         /// bounds and had to be wrapped in the manner
         /// of a toroidal displacement.
         bool hadToWrap() const;
-
         void setWrapped(bool const w = true);
+
+        /// Handle collisions
+        bool checkForCollisionWithOther(std::shared_ptr<Animat> other, bool const resolve = true);
 
       private:
         int m_id;
@@ -124,6 +126,8 @@ namespace model {
         /// Check if animat has folded in on itself
         bool checkForInnerCollisions() const;
 
+        /// Indicates if another animat is close by
+        bool isOtherAnimatClose(Animat const & other) const;
     };
 }
 
