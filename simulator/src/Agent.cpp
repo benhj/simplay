@@ -180,4 +180,13 @@ namespace simulator {
     {
         return m_animat->checkForCollisionWithOther(other.m_animat, resolve);
     }
+
+    void Agent::enableCollisionHandling()
+    {
+        m_handleCollisions = true;
+    }
+    void Agent::disableCollisionHandling()
+    {
+        m_handleCollisions = false;
+    }
 }

@@ -62,6 +62,9 @@ namespace simulator {
         /// Collision handling with other agents
         bool checkForCollisionWithOther(Agent & other, bool const resolve = true);
 
+        void enableCollisionHandling();
+        void disableCollisionHandling();
+
       private:
 
         /// The physical shell of the animat agent  

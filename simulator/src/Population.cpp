@@ -112,6 +112,11 @@ namespace simulator {
         m_evoOn = false;
     }
 
+    std::vector<simulator::Agent> & Population::getAgents()
+    {
+        return m_agents;
+    }
+
     void Population::update(long const tick, 
                             int const everyN,
                             bool const withMutations)

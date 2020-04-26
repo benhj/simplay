@@ -21,6 +21,8 @@ namespace simulator {
         void activateEvolution();
         void deactivateEvolution();
 
+        std::vector<simulator::Agent> & getAgents();
+
       private:
 
         /// The size of the population

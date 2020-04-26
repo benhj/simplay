@@ -73,4 +73,20 @@ namespace simulator {
             }
         }
     }
+
+    void Simulation::enableCollisionHandling()
+    {
+        auto & agents = m_population.getAgents();
+        for(auto & agent : agents) {
+            agent.enableCollisionHandling();
+        }
+    }
+    void Simulation::disableCollisionHandling()
+    {
+        auto & agents = m_population.getAgents();
+        for(auto & agent : agents) {
+            agent.disableCollisionHandling();
+        }
+
+    }
 }

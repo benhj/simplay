@@ -28,6 +28,10 @@ namespace simulator {
 
         /// Returns a reference to the simulated world
         model::AnimatWorld & animatWorld();
+
+        void enableCollisionHandling();
+        void disableCollisionHandling();
+
       private:
         /// The main simulation loop runs on this thread
         std::thread m_simThread;
